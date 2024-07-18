@@ -1,7 +1,47 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import InitialHeader from '@/components/common/InitialHeader.vue'
+import { ref } from 'vue'
+import axios from 'axios'
 //company_code, id, username, email, password, passwordCheck
+//회원가입
+const email = ref('');
+const username = ref('');
+const password = ref('');
+const id = ref('');
+const company_code = ref('');
+const passwordCheck = ref('');
+const router = useRouter();
+const Signup = () => {
+
+if(email.value!="" && name.value!="" && password.value!=""){
+    const body={
+        //유저 정보
+        "id": id.value,
+        "username": username.value,
+        "company_code": company_code.value,
+        "email": email.value,
+        "password": password.value,
+        "passwordCheck": passwordCheck.value
+    }
+    axios.post('/v1/users/register', body)
+        .then((response) => {
+            const data = response.data;
+            if (data.message === "success") {
+                router.push("/login");
+            } else {
+                console.log("회원가입 실패");
+            }
+        })
+        .catch((error) => {
+            console.error("An error occurred while registering the user:", error);
+        });
+}
+else{
+    console.log("모든 값을 채워야 합니다.")
+}
+
+};
 </script>
 
 <template>

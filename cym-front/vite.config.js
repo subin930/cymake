@@ -12,5 +12,13 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
-})
+  },
+  build: {
+    outDir: "../cym-back/src/main/resources/static",
+  },
+  serve: {
+    proxy: {
+      "/api": "http://localhost:8080",
+    },
+  },
+});
