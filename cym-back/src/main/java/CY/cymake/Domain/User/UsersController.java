@@ -58,8 +58,8 @@ public class UsersController {
      */
     @Operation(description = "회원 정보 수정")
     @PutMapping(value = "/update")
-    public CommonBaseResult updateProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestBody @Valid UpdateReqDto updateReqDto){
-        usersService.updateProfile(updateReqDto);
+    public CommonBaseResult updateProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestBody @Valid UpdateReqDto updateReqDto, @AuthenticationPrincipal CustomUserDetails user){
+        usersService.updateProfile(user.getUser(), updateReqDto);
         return globalResponseHandler.SendSuccess();
     }
 }
