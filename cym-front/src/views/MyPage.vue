@@ -1,11 +1,20 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import Header from '@/components/common/Header.vue'
+import PasswordChangeModal from '@/components/MyPage/PasswordChangeModal.vue'
 import { ref } from "vue";
 //companycode, userId, username, email, password, passwordCheck
 const userId = ref('testId');
 const username = ref('Test2');
 const email = ref('testmail@test.com');
+const modalID = ref('passwordChangeModal');
+
+const OpenChangeModal = () => {
+    const modalElement = document.getElementById(modalID.value);
+    const modalInstance = new bootstrap.Modal(modalElement);
+    modalInstance.show();
+};
+
 </script>
 
 <template>
@@ -43,7 +52,7 @@ const email = ref('testmail@test.com');
             <div class="mb-5 row ">
                 <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호 변경</label>
                 <div class="col-sm-8 d-inline-flex justify-contetnt-center">
-                    <button type="button" class="btn btn-outline-secondary w-20" style="font-size: 0.9rem;" @click="ChangePassword()">비밀번호 변경</button>
+                    <button type="button" class="btn btn-outline-secondary w-20" style="font-size: 0.9rem;" @click="OpenChangeModal()">비밀번호 변경</button>
                 </div>
                 
             </div>
@@ -53,4 +62,5 @@ const email = ref('testmail@test.com');
             </div>
         </div>
     </div>
+    <PasswordChangeModal></PasswordChangeModal>
 </template>
