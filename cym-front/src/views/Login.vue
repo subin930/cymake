@@ -5,13 +5,14 @@ import { ref } from "vue";
 const route = useRoute();
 const router = useRouter();
 
-const companycode = ref("");
-const userId = ref("");
+const company_code = ref("");
+const id = ref("");
 const password = ref("");
 
 const Login = () => {
+    console.log("login try...");
     localStorage.setItem("token", "Test"); //임시로 토큰 생성 (그냥 버튼 누르면 작동되게...)
-    localStorage.setItem("userId","Test2");
+    localStorage.setItem("id","Test2");
     localStorage.setItem("username", "임시용");
     router.push("/archive");
 }
@@ -19,12 +20,12 @@ const MoveToSignup = () => {
     router.push("/signup");
 };
 
-const updateCompanycode = (event) => {
-    companycode.value = event.target.value
+const updatecompany_code = (event) => {
+    company_code.value = event.target.value
 }
 
-const updateUserId = (event) => {
-    userId.value = event.target.value
+const updateid = (event) => {
+    id.value = event.target.value
 }
 
 const updatePassword = (event) => {
@@ -43,17 +44,17 @@ const updatePassword = (event) => {
         <div class="m-5">
             <div class="mb-3">
                 <div class="mb-3 row">
-                    <label for="inputCompanycode" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
+                    <label for="inputcompany_code" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputCompanycode" @input="updateCompanycode">
+                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputcompany_code" @input="updatecompany_code">
                     </div>
                 </div>
             </div>
             <div class="mb-3">
                 <div class="mb-3 row">
-                    <label for="inputUserId" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
+                    <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputUserId" @input="updateUserId">
+                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputid" @input="updateid">
                     </div>
                 </div>
             </div>

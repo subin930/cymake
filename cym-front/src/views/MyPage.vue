@@ -3,8 +3,8 @@ import { RouterLink, RouterView } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import PasswordChangeModal from '@/components/MyPage/PasswordChangeModal.vue'
 import { ref } from "vue";
-//companycode, userId, username, email, password, passwordCheck
-const userId = ref('testId');
+//company_code, id, username, email, password, passwordCheck
+const id = ref('testId');
 const username = ref('Test2');
 const email = ref('testmail@test.com');
 const modalID = ref('passwordChangeModal');
@@ -27,9 +27,9 @@ const OpenChangeModal = () => {
         <div class="container">
             <div class="mb-3">
                 <div class="mb-3 row">
-                    <label for="inputUserId" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
+                    <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50 disabled" style="font-size: 0.9rem;" :placeholder="userId" id="inputUserId" disabled>
+                    <input type="text" class="form-control form-control-sm w-50 disabled" style="font-size: 0.9rem;" :placeholder="id" id="inputid" disabled>
                     </div>
                 </div>
             </div>
