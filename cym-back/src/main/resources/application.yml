@@ -1,0 +1,35 @@
+springdoc:
+  swagger-ui:
+    groups-order: DESC #그룹의 정렬 순서 내림차 순으로 설정
+    tags-sorter: alpha #태그 알파벳 순 정렬
+    operations-sorter: method //작업을 메서드 별로 정렬
+    disable-swagger-default-url: true #Swagger의 기본 URL을 비활성화
+    display-request-duration: true #요청 소요 시간 표시
+    defaultModelExpandDepth: 2
+    defaultModelsExpandDepth: 2 #Swagger UI가 API문서 표시할 때, 사용자에게 얼마나 많은 세부정보를 기본적으로 보여줄지를 제어
+  api-docs:
+    path: /api-docs #API 문서의 경로를 /api-docs로 설정
+  show-actuator: true #Actuator 엔드포인틀 표시
+  default-consumes-media-type: application/json #기본 소비 미디어 타입을 application/json으로 설정
+  default-produces-media-type: application/json #기본 생성 미디어 타입을 application/jwon으로 설정
+  writer-with-default-pretty-printer: true #기본적으로 예쁘게 출력하는 프린터 사용
+  model-and-view-allowed: true #ModelAndView 허용하도록 설정
+  paths-to-match: #/v1/**경로와 일치하는 모든 경로를 포함하도록 설정
+    - /v1/**
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+cloud:
+  aws:
+    s3:
+      bucket: skku-cymake-crawl #만든 버킷 이름
+    region:
+      static: ap-northeast-1  #도쿄 / 서울 ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+    credentials:
+      accessKey: AKIAUOOO62J76H2VQK5R #발급받은 access key
+      secretKey: 3ZsMrSQN3YiiM2hPDyEOuTiguBR+28sO7aLE7n0G #발급받은 secret key

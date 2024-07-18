@@ -1,0 +1,40 @@
+package CY.cymake.Domain.Archive.Dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+@Data
+@Schema(description = "크롤링된 뉴스 조회 Dto")
+public class NewsResDto {
+    @NotBlank
+    @Schema(description = "뉴스 제목")
+    private String title;
+
+    @NotBlank
+    @Schema(description = "업로드 날짜")
+    private Timestamp upload_date;
+
+    @NotBlank
+    @Schema(description = "뉴스 링크")
+    private String news_link;
+
+    @NotBlank
+    @Schema(description = "이미지 url")
+    private String img_url;
+
+    @NotBlank
+    @Schema(description = "요약")
+    private String summary;
+
+    @NotBlank
+    @Schema(description = "주제")
+    private String subject;
+
+    @NotBlank
+    @Schema(description = "키워드")
+    private List<String> keyword;
+}

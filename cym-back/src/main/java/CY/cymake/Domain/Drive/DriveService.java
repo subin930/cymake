@@ -1,0 +1,114 @@
+package CY.cymake.Domain.Drive;
+
+import CY.cymake.AWS.S3Service;
+import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Entity.CompanyEntity;
+import CY.cymake.Entity.FileEntity;
+import CY.cymake.Entity.UsersEntity;
+import CY.cymake.Exception.FileDeleteFailedException;
+import CY.cymake.Exception.FileUpdateFailedException;
+import CY.cymake.Exception.UserNotFoundException;
+import CY.cymake.Repository.FileRepository;
+import CY.cymake.Repository.UsersRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
+public class DriveService {
+    private final S3Service s3Service;
+    private final UsersRepository usersRepository;
+    private final FileRepository fileRepository;
+    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String post_title) throws IOException {
+        Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
+        if(siteUser.isEmpty()) {
+            throw new UserNotFoundException("파일 업로드에 실패했습니다.");
+        }
+        CompanyEntity company_code = user.getCompany_code();
+        String path = "files/" + company_code.getCode() + "/" + multipartFile.getOriginalFilename();
+        String file_url = s3Service.uploadFile(multipartFile, path);
+
+        FileEntity file = FileEntity.builder()
+                .company_code(company_code)
+                .post_title(post_title)
+                .file(multipartFile.getOriginalFilename())
+                .file_url(file_url)
+                .uploader(siteUser.get())
+                .upload_date(Timestamp.valueOf(LocalDateTime.now()))
+                .last_edit_date(Timestamp.valueOf(LocalDateTime.now()))
+                .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
+                .build();
+        fileRepository.save(file);
+        return file_url;
+    }
+    /*
+     * 파일 다운로드
+     */
+    public ResponseEntity<byte[]> download(CustomUserInfoDto user, String filename) throws IOException {
+        String directory = "files/" + user.getCompany_code().getCode() + "/";
+        return s3Service.download(directory, filename);
+    }
+    /*
+     * 파일 삭제
+     */
+    public void deleteFile(CustomUserInfoDto user, String filename) throws IOException {
+        //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
+        FileEntity file = fileRepository.findByFile(filename).orElseThrow(() -> new FileDeleteFailedException("해당 파일이 존재하지 않습니다."));
+        //1. 버킷의 특정 디렉터리로 매핑
+        String directory = "files/" + user.getCompany_code().getCode() + "/";
+
+        //2. 작성자와 일치하는지 확인
+        if(!user.getId().equals(file.getUploader().getId())){
+            //일치하지 않을 경우
+            throw new FileDeleteFailedException("파일 삭제에 실패하였습니다.");
+        }
+
+        //3. s3에서 삭제 로직 수행
+        s3Service.deleteFile(directory, filename);
+
+        //4. db에서 삭제 로직 수행
+        fileRepository.delete(file);
+    }
+    /*
+     * 파일 수정
+     */
+    public void UpdateFile(CustomUserInfoDto user, MultipartFile multipartFile, String original_filename, String post_title) throws IOException {
+        FileEntity file = fileRepository.findByFile(original_filename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
+        //1. 작성자 일치 여부 확인
+        if(!user.getId().equals(file.getUploader().getId())) {
+            throw new FileUpdateFailedException("기존 파일이 존재하지 않습니다.");
+        }
+        //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
+        String directory = "files/" +  user.getCompany_code().getCode() + "/";
+        String file_url = s3Service.updateFile(multipartFile, directory, original_filename);
+
+        //3. db수정
+        file.updatePost(post_title, multipartFile.getName(), file_url, getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+    }
+
+    /*
+     * 중복되는 이름의 파일 충돌 방지 코드 -> 적용 여부 후에 논의
+     */
+    public String createRandomFilename(String originalFilename) {
+        int idx = originalFilename.lastIndexOf(".");
+        String extension = originalFilename.substring(idx + 1);
+        return UUID.randomUUID() + "." + extension;
+    }
+    /*
+     * 확장자 추출
+     */
+    public String getExtension(String originalFilename) {
+        int idx = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(idx + 1);
+    }
+
+}
