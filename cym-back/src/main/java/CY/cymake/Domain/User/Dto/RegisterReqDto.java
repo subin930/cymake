@@ -28,17 +28,17 @@ public class RegisterReqDto {
 
     @NotBlank(message = "비밀번호 입력은 필수입니다.")
     @Schema(description = "비밀번호", example = "password123!")
-    private String password1;
+    private String password;
 
     @NotBlank(message = "확인용 비밀번호 입력은 필수입니다.")
     @Schema(description = "비밀번호 확인", example = "password123!")
-    private String password2;
+    private String passwordCheck;
 
     public UsersEntity toUsersEntity(CompanyEntity company) {
         return UsersEntity.builder()
                 .id(id)
                 .username(username)
-                .password(password1)
+                .password(password)
                 .email(email)
                 .company_code(company)
                 .role(Role.USER)

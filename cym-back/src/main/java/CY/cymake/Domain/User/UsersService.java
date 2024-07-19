@@ -9,7 +9,6 @@ import CY.cymake.Exception.*;
 import CY.cymake.Repository.CompanyRepository;
 import CY.cymake.Repository.UsersRepository;
 import CY.cymake.Domain.User.Dto.RegisterReqDto;
-import CY.cymake.Security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +43,7 @@ public class UsersService {
             throw new RegisterFailedException("중복되는 email입니다.");
         }
         //3. password 일치 확인
-        if(!registerReqDto.getPassword1().equals(registerReqDto.getPassword2())){
+        if(!registerReqDto.getPassword().equals(registerReqDto.getPasswordCheck())){
             //비밀번호 일치 X
             throw new RegisterFailedException("비밀번호가 일치하지 않습니다.");
         }
@@ -54,7 +53,7 @@ public class UsersService {
             throw new RegisterFailedException("회사코드가 일치하지 않습니다.");
         }
         //5. 비밀번호 암호화
-        registerReqDto.setPassword1(encoder.encode(registerReqDto.getPassword1()));
+        registerReqDto.setPassword(encoder.encode(registerReqDto.getPassword()));
         //6. 회원가입 진행
         usersRepository.save(registerReqDto.toUsersEntity(company.get()));
     }
@@ -84,7 +83,6 @@ public class UsersService {
         UsersEntity user = siteUser.get();
         return UserInfoResDto.builder()
                 .id(id)
-                .company_code(user.getCompany_code().getCode())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .build();
@@ -93,18 +91,26 @@ public class UsersService {
     /*
      * 회원 정보 수정 로직
      */
-    public void updateProfile(UpdateReqDto updateReqDto) {
-        Optional<UsersEntity> siteUser = usersRepository.findById(updateReqDto.getId());
+    public void updateProfile(CustomUserInfoDto customUserInfoDto, UpdateReqDto updateReqDto) {
+        Optional<UsersEntity> siteUser = usersRepository.findById(customUserInfoDto.getId());
         if(siteUser.isEmpty()) {
             throw new UpdateProfileFailedException("회원 정보 수정에 실패하였습니다: 해당 회원을 찾을 수 없음.");
         }
         UsersEntity user = siteUser.get();
+        //비밀번호 확인
+        //1. 기존 비밀번호와 새로운 비밀번호가 같으면 실패
+        if(updateReqDto.getOriginalPassword().equals(updateReqDto.getNewPassword())) {
+            throw new UpdateProfileFailedException("기존 비밀번호와 새로운 비밀번호가 같습니다.");
+        }
+        //2. 새로운 비밀번호와 비밀번호 확인이 다르면 실패
+        if(!updateReqDto.getNewPassword().equals(updateReqDto.getNewPasswordCheck())) {
+            throw new UpdateProfileFailedException("비밀번호가 일치하지 않습니다.");
+        }
+        //3. 비밀번호 암호화
+        updateReqDto.setNewPassword(encoder.encode(updateReqDto.getNewPassword()));
 
-        //비밀번호 암호화
-        updateReqDto.setPassword(encoder.encode(updateReqDto.getPassword()));
-
-        //수정
-        user.updateProfile(updateReqDto.getPassword(), updateReqDto.getEmail());
+        //4. db에 수정 반영
+        user.updateProfile(updateReqDto.getNewPassword());
         usersRepository.save(user);
     }
 }

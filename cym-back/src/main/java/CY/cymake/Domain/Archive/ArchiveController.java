@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/v1/archive")
 @Tag(name = "Archive", description = "아카이브 API")
-public class ArchiveController {
+public class    ArchiveController {
     private final AuthService authService;
 
     /*
