@@ -23,8 +23,8 @@ public class CustomUserInfoDto {
     @Schema(description = "id")
     private String id;
 
-    @Schema(description = "company_code")
-    private CompanyEntity company_code;
+    @Schema(description = "companyCode")
+    private CompanyEntity companyCode;
 
     @Schema(description = "password")
     private String password;

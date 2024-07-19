@@ -23,9 +23,9 @@ public class ArchiveService {
         for(CrwlNewsEntity news: total) {
             NewsResDto newsResDto = new NewsResDto();
             newsResDto.setTitle(news.getTitle());
-            newsResDto.setUpload_date(news.getUpload_date());
-            newsResDto.setNews_link(news.getNews_link());
-            newsResDto.setImg_url(news.getImg_url());
+            newsResDto.setUploadDate(news.getUploadDate());
+            newsResDto.setNewsLink(news.getNewsLink());
+            newsResDto.setImgUrl(news.getImgUrl());
             list.add(newsResDto);
         }
         return list;
@@ -39,9 +39,9 @@ public class ArchiveService {
             CrwlNewsEntity news = totalDesc.get(i);
             NewsResDto newsResDto = new NewsResDto();
             newsResDto.setTitle(news.getTitle());
-            newsResDto.setUpload_date(news.getUpload_date());
-            newsResDto.setNews_link(news.getNews_link());
-            newsResDto.setImg_url(news.getImg_url());
+            newsResDto.setUploadDate(news.getUploadDate());
+            newsResDto.setNewsLink(news.getNewsLink());
+            newsResDto.setImgUrl(news.getImgUrl());
             list.add(newsResDto);
         }
         return list;

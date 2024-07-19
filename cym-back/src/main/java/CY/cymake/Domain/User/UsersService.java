@@ -30,7 +30,7 @@ public class UsersService {
      */
     @Transactional
     public void register(RegisterReqDto registerReqDto) {
-        //회원가입 - id, email, company_code, password1, password2 입력받음
+        //회원가입 - id, email, companyCode, password1, password2 입력받음
 
         //1. 아이디 중복 확인
         if(usersRepository.findById(registerReqDto.getId()).isPresent()){
@@ -48,7 +48,7 @@ public class UsersService {
             throw new RegisterFailedException("비밀번호가 일치하지 않습니다.");
         }
         //4. 회사 코드 일치 확인
-        Optional<CompanyEntity> company = companyRepository.findByCode(registerReqDto.getCompany_code());
+        Optional<CompanyEntity> company = companyRepository.findByCode(registerReqDto.getCompanyCode());
         if(company.isEmpty()) {
             throw new RegisterFailedException("회사코드가 일치하지 않습니다.");
         }

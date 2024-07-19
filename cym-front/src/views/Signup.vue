@@ -3,13 +3,13 @@ import { RouterLink, RouterView, useRouter } from 'vue-router'
 import InitialHeader from '@/components/common/InitialHeader.vue'
 import { ref } from 'vue'
 import axios from 'axios'
-//company_code, id, username, email, password, passwordCheck
+//companyCode, id, username, email, password, passwordCheck
 //회원가입
 const email = ref('');
 const username = ref('');
 const password = ref('');
 const id = ref('');
-const company_code = ref('');
+const companyCode = ref('');
 const passwordCheck = ref('');
 const router = useRouter();
 const Signup = () => {
@@ -19,7 +19,7 @@ if(email.value!="" && username.value!="" && password.value!=""){
         //유저 정보
         "id": id.value,
         "username": username.value,
-        "company_code": company_code.value,
+        "companyCode": companyCode.value,
         "email": email.value,
         "password": password.value,
         "passwordCheck": passwordCheck.value
@@ -54,9 +54,9 @@ else{
         <div class="m-5">
             <div class="mb-3">
                 <div class="mb-3 row">
-                    <label for="inputcompany_code" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
+                    <label for="inputcompanyCode" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50"style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요" id="inputcompany_code" :value="company_code" @input="company_code = $event.target.value">
+                    <input type="text" class="form-control form-control-sm w-50"style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요" id="inputcompanyCode" :value="companyCode" @input="companyCode = $event.target.value">
                     </div>
                 </div>
             </div>

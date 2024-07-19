@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @Schema(description = "새로운 post 등록 dto")
 public class UploadFileReqDto {
-    @Schema(description = "post_title")
+    @Schema(description = "postTitle")
     private String postTitle;
 
     @Schema(description = "file")

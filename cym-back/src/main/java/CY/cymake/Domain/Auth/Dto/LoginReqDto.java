@@ -13,7 +13,7 @@ import lombok.Data;
 public class LoginReqDto {
     @NotBlank(message = "회사 코드 입력은 필수입니다.")
     @Schema(description = "회사 코드", example = "CYGLOBAL")
-    private String company_code;
+    private String companyCode;
 
     @NotBlank(message = "아이디 입력은 필수입니다.")
     @Schema(description = "아이디", example = "gildong123")

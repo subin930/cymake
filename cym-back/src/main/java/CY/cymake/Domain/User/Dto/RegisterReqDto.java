@@ -20,7 +20,7 @@ public class RegisterReqDto {
 
     @NotBlank(message = "회사코드 입력은 필수입니다.")
     @Schema(description = "회사코드", example = "CYGLOBAL")
-    private String company_code;
+    private String companyCode;
 
     @NotBlank(message = "이메일 입력은 필수입니다.")
     @Schema(description = "이메일", example = "gildong@gmail.com")
@@ -40,7 +40,7 @@ public class RegisterReqDto {
                 .username(username)
                 .password(password)
                 .email(email)
-                .company_code(company)
+                .companyCode(company)
                 .role(Role.USER)
                 .build();
     }

@@ -52,11 +52,11 @@ public class AuthService {
 
         //3. 회사코드 확인: 회사코드가 존재하는지 & 유저의 회사코드와 입력한 회사코드가 일치하는지 확인
         //유저가 입력한 회사 코드가 존재하는지
-        if(companyRepository.findByCode(loginReqDto.getCompany_code()).isEmpty()) {
+        if(companyRepository.findByCode(loginReqDto.getCompanyCode()).isEmpty()) {
             throw new LoginFailedException("회사코드가 존재하지 않습니다.");
         }
         //db에 저장된 유저의 회사코드와 유저가 폼을 통해 입력한 회사코드가 일치하는지
-        if(!siteUser.getCompany_code().getCode().equals(loginReqDto.getCompany_code())) {
+        if(!siteUser.getCompanyCode().getCode().equals(loginReqDto.getCompanyCode())) {
             throw new LoginFailedException("회사코드가 일치하지 않습니다.");
         }
 

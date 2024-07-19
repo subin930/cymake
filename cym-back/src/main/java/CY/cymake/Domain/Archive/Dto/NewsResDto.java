@@ -16,13 +16,13 @@ public class NewsResDto {
 
     @NotBlank
     @Schema(description = "업로드 날짜")
-    private Timestamp upload_date;
+    private Timestamp uploadDate;
 
     @NotBlank
     @Schema(description = "뉴스 링크")
-    private String news_link;
+    private String newsLink;
 
     @NotBlank
     @Schema(description = "이미지 url")
-    private String img_url;
+    private String imgUrl;
 }

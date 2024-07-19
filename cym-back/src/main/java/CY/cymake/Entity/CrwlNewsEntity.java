@@ -29,14 +29,14 @@ public class CrwlNewsEntity {
     @Column(name = "url", nullable = false)
     private String url;
 
-    @Column(name = "news_link", nullable = false)
-    private String news_link;
+    @Column(name = "newsLink", nullable = false)
+    private String newsLink;
 
-    @Column(name = "img_url")
-    private String img_url;
+    @Column(name = "imgUrl")
+    private String imgUrl;
 
-    @Column(name = "upload_date", nullable = false)
-    private Timestamp upload_date;
+    @Column(name = "uploadDate", nullable = false)
+    private Timestamp uploadDate;
 
     @Column(name = "subject", nullable = false)
     private String subject;

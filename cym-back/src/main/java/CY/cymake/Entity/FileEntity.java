@@ -24,38 +24,38 @@ public class FileEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "company_code", referencedColumnName = "code")
+    @JoinColumn(name = "companyCode", referencedColumnName = "code")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private CompanyEntity company_code;
+    private CompanyEntity companyCode;
 
-    @Column(name = "post_title", nullable = false)
-    private String post_title;
+    @Column(name = "postTitle", nullable = false)
+    private String postTitle;
 
     @Column(name = "file_name", nullable = false)
     private String file;
 
-    @Column(name = "file_url", nullable = false)
-    private String file_url;
+    @Column(name = "fileUrl", nullable = false)
+    private String fileUrl;
 
     @ManyToOne
     @JoinColumn(name = "uploader", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UsersEntity uploader; //id저장
 
-    @Column(name = "upload_date", nullable = false)
-    private Timestamp upload_date;
+    @Column(name = "uploadDate", nullable = false)
+    private Timestamp uploadDate;
 
-    @Column(name = "last_edit_date", nullable = false)
-    private Timestamp last_edit_date;
+    @Column(name = "lastEditDate", nullable = false)
+    private Timestamp lastEditDate;
 
     @Column(name = "type", nullable = false)
     private String type;
 
-    public void updatePost(String post_title, String file_name, String file_url, String type) {
-        this.post_title = post_title;
+    public void updatePost(String postTitle, String file_name, String fileUrl, String type) {
+        this.postTitle = postTitle;
         this.file = file_name;
-        this.file_url = file_url;
+        this.fileUrl = fileUrl;
         this.type = type;
-        this.last_edit_date = Timestamp.valueOf(LocalDateTime.now());
+        this.lastEditDate = Timestamp.valueOf(LocalDateTime.now());
     }
 }

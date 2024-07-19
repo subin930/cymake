@@ -3,7 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import PasswordChangeModal from '@/components/MyPage/PasswordChangeModal.vue'
 import { ref } from "vue";
-//company_code, id, username, email, password, passwordCheck
+//companyCode, id, username, email, password, passwordCheck
 const id = ref('testId');
 const username = ref('Test2');
 const email = ref('testmail@test.com');
