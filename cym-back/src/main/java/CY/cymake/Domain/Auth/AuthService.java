@@ -69,6 +69,7 @@ public class AuthService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .id(info.getId())
+                .username(info.getUsername())
                 .email(info.getEmail())
                 .role(info.getRole().name())
                 .expireIn(jwtUtil.getExpireIn()) //access token의 만료 기간

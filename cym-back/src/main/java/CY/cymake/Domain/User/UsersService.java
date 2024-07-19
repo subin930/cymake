@@ -97,19 +97,25 @@ public class UsersService {
             throw new UpdateProfileFailedException("회원 정보 수정에 실패하였습니다: 해당 회원을 찾을 수 없음.");
         }
         UsersEntity user = siteUser.get();
+        //기존 비밀번호 확인
+        if(!encoder.matches(updateReqDto.getOriginalPassword(), user.getPassword())) {
+            //비밀번호 일치 X
+            throw new UpdateProfileFailedException("기존 비밀번호가 일치하지 않습니다.");
+        }
+
         //비밀번호 확인
-        //1. 기존 비밀번호와 새로운 비밀번호가 같으면 실패
+        //2. 기존 비밀번호와 새로운 비밀번호가 같으면 실패
         if(updateReqDto.getOriginalPassword().equals(updateReqDto.getNewPassword())) {
             throw new UpdateProfileFailedException("기존 비밀번호와 새로운 비밀번호가 같습니다.");
         }
-        //2. 새로운 비밀번호와 비밀번호 확인이 다르면 실패
+        //3. 새로운 비밀번호와 비밀번호 확인이 다르면 실패
         if(!updateReqDto.getNewPassword().equals(updateReqDto.getNewPasswordCheck())) {
             throw new UpdateProfileFailedException("비밀번호가 일치하지 않습니다.");
         }
-        //3. 비밀번호 암호화
+        //4. 비밀번호 암호화
         updateReqDto.setNewPassword(encoder.encode(updateReqDto.getNewPassword()));
 
-        //4. db에 수정 반영
+        //5. db에 수정 반영
         user.updateProfile(updateReqDto.getNewPassword());
         usersRepository.save(user);
     }

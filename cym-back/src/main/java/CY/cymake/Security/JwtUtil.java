@@ -57,6 +57,8 @@ public class JwtUtil {
     private String createToken(CustomUserInfoDto user, long expireTime) {
         Claims claims = Jwts.claims();
         claims.put("id", user.getId());
+        claims.put("username", user.getUsername());
+        claims.put("companyCode", user.getCompanyCode());
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
 

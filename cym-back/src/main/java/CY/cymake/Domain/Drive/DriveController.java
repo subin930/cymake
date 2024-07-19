@@ -54,4 +54,14 @@ public class DriveController {
         driveService.deleteFile(user.getUser(), filename);
         return globalResponseHandler.SendSuccess();
     }
+
+    /*
+     * 파일 수정
+     */
+    @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "파일 수정")
+    public CommonBaseResult edit(@Parameter(required = true, description = "파일 수정 요청 정보")@Valid @RequestPart String originalFilename, @Valid @RequestPart String postTitle, @RequestPart("file") MultipartFile multipartFile, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+        driveService.updateFile(user.getUser(), multipartFile, originalFilename, postTitle);
+        return globalResponseHandler.SendSuccess();
+    }
 }

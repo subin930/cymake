@@ -81,18 +81,19 @@ public class DriveService {
     /*
      * 파일 수정
      */
-    public void UpdateFile(CustomUserInfoDto user, MultipartFile multipartFile, String original_filename, String postTitle) throws IOException {
-        FileEntity file = fileRepository.findByFile(original_filename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
+    public void updateFile(CustomUserInfoDto user, MultipartFile multipartFile, String originalFilename, String postTitle) throws IOException {
+        FileEntity file = fileRepository.findByFile(originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
         //1. 작성자 일치 여부 확인
         if(!user.getId().equals(file.getUploader().getId())) {
             throw new FileUpdateFailedException("기존 파일이 존재하지 않습니다.");
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
         String directory = "files/" +  user.getCompanyCode().getCode() + "/";
-        String fileUrl = s3Service.updateFile(multipartFile, directory, original_filename);
+        String fileUrl = s3Service.updateFile(multipartFile, directory, originalFilename);
 
         //3. db수정
-        file.updatePost(postTitle, multipartFile.getName(), fileUrl, getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+        file.updatePost(postTitle, multipartFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+        fileRepository.save(file);
     }
 
     /*

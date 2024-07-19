@@ -24,6 +24,10 @@ public class LoginResDto {
     private String id;
 
     @NotBlank
+    @Schema(description = "username")
+    private String username;
+
+    @NotBlank
     @Schema(description = "email")
     private String email;
 
@@ -36,10 +40,11 @@ public class LoginResDto {
     private String expireIn;
 
     @Builder
-    public LoginResDto(String accessToken, String refreshToken, String id, String email, String role, String expireIn) {
+    public LoginResDto(String accessToken, String refreshToken, String id, String username, String email, String role, String expireIn) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = id;
+        this.username = username;
         this.email = email;
         this.role = role;
         this.expireIn = expireIn;

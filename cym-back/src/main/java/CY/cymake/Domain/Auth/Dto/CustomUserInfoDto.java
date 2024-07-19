@@ -23,6 +23,9 @@ public class CustomUserInfoDto {
     @Schema(description = "id")
     private String id;
 
+    @Schema(description = "username")
+    private String username;
+
     @Schema(description = "companyCode")
     private CompanyEntity companyCode;
 
