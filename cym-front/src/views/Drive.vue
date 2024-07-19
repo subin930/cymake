@@ -1,6 +1,8 @@
 <script setup>
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
+import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
+import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
 import { ref } from "vue";
 const route = useRoute();
 const router = useRouter();
@@ -45,8 +47,8 @@ const router = useRouter();
                     <td>@mdo</td>
                     <td>@mdo</td>
                     <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
+                    <td><FileModifyBtn/></td>
+                    <td><FileDeleteBtn/></td>
                     </tr>
                     <tr>
                     <th scope="row">2</th>
