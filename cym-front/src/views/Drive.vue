@@ -58,8 +58,8 @@ const router = useRouter();
                     <td>@mdo</td>
                     <td>@mdo</td>
                     <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
+                    <td><FileModifyBtn/></td>
+                    <td><FileDeleteBtn/></td>
                     </tr>
                     <tr>
                     <th scope="row">3</th>
@@ -69,8 +69,8 @@ const router = useRouter();
                     <td>@mdo</td>
                     <td>@mdo</td>
                     <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
+                    <td><FileModifyBtn/></td>
+                    <td><FileDeleteBtn/></td>
                     </tr>
                 </tbody>
             </table>
