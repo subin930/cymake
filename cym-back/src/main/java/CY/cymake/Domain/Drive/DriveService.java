@@ -28,33 +28,33 @@ public class DriveService {
     private final S3Service s3Service;
     private final UsersRepository usersRepository;
     private final FileRepository fileRepository;
-    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String post_title) throws IOException {
+    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
         if(siteUser.isEmpty()) {
             throw new UserNotFoundException("파일 업로드에 실패했습니다.");
         }
-        CompanyEntity company_code = user.getCompany_code();
-        String path = "files/" + company_code.getCode() + "/" + multipartFile.getOriginalFilename();
-        String file_url = s3Service.uploadFile(multipartFile, path);
+        CompanyEntity companyCode = user.getCompanyCode();
+        String path = "files/" + companyCode.getCode() + "/" + multipartFile.getOriginalFilename();
+        String fileUrl = s3Service.uploadFile(multipartFile, path);
 
         FileEntity file = FileEntity.builder()
-                .company_code(company_code)
-                .post_title(post_title)
+                .companyCode(companyCode)
+                .postTitle(postTitle)
                 .file(multipartFile.getOriginalFilename())
-                .file_url(file_url)
+                .fileUrl(fileUrl)
                 .uploader(siteUser.get())
-                .upload_date(Timestamp.valueOf(LocalDateTime.now()))
-                .last_edit_date(Timestamp.valueOf(LocalDateTime.now()))
+                .uploadDate(Timestamp.valueOf(LocalDateTime.now()))
+                .lastEditDate(Timestamp.valueOf(LocalDateTime.now()))
                 .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
                 .build();
         fileRepository.save(file);
-        return file_url;
+        return fileUrl;
     }
     /*
      * 파일 다운로드
      */
     public ResponseEntity<byte[]> download(CustomUserInfoDto user, String filename) throws IOException {
-        String directory = "files/" + user.getCompany_code().getCode() + "/";
+        String directory = "files/" + user.getCompanyCode().getCode() + "/";
         return s3Service.download(directory, filename);
     }
     /*
@@ -64,7 +64,7 @@ public class DriveService {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
         FileEntity file = fileRepository.findByFile(filename).orElseThrow(() -> new FileDeleteFailedException("해당 파일이 존재하지 않습니다."));
         //1. 버킷의 특정 디렉터리로 매핑
-        String directory = "files/" + user.getCompany_code().getCode() + "/";
+        String directory = "files/" + user.getCompanyCode().getCode() + "/";
 
         //2. 작성자와 일치하는지 확인
         if(!user.getId().equals(file.getUploader().getId())){
@@ -81,18 +81,19 @@ public class DriveService {
     /*
      * 파일 수정
      */
-    public void UpdateFile(CustomUserInfoDto user, MultipartFile multipartFile, String original_filename, String post_title) throws IOException {
-        FileEntity file = fileRepository.findByFile(original_filename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
+    public void updateFile(CustomUserInfoDto user, MultipartFile multipartFile, String originalFilename, String postTitle) throws IOException {
+        FileEntity file = fileRepository.findByFile(originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
         //1. 작성자 일치 여부 확인
         if(!user.getId().equals(file.getUploader().getId())) {
             throw new FileUpdateFailedException("기존 파일이 존재하지 않습니다.");
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
-        String directory = "files/" +  user.getCompany_code().getCode() + "/";
-        String file_url = s3Service.updateFile(multipartFile, directory, original_filename);
+        String directory = "files/" +  user.getCompanyCode().getCode() + "/";
+        String fileUrl = s3Service.updateFile(multipartFile, directory, originalFilename);
 
         //3. db수정
-        file.updatePost(post_title, multipartFile.getName(), file_url, getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+        file.updatePost(postTitle, multipartFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+        fileRepository.save(file);
     }
 
     /*

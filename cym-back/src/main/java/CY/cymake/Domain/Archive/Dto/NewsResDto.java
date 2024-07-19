@@ -16,25 +16,13 @@ public class NewsResDto {
 
     @NotBlank
     @Schema(description = "업로드 날짜")
-    private Timestamp upload_date;
+    private Timestamp uploadDate;
 
     @NotBlank
     @Schema(description = "뉴스 링크")
-    private String news_link;
+    private String newsLink;
 
     @NotBlank
     @Schema(description = "이미지 url")
-    private String img_url;
-
-    @NotBlank
-    @Schema(description = "요약")
-    private String summary;
-
-    @NotBlank
-    @Schema(description = "주제")
-    private String subject;
-
-    @NotBlank
-    @Schema(description = "키워드")
-    private List<String> keyword;
+    private String imgUrl;
 }

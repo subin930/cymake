@@ -22,9 +22,9 @@ public class UsersEntity {
     private Long pk;
 
     @ManyToOne
-    @JoinColumn(name = "company_code", referencedColumnName = "code")
+    @JoinColumn(name = "companyCode", referencedColumnName = "code")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private CompanyEntity company_code;
+    private CompanyEntity companyCode;
 
     @Column(name = "id", unique = true, nullable = false)
     private String id;

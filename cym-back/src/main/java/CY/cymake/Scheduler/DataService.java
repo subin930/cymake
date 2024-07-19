@@ -51,7 +51,7 @@ public class DataService {
             System.out.println("fileNames: ");
             System.out.println(fileNames);
             /*
-             * 관련 정보 DB에 넣기(title/url/news_link/img_url/upload_date/subject) -> 구조: url(\n)뉴스제목(\n)본문
+             * 관련 정보 DB에 넣기(title/url/newsLink/imgUrl/uploadDate/subject) -> 구조: url(\n)뉴스제목(\n)본문
              * 경로:ex) https://skku-cymake-crawl.s3.ap-northeast-1.amazonaws.com/testcrawl/beauty/article/20240716/202407160GWZJHRT8N.txt
              */
             //해당 날짜, 주제에 맞게 크롤링된 뉴스 기사 목록 가져옴
@@ -65,9 +65,9 @@ public class DataService {
                 CrwlNewsEntity news = CrwlNewsEntity.builder()
                         .title(titleAndLink.get(1))
                         .url(newsURL)
-                        .news_link(titleAndLink.get(0))
-                        .img_url(imgURL)
-                        .upload_date(Timestamp.valueOf(LocalDateTime.now())) //예시 날짜
+                        .newsLink(titleAndLink.get(0))
+                        .imgUrl(imgURL)
+                        .uploadDate(Timestamp.valueOf(LocalDateTime.now())) //예시 날짜
                         .subject(subject)
                         .build();
                 crwlNewsRepository.save(news);
