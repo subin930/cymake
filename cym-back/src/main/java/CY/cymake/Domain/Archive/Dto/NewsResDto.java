@@ -25,16 +25,4 @@ public class NewsResDto {
     @NotBlank
     @Schema(description = "이미지 url")
     private String img_url;
-
-    @NotBlank
-    @Schema(description = "요약")
-    private String summary;
-
-    @NotBlank
-    @Schema(description = "주제")
-    private String subject;
-
-    @NotBlank
-    @Schema(description = "키워드")
-    private List<String> keyword;
 }
