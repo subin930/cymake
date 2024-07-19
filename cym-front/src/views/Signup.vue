@@ -14,7 +14,7 @@ const passwordCheck = ref('');
 const router = useRouter();
 const Signup = () => {
 
-if(email.value!="" && name.value!="" && password.value!=""){
+if(email.value!="" && username.value!="" && password.value!=""){
     const body={
         //유저 정보
         "id": id.value,

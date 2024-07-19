@@ -9,7 +9,7 @@ import router from './router'
 import axios from "axios";
 
 
-axios.defaults.baseURL = "http://localhost:5173"; // TODO: Change this to the actual server URL 
+axios.defaults.baseURL = "http://localhost:8080"; // TODO: Change this to the actual server URL
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:5173';
 // axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'https:localhost:8080';
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD';
