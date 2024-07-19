@@ -1,7 +1,9 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import InitialHeader from '@/components/common/InitialHeader.vue'
-import { ref } from "vue";
+import { ref } from "vue"
+import axios from 'axios'
+
 const route = useRoute();
 const router = useRouter();
 
@@ -9,13 +11,30 @@ const companyCode = ref("");
 const id = ref("");
 const password = ref("");
 
-const Login = () => {
-    console.log("login try...");
-    localStorage.setItem("token", "Test"); //임시로 토큰 생성 (그냥 버튼 누르면 작동되게...)
-    localStorage.setItem("id","Test2");
-    localStorage.setItem("username", "임시용");
-    router.push("/archive");
-}
+const Login = async () => {
+    await axios.post(`/v1/auth/login`, {
+        companyCode: companyCode.value,
+        id: id.value,
+        password: password.value,
+    })
+    .then((res) => {
+        console.log(res.data.content.role)
+        localStorage.setItem("token", res.data.content.accessToken);
+        localStorage.setItem("refreshToken", res.data.content.refreshToken);
+        localStorage.setItem("userId", res.data.content.id);
+        localStorage.setItem("userRole", res.data.content.role);
+        localStorage.setItem("userEmail", res.data.content.email);
+        localStorage.setItem("username", res.data.content.username);
+        console.log(res.data.content.email);
+        console.log(res.data.content.id);
+        console.log(res.data.content.role);
+        router.push(`/archive`);
+    })
+    .catch(function (error) {
+        // TODO: 로그인 실패 창 보여주기
+        console.log(error);
+});
+};
 const MoveToSignup = () => {
     router.push("/signup");
 };
