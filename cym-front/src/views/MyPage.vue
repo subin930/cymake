@@ -4,10 +4,12 @@ import Header from '@/components/common/Header.vue'
 import PasswordChangeModal from '@/components/MyPage/PasswordChangeModal.vue'
 import { ref } from "vue";
 //companyCode, id, username, email, password, passwordCheck
-const id = ref('testId');
-const username = ref('Test2');
-const email = ref('testmail@test.com');
 const modalID = ref('passwordChangeModal');
+
+//const token = ref(localStorage.getItem("token"));
+const username = ref(localStorage.getItem("username"));
+const email = ref(localStorage.getItem("userEmail"));
+const id = ref(localStorage.getItem("userId"));
 
 const OpenChangeModal = () => {
     const modalElement = document.getElementById(modalID.value);
