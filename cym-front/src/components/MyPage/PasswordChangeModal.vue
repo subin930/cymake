@@ -4,16 +4,21 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref } from "vue"
 import axios from 'axios'
 
+const token = localStorage.getItem("token");
 const originalPassword = ref("");
 const newPassword = ref("");
 const newPasswordCheck = ref("");
 
 const ChangePassword = async() => {
-    await axios.post(`/v1/users/update`, {
+    await axios.put(`/v1/users/update`, {
         originalPassword: originalPassword.value,
         newPassword: newPassword.value,
         newPasswordCheck: newPasswordCheck.value,
-    })
+    }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
     .then((res) => {
         console.log(res.data.message);
     })

@@ -66,7 +66,7 @@ const updatePassword = (event) => {
                 <div class="mb-3 row">
                     <label for="inputcompanyCode" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputcompanyCode" @input="updatecompanyCode">
+                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputcompanyCode" @input="updatecompanyCode" required>
                     </div>
                 </div>
             </div>
@@ -74,14 +74,14 @@ const updatePassword = (event) => {
                 <div class="mb-3 row">
                     <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputid" @input="updateid">
+                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputid" @input="updateid" required>
                     </div>
                 </div>
             </div>
             <div class="mb-3 row">
                 <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호</label>
                 <div class="col-sm-8">
-                <input type="password" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="비밀번호를 입력하세요." id="inputPassword" @input="updatePassword">
+                <input type="password" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="비밀번호를 입력하세요." id="inputPassword" @input="updatePassword" required>
                 </div>
             </div>
             <div class="d-flex flex-column align-items-center m-5 mt-1">
