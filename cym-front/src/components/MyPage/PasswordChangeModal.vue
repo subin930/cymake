@@ -1,17 +1,27 @@
 <script setup>
 //비밀번호 변경 구현
-import { ref } from "vue";
+import { useRoute, useRouter } from 'vue-router'
+import { ref } from "vue"
+import axios from 'axios'
 
 const originalPassword = ref("");
 const newPassword = ref("");
 const newPasswordCheck = ref("");
 
-const ChangePassword = () => {
-    console.log("Change Password Activated");
-    console.log(originalPassword.value);
-    console.log(newPassword.value);
-    console.log(newPasswordCheck.value);
-} 
+const ChangePassword = async() => {
+    await axios.post(`/v1/users/update`, {
+        originalPassword: originalPassword.value,
+        newPassword: newPassword.value,
+        newPasswordCheck: newPasswordCheck.value,
+    })
+    .then((res) => {
+        console.log(res.data.message);
+    })
+    .catch(function (error) {
+        // TODO: 비밀번호 변경 오류 부분 알림
+        console.log(error);
+});
+}; 
 </script>
 
 <template>
