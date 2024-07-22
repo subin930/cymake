@@ -6,12 +6,13 @@ import { ref } from "vue";
 //companyCode, id, username, email, password, passwordCheck
 const modalID = ref('passwordChangeModal');
 
-//const token = ref(localStorage.getItem("token"));
+const token = ref(localStorage.getItem("token"));
 const username = ref(localStorage.getItem("username"));
 const email = ref(localStorage.getItem("userEmail"));
 const id = ref(localStorage.getItem("userId"));
 
 const OpenChangeModal = () => {
+    console.log(token);
     const modalElement = document.getElementById(modalID.value);
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();

@@ -28,6 +28,7 @@ const Login = async () => {
         console.log(res.data.content.email);
         console.log(res.data.content.id);
         console.log(res.data.content.role);
+        console.log(res.data.content.accessToken);
         router.push(`/archive`);
     })
     .catch(function (error) {
