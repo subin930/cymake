@@ -72,7 +72,7 @@ public class DriveController {
      */
     @GetMapping(value = "/list")
     @Operation(description = "post 리스트 전송")
-    public CommonResult<List<PostListResDto>> getPostList(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public CommonResult<List<PostListResDto>> getPostList(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         return globalResponseHandler.SendSuccessAndContent(driveService.getPostList(customUserDetails.getUser()));
     }
 
