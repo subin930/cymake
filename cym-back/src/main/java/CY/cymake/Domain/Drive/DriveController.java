@@ -1,5 +1,7 @@
 package CY.cymake.Domain.Drive;
 
+import CY.cymake.Domain.Drive.Dto.Item;
+import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Response.CommonBaseResult;
 import CY.cymake.Response.CommonResult;
 import CY.cymake.Response.GlobalResponseHandler;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ import java.io.IOException;
 @Tag(name = "Drive", description = "통합관리자 API")
 public class DriveController {
     private final DriveService driveService;
+    private final SearchDriveService searchDriveService;
     private final GlobalResponseHandler globalResponseHandler;
     /*
      * 파일 업로드
@@ -64,4 +68,24 @@ public class DriveController {
         driveService.updateFile(user.getUser(), multipartFile, originalFilename, postTitle);
         return globalResponseHandler.SendSuccess();
     }
+
+    /*
+     * 파일 검색
+     */
+    @GetMapping(value = "/search")
+    @Operation(description = "통합 아카이브 검색")
+    public CommonResult<List<Item>> searchDrive(@Parameter(required = true, description = "post 검색 요청 정보") @Valid @RequestParam String searchBody) throws IOException {
+        searchDriveService.indexData();
+        return globalResponseHandler.SendSuccessAndContent(searchDriveService.searchDrive(searchBody));
+    }
+
+    /*
+     * post 리스트 전송
+     */
+    @GetMapping(value = "/list")
+    @Operation(description = "post 리스트 전송")
+    public CommonResult<List<PostListResDto>> getPostList() {
+        return globalResponseHandler.SendSuccessAndContent(driveService.getPostList());
+    }
+
 }

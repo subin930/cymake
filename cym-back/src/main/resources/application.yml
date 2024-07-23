@@ -21,6 +21,16 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+  profiles:
+    active: elk
+#elasticsearch:
+#  host: localhost
+#  port: 9200
+#  api_key: bENPdTJKQUJyM09aSEZpZlBIaXA6YmpjcVJ5Z3JTUDJLVHE3WVNkVUJ2Zw==
+#  user:
+#    username: cymake
+#    password: q1w2e3r4
+
 cloud:
   aws:
     s3:
@@ -33,3 +43,4 @@ cloud:
     credentials:
       accessKey: AKIAUOOO62J76H2VQK5R #발급받은 access key
       secretKey: 3ZsMrSQN3YiiM2hPDyEOuTiguBR+28sO7aLE7n0G #발급받은 secret key
+
