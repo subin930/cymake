@@ -79,8 +79,8 @@ const formatDate = (dateString) => {
                     <tr v-for="(item, index) in content" :key="item.id">
                         <td>{{ index+1 }}</td>
                         <td>{{ item.postTitle }}</td>
-                        <td>{{ item.fileName }}</td>
-                        <td>File Size</td>
+                        <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                        <td>{{ item.size }}MB</td>
                         <td>{{  item.id  }}</td>
                         <td>{{ item.username }}</td>
                         <td>{{ formatDate(item.uploadDate) }}</td>
@@ -101,5 +101,12 @@ const formatDate = (dateString) => {
 .container {
     overflow-y: scroll;
     max-height: 60vh;
+}
+.download-link {
+  color: inherit; /* 기본 텍스트 색상 사용 */
+  text-decoration: none; /* 밑줄 제거 */
+}
+.download-link:hover {
+  color: #7248BD;
 }
 </style>
