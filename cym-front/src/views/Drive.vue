@@ -5,10 +5,40 @@ import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
 import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
 import FileUploadBtn from '@/components/Drive/FileUploadBtn.vue'
 
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from 'axios'
+
+const token = localStorage.getItem("token");
 const route = useRoute();
 const router = useRouter();
+/*const content = ref([
+  {
+    "fileName": "example.txt",
+    "postTitle": "Sample Title",
+    "id": "1",
+    "username": "john_doe",
+    "uploadDate": "2024-07-23T04:35:18.513Z"
+  }
+);*/
+const content = ref([]);
 
+const fetchData = async () => {
+  try {
+    const response = await axios.get(`/v1/drive/list`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    content.value = response.data.content;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+onMounted(fetchData);
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 </script>
 
 <template>
@@ -46,38 +76,16 @@ const router = useRouter();
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td><FileModifyBtn/></td>
-                    <td><FileDeleteBtn/></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td><FileModifyBtn/></td>
-                    <td><FileDeleteBtn/></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">3</th>
-                    <td>Larry the Bird</td>
-                    <td>ised</td>
-                    <td>@twitter</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td><FileModifyBtn/></td>
-                    <td><FileDeleteBtn/></td>
+                    <tr v-for="(item, index) in content" :key="item.id">
+                        <td>{{ index+1 }}</td>
+                        <td>{{ item.postTitle }}</td>
+                        <td>{{ item.fileName }}</td>
+                        <td>File Size</td>
+                        <td>{{  item.id  }}</td>
+                        <td>{{ item.username }}</td>
+                        <td>{{ formatDate(item.uploadDate) }}</td>
+                        <td><FileModifyBtn :file="item" @modify="handleModify"/></td>
+                        <td><FileDeleteBtn :file="item" @delete="handleDelete"/></td>
                     </tr>
                 </tbody>
             </table>
