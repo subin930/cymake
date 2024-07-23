@@ -117,9 +117,10 @@ public class S3Service {
     /*
      * 파일 용량 가져오기
      */
-    public long getFileSize(String directory, String filename) {
+    public long getFileSize(String directory, String filename) throws IOException {
         String path = directory + filename;
         S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
+        s3Object.close();
         return s3Object.getObjectMetadata().getContentLength();
     }
 

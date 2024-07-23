@@ -120,7 +120,7 @@ public class DriveService {
     /*
      * post 리스트 전송
      */
-    public List<PostListResDto> getPostList(CustomUserInfoDto user){
+    public List<PostListResDto> getPostList(CustomUserInfoDto user) throws IOException {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
 
         List<FileEntity> files = fileRepository.findAll();
