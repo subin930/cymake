@@ -3,6 +3,8 @@ import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
 import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
+import FileUploadBtn from '@/components/Drive/FileUploadBtn.vue'
+
 import { ref } from "vue";
 const route = useRoute();
 const router = useRouter();
@@ -15,13 +17,18 @@ const router = useRouter();
         <div class="m-3 mt-4">
             <p class="fw-bold fs-3">통합 자료실</p>
         </div>
-        <div class="row align-items-center justify-content-between m-3">
+        <div class="row d-flex align-items-center justify-content-between m-3">
+            <!-- Form element -->
+            <form class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
+                <input type="search" class="form-control" placeholder="search..." aria-label="Search">
+                <button type="button" class="btn btn-outline-secondary">검색</button>
+            </form>
+
+            <!-- FileUploadBtn element -->
+            <div class="col-md-6 col-lg-4 d-flex mt-3 mb-3 mx-6 justify-content-end">
+                <FileUploadBtn />
                 
-                <form class="input-group col-3 mt-3 mb-3" role="search" style="width: 300px">
-                    <input type="search" class="form-control" placeholder="search..." aria-label="Search">
-                    <button type="button" class="btn btn-outline-secondary">검색</button>
-                </form>
-                <button type="button" class="col-1 btn btn-outline-light text-white btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; background-color: #7248BD;">+ 파일 등록</button>
+            </div>
         </div>
         <div class="container m-3 d-flex">
             <table class="table table-hover table-bordered">
@@ -58,8 +65,8 @@ const router = useRouter();
                     <td>@mdo</td>
                     <td>@mdo</td>
                     <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
+                    <td><FileModifyBtn/></td>
+                    <td><FileDeleteBtn/></td>
                     </tr>
                     <tr>
                     <th scope="row">3</th>
@@ -69,8 +76,8 @@ const router = useRouter();
                     <td>@mdo</td>
                     <td>@mdo</td>
                     <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
+                    <td><FileModifyBtn/></td>
+                    <td><FileDeleteBtn/></td>
                     </tr>
                 </tbody>
             </table>

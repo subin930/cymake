@@ -46,7 +46,7 @@ const SignUp = () => {
         <button v-if="token === null" type="button" class="btn btn-outline-light me-2 btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; color: #7248BD;" @click="SignUp()">Sign Up</button>
         <button v-if="token === null" type="button" class="btn btn-outline-light text-white btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; background-color: #7248BD;" @click="Login()">Login</button>
         <div class="dropdown">
-          <button v-if="token !== null" class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="--bs-btn-color: #4b4b4b">
+          <button v-if="token !== null" class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="--bs-btn-color: #4b4b4b; color: black;">
           {{ username }}
           </button>
           <ul class="dropdown-menu">
