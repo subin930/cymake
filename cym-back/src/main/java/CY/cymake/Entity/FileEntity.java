@@ -58,4 +58,9 @@ public class FileEntity {
         this.type = type;
         this.lastEditDate = Timestamp.valueOf(LocalDateTime.now());
     }
+
+    public void updatePostTitle(String postTitle) {
+        this.postTitle = postTitle;
+        this.lastEditDate = Timestamp.valueOf(LocalDateTime.now());
+    }
 }

@@ -67,10 +67,6 @@ dependencies {
 	//aws 의존성 추가
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	//elastic search 의존성 추가
-	implementation 'co.elastic.clients:elasticsearch-java:8.14.3'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
-
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 

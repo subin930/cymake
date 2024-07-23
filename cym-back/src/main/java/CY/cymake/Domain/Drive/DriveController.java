@@ -1,6 +1,5 @@
 package CY.cymake.Domain.Drive;
 
-import CY.cymake.Domain.Drive.Dto.Item;
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Response.CommonBaseResult;
 import CY.cymake.Response.CommonResult;
@@ -26,7 +25,6 @@ import java.util.List;
 @Tag(name = "Drive", description = "통합관리자 API")
 public class DriveController {
     private final DriveService driveService;
-    private final SearchDriveService searchDriveService;
     private final GlobalResponseHandler globalResponseHandler;
     /*
      * 파일 업로드
@@ -64,19 +62,9 @@ public class DriveController {
      */
     @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "파일 수정")
-    public CommonBaseResult edit(@Parameter(required = true, description = "파일 수정 요청 정보")@Valid @RequestPart String originalFilename, @Valid @RequestPart String postTitle, @RequestPart("file") MultipartFile multipartFile, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
-        driveService.updateFile(user.getUser(), multipartFile, originalFilename, postTitle);
+    public CommonBaseResult edit(@Valid @RequestPart String postTitle, @Valid @RequestPart String originalFilename, @RequestPart("file") MultipartFile newFile, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+        driveService.updateFile(user.getUser(), newFile, originalFilename, postTitle);
         return globalResponseHandler.SendSuccess();
-    }
-
-    /*
-     * 파일 검색
-     */
-    @GetMapping(value = "/search")
-    @Operation(description = "통합 아카이브 검색")
-    public CommonResult<List<Item>> searchDrive(@Parameter(required = true, description = "post 검색 요청 정보") @Valid @RequestParam String searchBody) throws IOException {
-        searchDriveService.indexData();
-        return globalResponseHandler.SendSuccessAndContent(searchDriveService.searchDrive(searchBody));
     }
 
     /*
@@ -84,8 +72,8 @@ public class DriveController {
      */
     @GetMapping(value = "/list")
     @Operation(description = "post 리스트 전송")
-    public CommonResult<List<PostListResDto>> getPostList() {
-        return globalResponseHandler.SendSuccessAndContent(driveService.getPostList());
+    public CommonResult<List<PostListResDto>> getPostList(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return globalResponseHandler.SendSuccessAndContent(driveService.getPostList(customUserDetails.getUser()));
     }
 
 }
