@@ -20,6 +20,10 @@ public class PostListResDto {
     String postTitle;
 
     @NotBlank
+    @Schema(description = "fileUrl")
+    String fileUrl;
+
+    @NotBlank
     @Schema(description = "id")
     String id;
 
@@ -30,9 +34,9 @@ public class PostListResDto {
     @NotBlank
     @Schema(description = "date")
     Timestamp uploadDate;
-    /*
+
     @NotBlank
     @Schema(description = "size")
-    Long size;
-     */
+    Double size;
+
 }

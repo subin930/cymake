@@ -115,8 +115,14 @@ public class S3Service {
     }
 
     /*
-     * 파일 다운로드
+     * 파일 용량 가져오기
      */
+    public long getFileSize(String directory, String filename) {
+        String path = directory + filename;
+        S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
+        return s3Object.getObjectMetadata().getContentLength();
+    }
+
     public ResponseEntity<byte[]> download(String directory, String filename) throws IOException {
         String path = directory + filename;
         S3Object awsS3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
@@ -155,5 +161,6 @@ public class S3Service {
         deleteFile(directory, original_filename);
         return uploadFile(multipartFile, path);
     }
+
 }
 

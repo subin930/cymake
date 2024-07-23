@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -80,18 +81,23 @@ public class DriveService {
     /*
      * 파일 수정
      */
-    public void updateFile(CustomUserInfoDto user, MultipartFile multipartFile, String originalFilename, String postTitle) throws IOException {
+    public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String originalFilename, String postTitle) throws IOException {
         FileEntity file = fileRepository.findByFile(originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
         //1. 작성자 일치 여부 확인
         if(!user.getId().equals(file.getUploader().getId())) {
-            throw new FileUpdateFailedException("기존 파일이 존재하지 않습니다.");
+            throw new FileUpdateFailedException("기존 post가 존재하지 않습니다.");
+        }
+        //2. 파일 수정 여부 확인
+        if(newFile == null) {
+            file.updatePostTitle(postTitle);
+            return;
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
         String directory = "files/" +  user.getCompanyCode().getCode() + "/";
-        String fileUrl = s3Service.updateFile(multipartFile, directory, originalFilename);
+        String fileUrl = s3Service.updateFile(newFile, directory, originalFilename);
 
         //3. db수정
-        file.updatePost(postTitle, multipartFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())));
+        file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())));
         fileRepository.save(file);
     }
 
@@ -114,19 +120,28 @@ public class DriveService {
     /*
      * post 리스트 전송
      */
-    public List<PostListResDto> getPostList() {
+    public List<PostListResDto> getPostList(CustomUserInfoDto user){
+        String directory = "files/" + user.getCompanyCode().getCode() + "/";
+
         List<FileEntity> files = fileRepository.findAll();
         List<PostListResDto> posts = new ArrayList<>();
         for(FileEntity file: files) {
+            double size = s3Service.getFileSize(directory, file.getFile())/(1.0 * 1024 * 1024);
+            DecimalFormat df = new DecimalFormat("#.##");
+            double fileSizeFormatted = Double.parseDouble(df.format(size));
+
             PostListResDto post = PostListResDto.builder()
                     .fileName(file.getFile())
                     .postTitle(file.getPostTitle())
                     .id(file.getUploader().getId())
                     .username(file.getUploader().getUsername())
+                    .fileUrl(file.getFileUrl())
                     .uploadDate(file.getUploadDate())
+                    .size(fileSizeFormatted)
                     .build();
             posts.add(post);
         }
+
         return posts;
     }
 }
