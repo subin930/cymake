@@ -2,6 +2,7 @@ package CY.cymake.Domain.Drive;
 
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Entity.CompanyEntity;
 import CY.cymake.Entity.FileEntity;
 import CY.cymake.Entity.UsersEntity;
@@ -18,9 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -112,4 +111,22 @@ public class DriveService {
         return originalFilename.substring(idx + 1);
     }
 
+    /*
+     * post 리스트 전송
+     */
+    public List<PostListResDto> getPostList() {
+        List<FileEntity> files = fileRepository.findAll();
+        List<PostListResDto> posts = new ArrayList<>();
+        for(FileEntity file: files) {
+            PostListResDto post = PostListResDto.builder()
+                    .fileName(file.getFile())
+                    .postTitle(file.getPostTitle())
+                    .id(file.getUploader().getId())
+                    .username(file.getUploader().getUsername())
+                    .uploadDate(file.getUploadDate())
+                    .build();
+            posts.add(post);
+        }
+        return posts;
+    }
 }
