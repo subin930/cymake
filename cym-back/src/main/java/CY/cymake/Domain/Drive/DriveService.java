@@ -90,6 +90,7 @@ public class DriveService {
         //2. 파일 수정 여부 확인
         if(newFile == null) {
             file.updatePostTitle(postTitle);
+            fileRepository.save(file);
             return;
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
