@@ -8,7 +8,7 @@ const props = defineProps({
 });
 const title = ref(props.file.postTitle);
 const fileSize = ref(props.file.size);
-const originalFileName = props.file.fileName;
+const originalFileName = ref(props.file.fileName);
 const fileName = ref(props.file.fileName);
 const Newfile = ref(null);
 const emit = defineEmits(['fileModified']);
