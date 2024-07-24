@@ -62,7 +62,7 @@ public class DriveController {
      */
     @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "파일 수정")
-    public CommonBaseResult edit(@Valid @RequestPart String postTitle, @Valid @RequestPart String originalFilename, @RequestPart(value = "file", required = false) MultipartFile newFile, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+    public CommonBaseResult edit(@Valid @RequestPart(value = "postTitle") String postTitle, @Valid @RequestPart(value = "originalFilename") String originalFilename, @RequestPart(value = "file", required = false) MultipartFile newFile, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
         driveService.updateFile(user.getUser(), newFile, originalFilename, postTitle);
         return globalResponseHandler.SendSuccess();
     }
