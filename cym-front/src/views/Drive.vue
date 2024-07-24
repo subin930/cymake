@@ -85,7 +85,7 @@ const formatDate = (dateString) => {
                         <td>{{ item.username }}</td>
                         <td>{{ formatDate(item.uploadDate) }}</td>
                         <td><FileModifyBtn :file="item" @modify="handleModify"/></td>
-                        <td><FileDeleteBtn :file="item" @delete="handleDelete"/></td>
+                        <td><FileDeleteBtn :file="item" @fileDeleted="fetchData"/></td>
                     </tr>
                 </tbody>
             </table>
