@@ -25,7 +25,7 @@ const handleNewFileUpload = (event) => {
 const fileModify = async (close) => {
   const formData = new FormData();
   formData.append('postTitle', title.value);
-  formData.append('originalFileName', originalFileName.value);
+  formData.append('originalFilename', originalFileName.value);
   formData.append('file', Newfile.value);
   try {
     const response = await axios.put(`/v1/drive/edit`, formData, {
