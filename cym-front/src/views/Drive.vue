@@ -5,10 +5,40 @@ import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
 import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
 import FileUploadBtn from '@/components/Drive/FileUploadBtn.vue'
 
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from 'axios'
+
+const token = localStorage.getItem("token");
 const route = useRoute();
 const router = useRouter();
+/*const content = ref([
+  {
+    "fileName": "example.txt",
+    "postTitle": "Sample Title",
+    "id": "1",
+    "username": "john_doe",
+    "uploadDate": "2024-07-23T04:35:18.513Z"
+  }
+);*/
+const content = ref([]);
 
+const fetchData = async () => {
+  try {
+    const response = await axios.get(`/v1/drive/list`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    content.value = response.data.content;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+onMounted(fetchData);
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 </script>
 
 <template>
@@ -26,7 +56,7 @@ const router = useRouter();
 
             <!-- FileUploadBtn element -->
             <div class="col-md-6 col-lg-4 d-flex mt-3 mb-3 mx-6 justify-content-end">
-                <FileUploadBtn />
+                <FileUploadBtn @fileUploaded="fetchData"/>
                 
             </div>
         </div>
@@ -46,38 +76,16 @@ const router = useRouter();
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td><FileModifyBtn/></td>
-                    <td><FileDeleteBtn/></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td><FileModifyBtn/></td>
-                    <td><FileDeleteBtn/></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">3</th>
-                    <td>Larry the Bird</td>
-                    <td>ised</td>
-                    <td>@twitter</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td>@mdo</td>
-                    <td><FileModifyBtn/></td>
-                    <td><FileDeleteBtn/></td>
+                    <tr v-for="(item, index) in content" :key="item.id">
+                        <td>{{ index+1 }}</td>
+                        <td>{{ item.postTitle }}</td>
+                        <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                        <td>{{ item.size }}MB</td>
+                        <td>{{  item.id  }}</td>
+                        <td>{{ item.username }}</td>
+                        <td>{{ formatDate(item.uploadDate) }}</td>
+                        <td><FileModifyBtn :file="item" @fileModified="fetchData"/></td>
+                        <td><FileDeleteBtn :file="item" @fileDeleted="fetchData"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -93,5 +101,12 @@ const router = useRouter();
 .container {
     overflow-y: scroll;
     max-height: 60vh;
+}
+.download-link {
+  color: inherit; /* 기본 텍스트 색상 사용 */
+  text-decoration: none; /* 밑줄 제거 */
+}
+.download-link:hover {
+  color: #7248BD;
 }
 </style>
