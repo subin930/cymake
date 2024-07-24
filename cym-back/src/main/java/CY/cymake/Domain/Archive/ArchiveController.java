@@ -27,7 +27,7 @@ public class    ArchiveController {
      */
     @Operation(description = "주제 별 전체 뉴스 기사 조회")
     @GetMapping(value = "/total/{subject}")
-    public CommonResult<List<NewsResDto>> getTotalNews(@PathVariable String subject) {
+    public CommonResult<List<NewsResDto>> getTotalNews(@PathVariable(value = "subject") String subject) {
         return  globalResponseHandler.SendSuccessAndContent(archiveService.getTotalNews(subject));
     }
 
@@ -36,7 +36,7 @@ public class    ArchiveController {
      */
     @Operation(description = "주제 별 뉴스 기사 조회(n개)")
     @GetMapping(value = "/{subject}")
-    public CommonResult<List<NewsResDto>> getNews(@PathVariable String subject) {
+    public CommonResult<List<NewsResDto>> getNews(@PathVariable(value = "subject") String subject) {
         return globalResponseHandler.SendSuccessAndContent(archiveService.getNews(subject));
     }
 }

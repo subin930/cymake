@@ -3,7 +3,6 @@
         modalID: String,
         title: String,
         message: String,
-        eventFunction: Function,
     });
 
 </script>

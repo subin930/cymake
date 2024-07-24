@@ -2,16 +2,43 @@
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import NewsModal from '@/components/common/NewsModal.vue';
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from 'axios'
+
 const route = useRoute();
 const router = useRouter();
-
-const testfun = () => {
+const token = localStorage.getItem("token");
+const contentCar = ref([]);
+const contentBeauty = ref([]);
+const subject = ref('');
+/*const testfun = () => {
     console.log("testfun played");
     router.push("/signup");
+};*/
+const fetchCarNews = async () => {
+  subject.value = "car";
+  try {
+    const response = await axios.get(`/v1/archive/${subject.value}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    contentCar.value = response.data.content;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 };
-
-
+const fetchBeautyNews = async () => {
+  subject.value = "beauty";
+  try {
+    const response = await axios.get(`/v1/archive/${subject.value}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    contentBeauty.value = response.data.content;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 const openModal = (titleVal, messageVal) => {
     title.value = titleVal;
     message.value = messageVal;
@@ -23,8 +50,9 @@ const openModal = (titleVal, messageVal) => {
 const modalID = ref('newsModal');
 const title = ref('title news test');
 const message = ref('news body test');
-const eventFunction = ref(testfun);
 
+onMounted(fetchCarNews);
+onMounted(fetchBeautyNews);
 </script>
 
 <template>
@@ -40,18 +68,11 @@ const eventFunction = ref(testfun);
                     <a class="nav-link active mt-1 px-2" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between">
-                <div class="d-flex flex-row row-cols-auto">
+                <div class="d-flex flex-row row-cols-auto" v-for="carNews in contentCar" :key="carNews.title">
                     <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스1 제목', '자동차 뉴스1 본문')">자동차 뉴스1</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스2 제목', '자동차 뉴스2 본문')">자동차 뉴스2</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스3 제목', '자동차 뉴스3 본문')">자동차 뉴스3</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스4 제목', '자동차 뉴스4 본문')">자동차 뉴스4</button>
+                        <button type="button" class="btn news-btn" @click="openModal(carNews.title, carNews.newsLink)">
+                            {{ carNews.title }}
+                        </button>
                     </div>
                 </div>
             </div> 
@@ -62,25 +83,18 @@ const eventFunction = ref(testfun);
                     <a class="nav-link active mt-1 px-2" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between">
-                <div class="d-flex flex-row row-cols-auto">
+                <div class="d-flex flex-row row-cols-auto" v-for="beautyNews in contentBeauty" :key="beautyNews.title">
                     <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스1 제목', '화장품 뉴스1 본문')">화장품 뉴스1</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스2 제목', '화장품 뉴스2 본문')">화장품 뉴스2</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스3 제목', '뉴스3 본문')">화장품 뉴스3</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스4 제목', '뉴스4 본문')">화장품 뉴스4</button>
+                        <button type="button" class="btn news-btn" @click="openModal(beautyNews.title, beautyNews.newsLink)">
+                            {{ beautyNews.title }}
+                        </button>
                     </div>
                 </div>
             </div> 
         </div>
     </div>
     
-    <NewsModal :modalID="modalID" :title="title" :message="message" :eventFunction="eventFunction"></NewsModal>
+    <NewsModal :modalID="modalID" :title="title" :message="message"></NewsModal>
 </template>
 
 <style scoped>

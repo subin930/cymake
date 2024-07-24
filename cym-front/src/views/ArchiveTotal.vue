@@ -29,7 +29,6 @@ const setContentCos = () => {
 const modalID = ref('newsModal');
 const title = ref('title news test');
 const message = ref('news body test');
-const eventFunction = ref(testfun);
 
 </script>
 
@@ -88,7 +87,7 @@ const eventFunction = ref(testfun);
             </div> 
         </div>
     </div>
-    <NewsModal :modalID="modalID" :title="title" :message="message" :eventFunction="eventFunction"></NewsModal>
+    <NewsModal :modalID="modalID" :title="title" :message="message"></NewsModal>
 </template>
 
 <style scoped>
