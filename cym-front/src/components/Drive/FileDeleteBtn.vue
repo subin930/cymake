@@ -7,8 +7,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['fileDeleted']);
 const token = localStorage.getItem("token");
-const modifyFile = async() => {
-    console.log("modifyFile called");
+const deleteFile = async() => {
     try {
     const response = await axios.delete(`/v1/drive/delete`, {
       headers: {
@@ -26,7 +25,7 @@ const modifyFile = async() => {
 </script>
 
 <template>
-    <button type="button" class="btn btn-outline-secondary btn-sm" @click="modifyFile()" >
+    <button type="button" class="btn btn-outline-secondary btn-sm" @click="deleteFile()" >
         <i class="bi bi-trash"></i>
     </button>
 </template>
