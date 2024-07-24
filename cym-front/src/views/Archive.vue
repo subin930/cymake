@@ -68,11 +68,20 @@ onMounted(fetchBeautyNews);
                     <a class="nav-link active mt-1 px-2" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between">
-                <div class="d-flex flex-row row-cols-auto" v-for="carNews in contentCar" :key="carNews.title">
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal(carNews.title, carNews.newsLink)">
+                <div class="row row-cols-1 row-cols-lg-6 g-3">
+                    <div  v-for="carNews in contentCar" :key="carNews.title">
+                        <div class="col">
+                        <button type="button" 
+                        class="btn news-btn" 
+                        style="font-size: .8rem; font-weight: bold"
+                        @click="openModal(carNews.title, carNews.newsLink)">
+                        <img :src="carNews.imgUrl" alt="news image" class="news-image">
+                        <br/>
                             {{ carNews.title }}
+                        <br/>
+                        <p style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
                         </button>
+                    </div>
                     </div>
                 </div>
             </div> 
@@ -82,12 +91,21 @@ onMounted(fetchBeautyNews);
                     <p class="px-1 fw-bold">화장품 산업 정보</p>
                     <a class="nav-link active mt-1 px-2" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
-            <div class="container text-center justify-content-between">
-                <div class="d-flex flex-row row-cols-auto" v-for="beautyNews in contentBeauty" :key="beautyNews.title">
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal(beautyNews.title, beautyNews.newsLink)">
+            <div class="container text-start justify-content-between">
+                <div class="row row-cols-1 row-cols-lg-6 g-3">
+                    <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title">
+                        <div class="col">
+                        <button type="button" 
+                        class="btn news-btn" 
+                        style="font-size: .8rem; font-weight: bold"
+                        @click="openModal(beautyNews.title, beautyNews.newsLink)">
+                        <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
+                        <br/>
                             {{ beautyNews.title }}
+                        <br/>
+                        <p style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
                         </button>
+                    </div>
                     </div>
                 </div>
             </div> 
@@ -98,6 +116,7 @@ onMounted(fetchBeautyNews);
 </template>
 
 <style scoped>
+
 .nav-link.active {
     color: #6D6D6D;
 }
@@ -115,5 +134,16 @@ onMounted(fetchBeautyNews);
     color: #7248BD;
     border-color:#7248BD;
 }
-
+.news-btn {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  width: 12rem; /* Set the width of the image */
+  height: 20rem;
+  text-overflow: ellipsis;
+}
+.news-image {
+  width: 10rem; /* Set the width of the image */
+  height: 12rem; /* Set the height of the image */
+}
 </style>
