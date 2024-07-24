@@ -48,7 +48,7 @@ const submitForm = (close) => {
 };
 
 const resetForm = () => {
-  title.value = '';
+  
   fileSize.value = 0;
   file.value = null;
   // 파일 입력 필드 초기화
@@ -67,7 +67,7 @@ const resetForm = () => {
         <template #content="{ close }">
             <div class="align-items-center justify-content-center">
                 <div class="row w-100 text-center mb-3">
-                    <p style="font-size: 1.1rem; font-weight:bold">파일등록</p>
+                    <p style="font-size: 1.1rem; font-weight:bold">파일수정</p>
                 </div>
                 <form @submit.prevent="submitForm(close)">
                     <div class="form-group mb-3">
