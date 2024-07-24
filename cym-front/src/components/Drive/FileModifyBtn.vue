@@ -34,6 +34,7 @@ const fileModify = async (close) => {
       }
     });
     console.log(response.data.message);
+    resetForm();
     emit('fileModified');
     close(); // 파일 수정 성공 시 Popper 닫기
   } catch (error) {
@@ -44,6 +45,17 @@ const fileModify = async (close) => {
 
 const submitForm = (close) => {
   fileModify(close);
+};
+
+const resetForm = () => {
+  title.value = '';
+  fileSize.value = 0;
+  file.value = null;
+  // 파일 입력 필드 초기화
+  const fileInput = document.getElementById('file');
+  if (fileInput) {
+    fileInput.value = null;
+  }
 };
 </script>
 
