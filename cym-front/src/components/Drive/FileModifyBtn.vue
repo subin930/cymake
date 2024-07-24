@@ -28,7 +28,7 @@ const fileModify = async (close) => {
   formData.append('originalFileName', originalFileName.value);
   formData.append('file', Newfile.value);
   try {
-    const response = await axios.post(`/v1/drive/upload`, formData, {
+    const response = await axios.put(`/v1/drive/edit`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
