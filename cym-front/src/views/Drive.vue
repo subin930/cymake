@@ -56,7 +56,7 @@ const formatDate = (dateString) => {
 
             <!-- FileUploadBtn element -->
             <div class="col-md-6 col-lg-4 d-flex mt-3 mb-3 mx-6 justify-content-end">
-                <FileUploadBtn />
+                <FileUploadBtn @fileUploaded="fetchData"/>
                 
             </div>
         </div>

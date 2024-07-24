@@ -50,7 +50,7 @@
 import { ref } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
-
+const emit = defineEmits(['fileUploaded']);
 const token = localStorage.getItem("token");
 const title = ref('');
 const fileSize = ref(0);
@@ -75,6 +75,7 @@ const fileUpload = async (close) => {
     });
     console.log(response.data.message);
     resetForm(); //초기화
+    emit('fileUploaded');
     close(); // 파일 업로드 성공 시 Popper 닫기
   } catch (error) {
     console.error('파일 업로드 오류:', error);
