@@ -82,7 +82,9 @@ public class DriveService {
      * 파일 수정
      */
     public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String originalFilename, String postTitle) throws IOException {
-        FileEntity file = fileRepository.findByFile(originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
+        FileEntity file = fileRepository.findByFile(originalFilename)
+                .orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
+
         //1. 작성자 일치 여부 확인
         if(!user.getId().equals(file.getUploader().getId())) {
             throw new FileUpdateFailedException("기존 post가 존재하지 않습니다.");
