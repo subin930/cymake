@@ -23,13 +23,6 @@ spring:
       max-request-size: 50MB
   profiles:
     active: elk
-#elasticsearch:
-#  host: localhost
-#  port: 9200
-#  api_key: bENPdTJKQUJyM09aSEZpZlBIaXA6YmpjcVJ5Z3JTUDJLVHE3WVNkVUJ2Zw==
-#  user:
-#    username: cymake
-#    password: q1w2e3r4
 
 cloud:
   aws:
