@@ -89,7 +89,7 @@ onMounted(fetchBeautyNews);
                 </form>
                 
             </div>
-            <div class="container text-center justify-content-between">
+            <div class="container text-start justify-content-between">
                 <div v-if="contentToken =='0'" class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -134,16 +134,17 @@ onMounted(fetchBeautyNews);
     border-color:#7248BD;
 }
 .news-btn {
+  border-radius: 0;
   border-color:#6D6D6D;
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
-  width: 12rem; /* Set the width of the image */
+  padding: 0%;
+  width: 10rem; /* Set the width of the image */
   height: 20rem;
   text-overflow: ellipsis;
 }
 .news-image {
-  width: 10rem; /* Set the width of the image */
+  width: 100%; /* Set the width of the image */
   height: 12rem; /* Set the height of the image */
 }
 .test-btn:hover {
