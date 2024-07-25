@@ -146,7 +146,7 @@ onMounted(fetchBeautyNews);
   flex-direction: column;
   margin-bottom: 10px;
   padding: 0%;
-  width: 12rem; /* Set the width of the image */
+  width: 10rem; /* Set the width of the image */
   height: 20rem;
   text-overflow: ellipsis;
 }
