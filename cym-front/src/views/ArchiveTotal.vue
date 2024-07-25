@@ -12,10 +12,28 @@ const token = localStorage.getItem("token");
 const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
-/*const testfun = () => {
-    console.log("testfun played");
-    router.push("/signup");
-};*/
+
+const searchQuery = ref('');
+const searchResults = ref([]);
+
+const handleSearch = async () => {
+    console.log(searchQuery.value);
+    if (searchQuery.value.length > 0) { // 최소 1글자 이상일 때 검색
+        try {
+            const response = await axios.get('/api/search', {
+                params: {
+                    query: searchQuery.value
+                }
+            });
+            searchResults.value = response.data.results;
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    } else {
+        searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+    }
+};
+
 const fetchCarNews = async () => {
   subject.value = "car";
   try {
@@ -84,8 +102,9 @@ onMounted(fetchBeautyNews);
             </div>
             <div class="row d-flex align-items-center">
                 <form class="input-group mt-3 mb-3" role="search">
-                    <input type="search" class="form-control" placeholder="Please input" aria-label="Search">
-                    <button type="button" class="btn btn-outline-secondary">검색</button>
+                    <input type="search" class="form-control" placeholder="Please input" aria-label="Search"
+                    v-model="searchQuery">
+                    <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
                 </form>
                 
             </div>
