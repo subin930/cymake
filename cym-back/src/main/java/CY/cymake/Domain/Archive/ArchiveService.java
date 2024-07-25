@@ -18,7 +18,7 @@ public class ArchiveService {
     private final CrwlNewsRepository crwlNewsRepository;
 
     public List<NewsResDto> getTotalNews(String subject) {
-        List<CrwlNewsEntity> total = crwlNewsRepository.findBySubject(subject);
+        List<CrwlNewsEntity> total = crwlNewsRepository.findBySubjectOrderByUploadDateDesc(subject);
         List<NewsResDto> list = new ArrayList<>();
         for(CrwlNewsEntity news: total) {
             NewsResDto newsResDto = new NewsResDto();

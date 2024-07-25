@@ -2,34 +2,68 @@
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import NewsModal from '@/components/common/NewsModal.vue';
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from 'axios';
+
 const route = useRoute();
 const router = useRouter();
 const contentToken = ref('0');
-const testfun = () => {
+const token = localStorage.getItem("token");
+const contentCar = ref([]);
+const contentBeauty = ref([]);
+const subject = ref('');
+/*const testfun = () => {
     console.log("testfun played");
     router.push("/signup");
+};*/
+const fetchCarNews = async () => {
+  subject.value = "car";
+  try {
+    const response = await axios.get(`/v1/archive/total/${subject.value}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    contentCar.value = response.data.content;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
 };
-const openModal = (titleVal, messageVal) => {
+
+const fetchBeautyNews = async () => {
+  subject.value = "beauty";
+  try {
+    const response = await axios.get(`/v1/archive/total/${subject.value}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    contentBeauty.value = response.data.content;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+const openModal = (titleVal, imgUrlVal, linkVal) => {
     title.value = titleVal;
-    message.value = messageVal;
-    const modalElement = document.getElementById(modalID.value);
+    imgUrl.value = imgUrlVal;
+    newsLink.value = linkVal;
+    const modalElement = document.getElementById("newsModal");
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
 };
 
-const setCotentCar = () => {
-    contentToken.value = '0';
-};
-
 const setContentCos = () => {
-    contentToken.value = '1';
-};
+    contentToken.value = 1;
+}
 
-const modalID = ref('newsModal');
-const title = ref('title news test');
-const message = ref('news body test');
+const setCotentCar = () => {
+    contentToken.value = 0;
+}
+const title = ref('no title');
+const imgUrl = ref(null);
+const newsLink = ref('no link');
 
+onMounted(fetchCarNews);
+onMounted(fetchBeautyNews);
 </script>
 
 <template>
@@ -56,43 +90,61 @@ const message = ref('news body test');
                 
             </div>
             <div class="container text-center justify-content-between">
-                <div v-if="contentToken == '0'" class="d-flex flex-row row-cols-auto">
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스1 제목', '자동차 뉴스1 본문')">자동차 뉴스1</button>
+                <div v-if="contentToken =='0'" class="row g-3">
+                    <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <div class="col">
+                        <button type="button" 
+                        class="btn news-btn" 
+                        style="font-size: .8rem; font-weight: bold"
+                        @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
+                        <img :src="carNews.imgUrl" alt="news image" class="news-image">
+                        <br/>
+                            {{ carNews.title }}
+                        <br/>
+                        <p style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
+                        </button>
                     </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스2 제목', '자동차 뉴스2 본문')">자동차 뉴스2</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스3 제목', '자동차 뉴스3 본문')">자동차 뉴스3</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('자동차 뉴스4 제목', '자동차 뉴스4 본문')">자동차 뉴스4</button>
                     </div>
                 </div>
-                <div v-if="contentToken == '1'" class="d-flex flex-row row-cols-auto">
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스1 제목', '화장품 뉴스1 본문')">화장품 뉴스1</button>
+                <div v-if="contentToken =='1'" class="row g-3">
+                    <div v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
+                        <div class="col">
+                        <button type="button" 
+                        class="btn news-btn" 
+                        style="font-size: .8rem; font-weight: bold"
+                        @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
+                        <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
+                        <br/>
+                            {{ beautyNews.title }}
+                        <br/>
+                        <p style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
+                        </button>
                     </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스2 제목', '화장품 뉴스2 본문')">화장품 뉴스2</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스3 제목', '화장품 뉴스3 본문')">화장품 뉴스3</button>
-                    </div>
-                    <div class="col-3">
-                        <button type="button" class="btn news-btn" @click="openModal('화장품 뉴스4 제목', '화장품 뉴스4 본문')">화장품 뉴스4</button>
                     </div>
                 </div>
             </div> 
         </div>
     </div>
-    <NewsModal :modalID="modalID" :title="title" :message="message"></NewsModal>
+    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
 </template>
 
 <style scoped>
+.news-btn:hover {
+    color: #7248BD;
+    border-color:#7248BD;
+}
 .news-btn {
-    border-color:#6D6D6D
+  border-color:#6D6D6D;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  width: 12rem; /* Set the width of the image */
+  height: 20rem;
+  text-overflow: ellipsis;
+}
+.news-image {
+  width: 10rem; /* Set the width of the image */
+  height: 12rem; /* Set the height of the image */
 }
 .test-btn:hover {
   color: #7248BD; /* 마우스를 올렸을 때의 색상 */

@@ -39,17 +39,18 @@ const fetchBeautyNews = async () => {
     console.error('Error fetching data:', error);
   }
 };
-const openModal = (titleVal, messageVal) => {
+const openModal = (titleVal, imgUrlVal, linkVal) => {
     title.value = titleVal;
-    message.value = messageVal;
-    const modalElement = document.getElementById(modalID.value);
+    imgUrl.value = imgUrlVal;
+    newsLink.value = linkVal;
+    const modalElement = document.getElementById("newsModal");
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
 };
 
-const modalID = ref('newsModal');
-const title = ref('title news test');
-const message = ref('news body test');
+const title = ref('no title');
+const imgUrl = ref(null);
+const newsLink = ref('no link');
 
 onMounted(fetchCarNews);
 onMounted(fetchBeautyNews);
@@ -68,13 +69,13 @@ onMounted(fetchBeautyNews);
                     <a class="nav-link active mt-1 px-2" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between">
-                <div class="row row-cols-1 row-cols-lg-6 g-3">
-                    <div  v-for="carNews in contentCar" :key="carNews.title">
+                <div class="row g-3">
+                    <div  v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
                         <button type="button" 
                         class="btn news-btn" 
                         style="font-size: .8rem; font-weight: bold"
-                        @click="openModal(carNews.title, carNews.newsLink)">
+                        @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
                         <img :src="carNews.imgUrl" alt="news image" class="news-image">
                         <br/>
                             {{ carNews.title }}
@@ -92,13 +93,13 @@ onMounted(fetchBeautyNews);
                     <a class="nav-link active mt-1 px-2" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div class="container text-start justify-content-between">
-                <div class="row row-cols-1 row-cols-lg-6 g-3">
-                    <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title">
+                <div class="row g-3">
+                    <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
                         <button type="button" 
                         class="btn news-btn" 
                         style="font-size: .8rem; font-weight: bold"
-                        @click="openModal(beautyNews.title, beautyNews.newsLink)">
+                        @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
                         <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
                         <br/>
                             {{ beautyNews.title }}
@@ -112,7 +113,7 @@ onMounted(fetchBeautyNews);
         </div>
     </div>
     
-    <NewsModal :modalID="modalID" :title="title" :message="message"></NewsModal>
+    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
 </template>
 
 <style scoped>

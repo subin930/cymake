@@ -1,15 +1,15 @@
 <script setup>
     const props=defineProps({
-        modalID: String,
         title: String,
-        message: String,
+        imgUrl: String,
+        newsLink: String,
     });
 
 </script>
 
 <template>
     <!-- Modal --> 
-    <div class="modal fade" :id="modalID" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="newsModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
             <div class="modal-header">
@@ -17,8 +17,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
-                {{ message }}
+                <img :src="imgUrl" alt="news image" class="news-image">
+                <br>
+                <p>뉴스 링크</p>
+                {{ newsLink }}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
@@ -28,4 +30,11 @@
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.news-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+}
+</style>
