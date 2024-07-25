@@ -2,12 +2,12 @@
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import NewsModal from '@/components/common/NewsModal.vue';
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
-const contentToken = ref('0');
+const contentToken = ref(localStorage.getItem("contentToken"));
 const token = localStorage.getItem("token");
 const contentCar = ref([]);
 const contentBeauty = ref([]);
@@ -69,13 +69,6 @@ const openModal = (titleVal, imgUrlVal, linkVal) => {
     modalInstance.show();
 };
 
-const setContentCos = () => {
-    contentToken.value = 1;
-}
-
-const setCotentCar = () => {
-    contentToken.value = 0;
-}
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
@@ -93,11 +86,11 @@ onMounted(fetchBeautyNews);
         <div class="container m-3">
             <div class="row">
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" class="btn-check col-6" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                    <label class="btn fw-bold" for="btnradio1" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;" @click="setCotentCar()"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
+                    <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio1" value="0">
+                    <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '0' }" for="btnradio1" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
 
-                    <input type="radio" class="btn-check col-6" name="btnradio" id="btnradio2" autocomplete="off">
-                    <label class="btn fw-bold" for="btnradio2" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;" @click="setContentCos()"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
+                    <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio2" value="1">
+                    <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '1' }" for="btnradio2" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
                 </div>
             </div>
             <div class="row d-flex align-items-center">
@@ -113,14 +106,14 @@ onMounted(fetchBeautyNews);
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
                         <button type="button" 
-                        class="btn news-btn" 
+                        class="btn news-btn text-start" 
                         style="font-size: .8rem; font-weight: bold"
                         @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
                         <img :src="carNews.imgUrl" alt="news image" class="news-image">
                         <br/>
-                            {{ carNews.title }}
+                        <p class="news-title ms-1">{{ carNews.title }}</p>
                         <br/>
-                        <p style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
+                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
                         </button>
                     </div>
                     </div>
@@ -129,14 +122,14 @@ onMounted(fetchBeautyNews);
                     <div v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
                         <button type="button" 
-                        class="btn news-btn" 
+                        class="btn news-btn text-start" 
                         style="font-size: .8rem; font-weight: bold"
                         @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
                         <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
                         <br/>
-                            {{ beautyNews.title }}
+                        <p class="news-title ms-1">{{ beautyNews.title }}</p>
                         <br/>
-                        <p style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
+                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
                         </button>
                     </div>
                     </div>
