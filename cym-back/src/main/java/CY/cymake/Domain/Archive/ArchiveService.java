@@ -2,7 +2,6 @@ package CY.cymake.Domain.Archive;
 
 import CY.cymake.Domain.Archive.Dto.NewsResDto;
 import CY.cymake.Entity.CrwlNewsEntity;
-import CY.cymake.Entity.NewsDataEntity;
 import CY.cymake.Repository.CrwlNewsRepository;
 import CY.cymake.Repository.NewsDataRepository;
 import lombok.RequiredArgsConstructor;

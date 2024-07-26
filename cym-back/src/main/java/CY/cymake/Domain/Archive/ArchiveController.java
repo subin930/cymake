@@ -1,7 +1,6 @@
 package CY.cymake.Domain.Archive;
 
 import CY.cymake.Domain.Archive.Dto.NewsResDto;
-import CY.cymake.Domain.Auth.AuthService;
 import CY.cymake.Response.CommonResult;
 import CY.cymake.Response.GlobalResponseHandler;
 import io.swagger.v3.oas.annotations.Operation;

@@ -7,7 +7,6 @@
     import lombok.NoArgsConstructor;
     import org.hibernate.annotations.ColumnDefault;
 
-    import java.sql.Timestamp;
 
     @Entity
     @Table(name = "tb_crwl_total")
