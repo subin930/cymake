@@ -24,6 +24,7 @@ spring:
   profiles:
     active: elk
 
+
 cloud:
   aws:
     s3:
@@ -33,7 +34,10 @@ cloud:
       auto: false
     stack:
       auto: false
-    credentials:
+    credentials: #S3 버킷 접근
       accessKey: AKIAUOOO62J76H2VQK5R #발급받은 access key
       secretKey: 3ZsMrSQN3YiiM2hPDyEOuTiguBR+28sO7aLE7n0G #발급받은 secret key
-
+    opensearch:
+      accessKey: AKIAUOOO62J72AOF47VO
+      secretKey: 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
+      endpoint: search-skku-cymake-domain-g6irr6khpel2jhcbohg5m4okiy.ap-northeast-2.es.amazonaws.com

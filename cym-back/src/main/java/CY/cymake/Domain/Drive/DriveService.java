@@ -3,12 +3,15 @@ package CY.cymake.Domain.Drive;
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
+import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Entity.CompanyEntity;
 import CY.cymake.Entity.FileEntity;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.FileDeleteFailedException;
 import CY.cymake.Exception.FileUpdateFailedException;
 import CY.cymake.Exception.UserNotFoundException;
+import CY.cymake.OpenSearch.DataExtractor;
+import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,9 @@ public class DriveService {
     private final S3Service s3Service;
     private final UsersRepository usersRepository;
     private final FileRepository fileRepository;
+    private final OpenSearchService openSearchService;
+    private final DataExtractor dataExtractor;
+
     public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
         if(siteUser.isEmpty()) {
@@ -123,16 +129,13 @@ public class DriveService {
     /*
      * post 리스트 전송
      */
-    public List<PostListResDto> getPostList(CustomUserInfoDto user) throws IOException {
+    public List<PostListResDto> getPostList(CustomUserInfoDto user) throws IOException, Exception {
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
 
         List<FileEntity> files = fileRepository.findAll();
         List<PostListResDto> posts = new ArrayList<>();
         for(FileEntity file: files) {
-            double size = s3Service.getFileSize(directory, file.getFile())/(1.0 * 1024 * 1024);
-            DecimalFormat df = new DecimalFormat("#.##");
-            double fileSizeFormatted = Double.parseDouble(df.format(size));
-
             PostListResDto post = PostListResDto.builder()
                     .fileName(file.getFile())
                     .postTitle(file.getPostTitle())
@@ -140,11 +143,30 @@ public class DriveService {
                     .username(file.getUploader().getUsername())
                     .fileUrl(file.getFileUrl())
                     .uploadDate(file.getUploadDate())
-                    .size(fileSizeFormatted)
+                    .size(s3Service.getFileSize(directory, file.getFile()))
                     .build();
             posts.add(post);
         }
-
         return posts;
+    }
+    /*
+     * post 검색
+     */
+    public List<PostSearchResultDto> searchPost(String searchBody) throws IOException {
+        String[] col = {"file_name"};
+        return openSearchService.searchFileTb("tb_file", searchBody);
+
+    }
+    /*
+     * PostListDto -> PostSearchResultDto
+     */
+    public List<PostListResDto> changeToPostList(CustomUserInfoDto user, List<PostSearchResultDto> list) throws IOException {
+        String directory = "files/" + user.getCompanyCode().getCode() + "/";
+        List<PostListResDto> result = new ArrayList<>();
+        for(PostSearchResultDto post: list) {
+            PostListResDto postListResDto = new PostListResDto(post.getFile_name(), post.getPost_title(), post.getFile_url(), post.getFile_id(), post.getUploader(), post.getUpload_date(), s3Service.getFileSize(directory,post.getFile_name()));
+            result.add(postListResDto);
+        }
+        return result;
     }
 }

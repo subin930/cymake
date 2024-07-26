@@ -1,6 +1,7 @@
 package CY.cymake.Domain.Drive;
 
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
+import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Response.CommonBaseResult;
 import CY.cymake.Response.CommonResult;
 import CY.cymake.Response.GlobalResponseHandler;
@@ -72,8 +73,16 @@ public class DriveController {
      */
     @GetMapping(value = "/list")
     @Operation(description = "post 리스트 전송")
-    public CommonResult<List<PostListResDto>> getPostList(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+    public CommonResult<List<PostListResDto>> getPostList(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException, Exception {
         return globalResponseHandler.SendSuccessAndContent(driveService.getPostList(customUserDetails.getUser()));
     }
-
+    /*
+     * post 검색
+     */
+    @GetMapping(value = "/search")
+    @Operation(description = "post 검색")
+    public CommonResult<List<PostListResDto>> searchPost(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestParam(value = "searchBody") String searchBody) throws IOException {
+        List<PostSearchResultDto> list = driveService.searchPost(searchBody);
+        return globalResponseHandler.SendSuccessAndContent(driveService.changeToPostList(customUserDetails.getUser(), list));
+    }
 }
