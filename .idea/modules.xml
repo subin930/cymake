@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/cymake.iml" filepath="$PROJECT_DIR$/.idea/cymake.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cymake-backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cymake-backend.main.iml" />
     </modules>
   </component>
 </project>

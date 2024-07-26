@@ -52,7 +52,7 @@ public class DriveController {
     @DeleteMapping(value = "/delete")
     @Operation(description = "파일 삭제")
     public CommonBaseResult delete(
-            @Parameter(required = true, description = "파일 삭제 요청 정보") @Valid @RequestBody String filename, @AuthenticationPrincipal CustomUserDetails user
+            @Parameter(required = true, description = "파일 삭제 요청 정보") @Valid @RequestParam(value = "filename") String filename, @AuthenticationPrincipal CustomUserDetails user
     ) throws IOException {
         driveService.deleteFile(user.getUser(), filename);
         return globalResponseHandler.SendSuccess();

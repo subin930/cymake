@@ -45,6 +45,26 @@ const handleSearch = async () => {
         searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
     }
 };
+const updateFile = async({ originalFileName, newFileData }) => {
+  const index = content.value.findIndex(item => item.fileName === originalFileName.value);
+  console.log(originalFileName.value);
+  if (index !== -1) {
+    // Create a new object to trigger reactivity
+    content.value[index] = {
+      ...content.value[index],
+      postTitle: newFileData.postTitle,
+      fileName: newFileData.fileName,
+      size: newFileData.size
+    };
+    console.log(content.value[index]);
+  } else {
+    console.error('File not found');
+  }
+};
+
+const removeFile = async(originalFileName) => {
+  content.value = content.value.filter(item => item.fileName !== originalFileName.value);
+};
 
 const fetchData = async () => {
   try {
@@ -109,8 +129,8 @@ const formatDate = (dateString) => {
                         <td>{{  item.id  }}</td>
                         <td>{{ item.username }}</td>
                         <td>{{ formatDate(item.uploadDate) }}</td>
-                        <td><FileModifyBtn :file="item" @fileModified="fetchData"/></td>
-                        <td><FileDeleteBtn :file="item" @fileDeleted="fetchData"/></td>
+                        <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
+                        <td><FileDeleteBtn :file="item" @fileDeleted="removeFile"/></td>
                     </tr>
                 </tbody>
             </table>
