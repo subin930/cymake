@@ -5,7 +5,7 @@ import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
 import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
 import FileUploadBtn from '@/components/Drive/FileUploadBtn.vue'
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from 'axios'
 
 const token = localStorage.getItem("token");
@@ -23,6 +23,8 @@ const router = useRouter();
 const content = ref([]);
 const searchBody = ref('');
 const searchResults = ref([]);
+const totalSize = ref(0);
+const usagePercentage = ref(0);
 
 const handleSearch = async () => {
     console.log(searchBody.value);
@@ -73,6 +75,8 @@ const fetchData = async () => {
         'Authorization': `Bearer ${token}`
       }});
     content.value = response.data.content;
+    setTotalSize();
+    setUsagePercentage();
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -82,6 +86,17 @@ onMounted(fetchData);
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const setTotalSize = () => {
+  totalSize.value = content.value.reduce((total, item) => total + item.size, 0).toFixed(3);
+  console.log(totalSize.value);
+};
+
+const setUsagePercentage = () => {
+  const size = parseFloat(totalSize.value);
+  usagePercentage.value = ((size / 10) * 100).toFixed(2);
+  console.log(usagePercentage.value);
 };
 </script>
 
@@ -105,6 +120,13 @@ const formatDate = (dateString) => {
                 
             </div>
         </div>
+        <div class="row d-flex justify-content-start m-2">
+          <div class="progress">
+            <div class="progress-bar" :style="{ width: usagePercentage + '%', backgroundColor: '#7248BD' }" role="progressbar">
+              {{ totalSize }} MB / 3072 MB
+            </div>
+          </div>
+        </div> 
         <div class="container m-3 d-flex">
             <table class="table table-hover table-bordered">
                 <thead class="table-head">

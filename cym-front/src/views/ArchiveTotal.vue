@@ -20,12 +20,20 @@ const handleSearch = async () => {
     console.log(searchBody.value);
     if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
         try {
-            const response = await axios.get('/api/search', {
+            const response = await axios.get('/v1/archive/${subject.value}/search', {
                 params: {
-                    query: searchBody.value
+                    searchBody: searchBody.value
+                },
+                headers: {
+                'Authorization': `Bearer ${token}`
                 }
             });
-            searchResults.value = response.data.results;
+            searchResults.value = response.data.content;
+            if (subject.value === "car"){
+                contentCar.value = searchResults.value;
+            } else {
+                contentBeauty.value = searchResults.value;
+            }
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
