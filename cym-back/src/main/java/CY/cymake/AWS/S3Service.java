@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,11 +118,13 @@ public class S3Service {
     /*
      * 파일 용량 가져오기
      */
-    public long getFileSize(String directory, String filename) throws IOException {
+    public double getFileSize(String directory, String filename) throws IOException {
         String path = directory + filename;
         S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
         s3Object.close();
-        return s3Object.getObjectMetadata().getContentLength();
+        double size = s3Object.getObjectMetadata().getContentLength() /(1.0 * 1024 * 1024);
+        DecimalFormat df = new DecimalFormat("#.##");
+        return Double.parseDouble(df.format(size));
     }
 
     public ResponseEntity<byte[]> download(String directory, String filename) throws IOException {

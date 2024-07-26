@@ -1,15 +1,20 @@
 package CY.cymake.Domain.Drive.Dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Data
 @Schema(description = "post 리스트 Dto")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostListResDto {
     @NotBlank
     @Schema(description = "fileName")
@@ -38,5 +43,4 @@ public class PostListResDto {
     @NotBlank
     @Schema(description = "size")
     Double size;
-
 }
