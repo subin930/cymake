@@ -13,16 +13,16 @@ const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
 
-const searchQuery = ref('');
+const searchBody = ref('');
 const searchResults = ref([]);
 
 const handleSearch = async () => {
-    console.log(searchQuery.value);
-    if (searchQuery.value.length > 0) { // 최소 1글자 이상일 때 검색
+    console.log(searchBody.value);
+    if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
         try {
             const response = await axios.get('/api/search', {
                 params: {
-                    query: searchQuery.value
+                    query: searchBody.value
                 }
             });
             searchResults.value = response.data.results;
@@ -96,7 +96,7 @@ onMounted(fetchBeautyNews);
             <div class="row d-flex align-items-center">
                 <form class="input-group mt-3 mb-3" role="search">
                     <input type="search" class="form-control" placeholder="Please input" aria-label="Search"
-                    v-model="searchQuery">
+                    v-model="searchBody">
                     <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
                 </form>
                 

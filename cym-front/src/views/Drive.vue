@@ -21,6 +21,30 @@ const router = useRouter();
   }
 );*/
 const content = ref([]);
+const searchBody = ref('');
+const searchResults = ref([]);
+
+const handleSearch = async () => {
+    console.log(searchBody.value);
+    if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
+        try {
+            const response = await axios.get('/v1/drive/search', {
+                params: {
+                    searchBody: searchBody.value
+                },
+                headers: {
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            searchResults.value = response.data.content;
+            content.value = searchResults.value;
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    } else {
+        searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+    }
+};
 
 const fetchData = async () => {
   try {
@@ -49,9 +73,10 @@ const formatDate = (dateString) => {
         </div>
         <div class="row d-flex align-items-center justify-content-between m-3">
             <!-- Form element -->
-            <form class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
-                <input type="search" class="form-control" placeholder="search..." aria-label="Search">
-                <button type="button" class="btn btn-outline-secondary">검색</button>
+            <form @submit.prevent="handleSearch" class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
+              <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
+              v-model="searchBody">
+              <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
             </form>
 
             <!-- FileUploadBtn element -->
