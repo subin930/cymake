@@ -2,12 +2,18 @@ package CY.cymake.Domain.Archive.Dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @Data
 @Schema(description = "크롤링된 뉴스 조회 Dto")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NewsResDto {
     @NotBlank
     @Schema(description = "뉴스 제목")

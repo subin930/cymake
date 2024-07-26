@@ -1,7 +1,9 @@
 package CY.cymake.OpenSearch;
 
+import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.mapping.*;
 import org.opensearch.client.opensearch.core.*;
 import org.opensearch.client.opensearch.core.search.Hit;
@@ -252,6 +254,46 @@ public class OpenSearchService {
         List<Hit<PostSearchResultDto>> hits2 = searchResponse2.hits().hits();
         for (Hit<PostSearchResultDto> hit: hits2) {
             PostSearchResultDto data = hit.source();
+            resultsSet.add(data);
+        }
+        return new ArrayList<>(resultsSet);
+    }
+    /*
+     * 데이터 검색(tb_crwl_news)
+     * 1. 뉴스 제목 title
+     */
+
+    public List<NewsSearchResultDto> searchNewsTb(String index, String subject, String searchBody) throws IOException {
+        Set<NewsSearchResultDto> resultsSet = new HashSet<>();
+        /*
+         * 1. title로 검색
+         */
+        SearchRequest searchRequest1 = SearchRequest.of(s -> s
+                .index(index)
+                .query(q -> q
+                        .bool(b -> b
+                                .must(m -> m
+                                        .wildcard(w -> w
+                                                .field("title")
+                                                .value("*" + searchBody + "*")
+                                        )
+                                )
+                                .must(m -> m
+                                        .term(t -> t
+                                                .field("subject")
+                                                .value(FieldValue.of(subject))
+                                        )
+                                )
+                        )
+                )
+        );
+
+        //검색 요청 실행
+        SearchResponse<NewsSearchResultDto> searchResponse1 = client.search(searchRequest1,NewsSearchResultDto.class);
+        //검색 결과 리스트에 넣기
+        List<Hit<NewsSearchResultDto>> hits1 = searchResponse1.hits().hits();
+        for (Hit<NewsSearchResultDto> hit: hits1) {
+            NewsSearchResultDto data = hit.source();
             resultsSet.add(data);
         }
         return new ArrayList<>(resultsSet);

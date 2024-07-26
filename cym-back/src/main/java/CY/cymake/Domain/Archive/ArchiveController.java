@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,7 @@ public class    ArchiveController {
      */
     @Operation(description = "주제 별 전체 뉴스 기사 조회")
     @GetMapping(value = "/total/{subject}")
-    public CommonResult<List<NewsResDto>> getTotalNews(@PathVariable(value = "subject") String subject) {
+    public CommonResult<List<NewsResDto>> getTotalNews(@PathVariable(value = "subject") String subject) throws Exception {
         return  globalResponseHandler.SendSuccessAndContent(archiveService.getTotalNews(subject));
     }
 
@@ -37,5 +38,13 @@ public class    ArchiveController {
     @GetMapping(value = "/{subject}")
     public CommonResult<List<NewsResDto>> getNews(@PathVariable(value = "subject") String subject) {
         return globalResponseHandler.SendSuccessAndContent(archiveService.getNews(subject));
+    }
+    /*
+     * 뉴스 기사 검색(주제별로)
+     */
+    @Operation(description = "주제 별 뉴스 기사 검색")
+    @GetMapping(value = "/total/{subject}/search")
+    public CommonResult<List<NewsResDto>> searchNews(@PathVariable(value = "subject") String subject, String searchBody) throws IOException {
+        return globalResponseHandler.SendSuccessAndContent(archiveService.searchNews(subject, searchBody));
     }
 }

@@ -154,7 +154,6 @@ public class DriveService {
      * post 검색
      */
     public List<PostSearchResultDto> searchPost(String searchBody) throws IOException {
-        String[] col = {"file_name"};
         return openSearchService.searchFileTb("tb_file", searchBody);
 
     }
@@ -165,7 +164,8 @@ public class DriveService {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         List<PostListResDto> result = new ArrayList<>();
         for(PostSearchResultDto post: list) {
-            PostListResDto postListResDto = new PostListResDto(post.getFile_name(), post.getPost_title(), post.getFile_url(), post.getFile_id(), post.getUploader(), post.getUpload_date(), s3Service.getFileSize(directory,post.getFile_name()));
+            String username = usersRepository.findById(post.getUploader()).orElseThrow(() -> new UserNotFoundException("파일 업로더가 존재하지 않습니다.")).getUsername();
+            PostListResDto postListResDto = new PostListResDto(post.getFile_name(), post.getPost_title(), post.getFile_url(), post.getUploader(), username, post.getUpload_date(), s3Service.getFileSize(directory,post.getFile_name()));
             result.add(postListResDto);
         }
         return result;

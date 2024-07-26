@@ -1,12 +1,16 @@
 package CY.cymake.Domain.Archive;
 
 import CY.cymake.Domain.Archive.Dto.NewsResDto;
+import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
 import CY.cymake.Entity.CrwlNewsEntity;
+import CY.cymake.OpenSearch.DataExtractor;
+import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Repository.CrwlNewsRepository;
 import CY.cymake.Repository.NewsDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +19,12 @@ import java.util.List;
 public class ArchiveService {
     private final NewsDataRepository newsDataRepository;
     private final CrwlNewsRepository crwlNewsRepository;
+    private final DataExtractor dataExtractor;
+    private final OpenSearchService openSearchService;
 
-    public List<NewsResDto> getTotalNews(String subject) {
+    public List<NewsResDto> getTotalNews(String subject) throws IOException, Exception {
+        //openSearchService.deleteNewsIndex(); //test 용. 실제 코드에서는 삭제
+        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
         List<CrwlNewsEntity> total = crwlNewsRepository.findBySubjectOrderByUploadDateDesc(subject);
         List<NewsResDto> list = new ArrayList<>();
         for(CrwlNewsEntity news: total) {
@@ -44,5 +52,23 @@ public class ArchiveService {
             list.add(newsResDto);
         }
         return list;
+    }
+    /*
+     * 뉴스 검색
+     */
+    public List<NewsResDto> searchNews(String subject, String searchBody) throws IOException {
+        List <NewsSearchResultDto> list = openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody);
+        return changeToNewsResDto(list);
+    }
+    /*
+     * NewsSearchResultDto -> NewsResDto
+     */
+    public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) {
+        List<NewsResDto> result = new ArrayList<>();
+        for(NewsSearchResultDto news: list) {
+            NewsResDto newsResDto = new NewsResDto(news.getTitle(), news.getUpload_date(), news.getNews_link(), news.getImg_url());
+            result.add(newsResDto);
+        }
+        return result;
     }
 }
