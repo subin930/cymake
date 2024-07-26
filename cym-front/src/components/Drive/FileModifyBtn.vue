@@ -104,7 +104,7 @@ const resetForm = () => {
     
 </template>
 
-<style>
+<style scoped>
 :root {
   --popper-theme-background-color: #ffffff;
   --popper-theme-background-color-hover: #ececec;
@@ -114,5 +114,8 @@ const resetForm = () => {
   --popper-theme-border-style: solid;
   --popper-theme-border-color: #c9c9c9;
   --popper-theme-padding: 32px;
+}
+.btn {
+  border-color: #c9c9c9;
 }
 </style>

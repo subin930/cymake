@@ -122,7 +122,6 @@ onMounted(fetchBeautyNews);
 </template>
 
 <style scoped>
-
 .nav-link.active {
     color: #6D6D6D;
 }

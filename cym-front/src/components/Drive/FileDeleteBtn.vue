@@ -29,3 +29,9 @@ const deleteFile = async() => {
         <i class="bi bi-trash"></i>
     </button>
 </template>
+
+<style scoped>
+.btn {
+  border-color: #c9c9c9;
+}
+</style>
