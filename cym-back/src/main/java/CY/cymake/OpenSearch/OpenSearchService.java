@@ -1,7 +1,10 @@
 package CY.cymake.OpenSearch;
 
 import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
+import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
+import CY.cymake.Domain.total.Dto.TotalSearchDto;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.mapping.*;
@@ -207,9 +210,10 @@ public class OpenSearchService {
      * 데이터 검색(tb_file)
      * 1. 파일 이름
      * 2. post title
+     * 조건: 회사 코드
      * 로 검색
      */
-    public List<PostSearchResultDto> searchFileTb(String index, String searchBody) throws IOException {
+    public List<PostSearchResultDto> searchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
         Set<PostSearchResultDto> resultsSet = new HashSet<>();
         /*
          * 1. 파일 이름으로 검색
@@ -217,9 +221,19 @@ public class OpenSearchService {
         SearchRequest searchRequest1 = SearchRequest.of(s -> s
                 .index(index)
                 .query(q -> q
-                        .wildcard(t -> t
-                                .field("file_name")
-                                .value("*" + searchBody + "*")
+                        .bool(b -> b
+                                .must(m -> m
+                                        .wildcard(w -> w
+                                                .field("file_name")
+                                                .value("*" + searchBody + "*")
+                                        )
+                                )
+                                .must(m -> m
+                                        .term(t -> t
+                                                .field("company_code")
+                                                .value(FieldValue.of(user.getCompanyCode().getCode()))
+                                        )
+                                )
                         )
                 )
 
@@ -240,9 +254,19 @@ public class OpenSearchService {
         SearchRequest searchRequest2 = SearchRequest.of(s -> s
                 .index(index)
                 .query(q -> q
-                        .wildcard(t -> t
-                                .field("post_title")
-                                .value("*" + searchBody + "*")
+                        .bool(b -> b
+                                .must(m -> m
+                                        .wildcard(w -> w
+                                                .field("post_title")
+                                                .value("*" + searchBody + "*")
+                                        )
+                                )
+                                .must(m -> m
+                                        .term(t -> t
+                                                .field("company_code")
+                                                .value(FieldValue.of(user.getCompanyCode().getCode()))
+                                        )
+                                )
                         )
                 )
 
@@ -298,5 +322,4 @@ public class OpenSearchService {
         }
         return new ArrayList<>(resultsSet);
     }
-
 }

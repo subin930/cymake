@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -153,8 +152,8 @@ public class DriveService {
     /*
      * post 검색
      */
-    public List<PostSearchResultDto> searchPost(String searchBody) throws IOException {
-        return openSearchService.searchFileTb("tb_file", searchBody);
+    public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws IOException {
+        return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
 
     }
     /*

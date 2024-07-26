@@ -33,7 +33,7 @@ public class DriveController {
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "파일 업로드")
     public CommonResult<String> upload(
-            @Parameter(required = true, description = "파일 업로드 요청 정보") @Valid @RequestPart("file") MultipartFile multipartFile, @Valid @RequestPart("title") String postTitle,
+            @Parameter(required = true, description = "파일 업로드 요청 정보") @Valid @RequestPart(value = "file") MultipartFile multipartFile, @Valid @RequestPart(value = "title") String postTitle,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException {
         return globalResponseHandler.SendSuccessAndContent(driveService.uploadFile(customUserDetails.getUser(), multipartFile, postTitle));
@@ -43,7 +43,7 @@ public class DriveController {
      */
     @GetMapping(value = "/download")
     @Operation(description = "파일 다운로드")
-    public ResponseEntity<byte[]> download(@RequestParam String filename, @AuthenticationPrincipal CustomUserDetails user) throws IOException{
+    public ResponseEntity<byte[]> download(@RequestParam(value = "filename") String filename, @AuthenticationPrincipal CustomUserDetails user) throws IOException{
         return driveService.download(user.getUser(), filename);
     }
     /*
@@ -52,7 +52,7 @@ public class DriveController {
     @DeleteMapping(value = "/delete")
     @Operation(description = "파일 삭제")
     public CommonBaseResult delete(
-            @Parameter(required = true, description = "파일 삭제 요청 정보") @Valid @RequestBody String filename, @AuthenticationPrincipal CustomUserDetails user
+            @Parameter(required = true, description = "파일 삭제 요청 정보") @Valid @RequestParam(value = "filename") String filename, @AuthenticationPrincipal CustomUserDetails user
     ) throws IOException {
         driveService.deleteFile(user.getUser(), filename);
         return globalResponseHandler.SendSuccess();
@@ -82,7 +82,6 @@ public class DriveController {
     @GetMapping(value = "/search")
     @Operation(description = "post 검색")
     public CommonResult<List<PostListResDto>> searchPost(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestParam(value = "searchBody") String searchBody) throws IOException {
-        List<PostSearchResultDto> list = driveService.searchPost(searchBody);
-        return globalResponseHandler.SendSuccessAndContent(driveService.changeToPostList(customUserDetails.getUser(), list));
+        return globalResponseHandler.SendSuccessAndContent(driveService.searchPost(customUserDetails.getUser(), searchBody));
     }
 }
