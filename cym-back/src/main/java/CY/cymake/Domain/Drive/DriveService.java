@@ -130,6 +130,7 @@ public class DriveService {
      * post 리스트 전송
      */
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws IOException, Exception {
+        openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
         openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
 
