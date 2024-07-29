@@ -10,6 +10,7 @@ const router = useRouter();
 const companyCode = ref("");
 const id = ref("");
 const password = ref("");
+const errorMessage = ref("");
 
 const Login = async () => {
     await axios.post(`/v1/auth/login`, {
@@ -33,6 +34,7 @@ const Login = async () => {
     })
     .catch(function (error) {
         // TODO: 로그인 실패 창 보여주기
+        errorMessage.value = error.response.data.message;
         console.log(error);
 });
 };
@@ -86,6 +88,7 @@ const updatePassword = (event) => {
             </div>
             <div class="d-flex flex-column align-items-center m-5 mt-1">
                 <button type="button" class="btn text-white btn-outline-secondary w-50" style="font-size: 0.9rem; background-color: #6b42db;" @click="Login()">로그인</button>
+                 <p v-if="errorMessage" class="text-danger mt-2" style="font-size: .8rem">{{ errorMessage }}</p>
                 <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
             </div>
         </div>
