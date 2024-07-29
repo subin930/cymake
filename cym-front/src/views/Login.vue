@@ -87,12 +87,12 @@ const updatePassword = (event) => {
                 </div>
             </div>
             <div class="d-flex flex-column align-items-center m-5 mt-1">
-                <button type="button" class="btn text-white btn-outline-secondary w-50" style="font-size: 0.9rem; background-color: #6b42db;" @click="Login()">로그인</button>
-                 <p v-if="errorMessage" class="text-danger mt-2" style="font-size: .8rem">{{ errorMessage }}</p>
-                <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
-            </div>
-        </div>
-        
+                        <button type="button" class="btn text-white btn-outline-secondary w-50" style="font-size: 0.9rem; background-color: #6b42db;" @click="Login()" @submit.prevent = "Login()">로그인</button>
+                        <p v-if="errorMessage" class="text-danger" style="font-size: .7rem; margin-bottom: 0.5rem; margin-top: 0.1rem;">{{ errorMessage }}</p>
+                        <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
+                    </div>
+                </div>
+
         
     </div>
     

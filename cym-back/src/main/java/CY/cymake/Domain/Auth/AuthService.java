@@ -41,20 +41,20 @@ public class AuthService {
         //1. 회사코드 확인: 회사코드가 존재하는지 & 유저의 회사코드와 입력한 회사코드가 일치하는지 확인
         //유저가 입력한 회사 코드가 존재하는지
         if(companyRepository.findByCode(loginReqDto.getCompanyCode()).isEmpty()) {
-            throw new LoginFailedException("회사코드가 존재하지 않습니다.");
+            throw new LoginFailedException("회사코드를 확인해주세요.");
         }
 
         //2. username으로 유저 검색
         Optional<UsersEntity> user = usersRepository.findById(id);
         if(user.isEmpty()) {
             //해당 아이디를 가진 유저가 존재하지 않는 경우
-            throw new LoginFailedException("아이디가 존재하지 않습니다.");
+            throw new LoginFailedException("아이디를 확인해주세요.");
         }
         UsersEntity siteUser = user.get();
 
         //3. 비밀번호 확인: 암호화된 password를 디코딩한 값과 입력한 패스워드 값이 다르면 null 반환
         if(!encoder.matches(password, siteUser.getPassword())) {
-            throw new LoginFailedException("비밀번호가 일치하지 않습니다.");
+            throw new LoginFailedException("비밀번호를 확인해주세요.");
         }
 
 

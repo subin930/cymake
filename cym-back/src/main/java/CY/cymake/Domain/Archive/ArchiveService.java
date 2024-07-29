@@ -57,6 +57,8 @@ public class ArchiveService {
      * 뉴스 검색
      */
     public List<NewsResDto> searchNews(String subject, String searchBody) throws IOException {
+        System.out.println(searchBody);
+        System.out.println(subject);
         List <NewsSearchResultDto> list = openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody);
         return changeToNewsResDto(list);
     }
