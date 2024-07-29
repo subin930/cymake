@@ -67,7 +67,7 @@ public class DriveService {
      */
     public void deleteFile(CustomUserInfoDto user, String filename) throws IOException {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
-        FileEntity file = fileRepository.findByFile(filename).orElseThrow(() -> new FileDeleteFailedException("해당 파일이 존재하지 않습니다."));
+        FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), filename).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
         //1. 버킷의 특정 디렉터리로 매핑
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
 
@@ -87,8 +87,7 @@ public class DriveService {
      * 파일 수정
      */
     public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String originalFilename, String postTitle) throws IOException {
-        FileEntity file = fileRepository.findByFile(originalFilename)
-                .orElseThrow(() -> new FileUpdateFailedException("파일 수정에 실패했습니다."));
+        FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일이 존재하지 않습니다."));
 
         //1. 작성자 일치 여부 확인
         if(!user.getId().equals(file.getUploader().getId())) {
