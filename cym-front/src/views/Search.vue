@@ -121,7 +121,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
             <div class="row justify-content-between">
                 <p class="px-1 fw-bold">통합 자료실</p>
             </div>
-            <div class="container m-3 d-flex">
+            <div class="container drive-container m-3 d-flex">
                 <table class="table table-hover table-bordered">
                     <thead class="table-head">
                         <tr>
@@ -176,7 +176,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
 .table {
     font-size: .8rem;
 }
-.container {
+.drive-container {
     overflow-y: scroll;
     max-height: 60vh;
 }
