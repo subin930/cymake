@@ -215,9 +215,9 @@ public class OpenSearchService {
      */
     public List<PostSearchResultDto> searchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
         Set<PostSearchResultDto> resultsSet = new HashSet<>();
-        /*
-         * 1. 파일 이름으로 검색
-         */
+        String company_code = user.getCompanyCode().getCode();
+        System.out.println(company_code);
+        // 파일 이름으로 검색
         SearchRequest searchRequest1 = SearchRequest.of(s -> s
                 .index(index)
                 .query(q -> q
@@ -228,29 +228,23 @@ public class OpenSearchService {
                                                 .value("*" + searchBody + "*")
                                         )
                                 )
-                                .must(m -> m
-                                        .term(t -> t
-                                                .field("company_code")
-                                                .value(FieldValue.of(user.getCompanyCode().getCode()))
-                                        )
-                                )
                         )
                 )
-
         );
 
-        //검색 요청 실행
-        SearchResponse<PostSearchResultDto> searchResponse1 = client.search(searchRequest1,PostSearchResultDto.class);
-        //검색 결과 리스트에 넣기
+        // 검색 요청 실행
+        SearchResponse<PostSearchResultDto> searchResponse1 = client.search(searchRequest1, PostSearchResultDto.class);
+
+        // 검색 결과 리스트에 넣기
         List<Hit<PostSearchResultDto>> hits1 = searchResponse1.hits().hits();
-        for (Hit<PostSearchResultDto> hit: hits1) {
-            PostSearchResultDto data = hit.source();
-            resultsSet.add(data);
+        for (Hit<PostSearchResultDto> hit : hits1) {
+            if(Objects.requireNonNull(hit.source()).getCompany_code().equals(company_code)) {
+                PostSearchResultDto data = hit.source();
+                resultsSet.add(data);
+            }
         }
 
-        /*
-         * post title로 검색
-         */
+        // post title로 검색
         SearchRequest searchRequest2 = SearchRequest.of(s -> s
                 .index(index)
                 .query(q -> q
@@ -261,25 +255,22 @@ public class OpenSearchService {
                                                 .value("*" + searchBody + "*")
                                         )
                                 )
-                                .must(m -> m
-                                        .term(t -> t
-                                                .field("company_code")
-                                                .value(FieldValue.of(user.getCompanyCode().getCode()))
-                                        )
-                                )
                         )
                 )
-
         );
 
-        //검색 요청 실행
-        SearchResponse<PostSearchResultDto> searchResponse2 = client.search(searchRequest2,PostSearchResultDto.class);
-        //검색 결과 리스트에 넣기
+        // 검색 요청 실행
+        SearchResponse<PostSearchResultDto> searchResponse2 = client.search(searchRequest2, PostSearchResultDto.class);
+
+        // 검색 결과 리스트에 넣기
         List<Hit<PostSearchResultDto>> hits2 = searchResponse2.hits().hits();
-        for (Hit<PostSearchResultDto> hit: hits2) {
-            PostSearchResultDto data = hit.source();
-            resultsSet.add(data);
+        for (Hit<PostSearchResultDto> hit : hits2) {
+            if(Objects.requireNonNull(hit.source()).getCompany_code().equals(company_code)) {
+                PostSearchResultDto data = hit.source();
+                resultsSet.add(data);
+            }
         }
+
         return new ArrayList<>(resultsSet);
     }
     /*
