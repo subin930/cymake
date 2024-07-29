@@ -2,9 +2,7 @@ package CY.cymake.OpenSearch;
 
 import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
-import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
-import CY.cymake.Domain.total.Dto.TotalSearchDto;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.mapping.*;

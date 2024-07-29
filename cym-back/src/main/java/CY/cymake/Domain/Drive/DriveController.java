@@ -1,7 +1,6 @@
 package CY.cymake.Domain.Drive;
 
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
-import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Response.CommonBaseResult;
 import CY.cymake.Response.CommonResult;
 import CY.cymake.Response.GlobalResponseHandler;

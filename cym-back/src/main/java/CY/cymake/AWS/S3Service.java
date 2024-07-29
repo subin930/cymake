@@ -1,10 +1,8 @@
 package CY.cymake.AWS;
 
-import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
 import CY.cymake.Exception.EmptyFileException;
 import CY.cymake.Exception.FileDeleteFailedException;
 import CY.cymake.Exception.FileUploadFailedException;
-import CY.cymake.Response.GlobalResponseHandler;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -13,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

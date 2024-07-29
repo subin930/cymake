@@ -1,6 +1,5 @@
 package CY.cymake.Security;
 
-import com.mysql.cj.log.LogFactory;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

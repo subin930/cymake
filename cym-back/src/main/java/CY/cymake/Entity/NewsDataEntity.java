@@ -1,6 +1,5 @@
 package CY.cymake.Entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
