@@ -19,9 +19,9 @@ public class TotalService {
     private final DriveService driveService;
     private final ArchiveService archiveService;
     public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException {
-        List<PostListResDto> searchDrive = driveService.searchPost(user, searchBody);
-        List<NewsResDto> searchArchiveCar = archiveService.searchNews("car", searchBody);
-        List<NewsResDto> searchArchiveBeauty = archiveService.searchNews("beauty", searchBody);
+        List<PostListResDto> searchDrive = driveService.totalSearchPost(user, searchBody);
+        List<NewsResDto> searchArchiveCar = archiveService.totalSearchNews("car", searchBody);
+        List<NewsResDto> searchArchiveBeauty = archiveService.totalSearchNews("beauty", searchBody);
 
         return new TotalSearchDto(searchArchiveCar, searchArchiveBeauty, searchDrive);
     }

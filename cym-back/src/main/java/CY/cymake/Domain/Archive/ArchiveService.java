@@ -57,10 +57,7 @@ public class ArchiveService {
      * 뉴스 검색
      */
     public List<NewsResDto> searchNews(String subject, String searchBody) throws IOException {
-        System.out.println(searchBody);
-        System.out.println(subject);
-        List <NewsSearchResultDto> list = openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody);
-        return changeToNewsResDto(list);
+        return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody));
     }
     /*
      * NewsSearchResultDto -> NewsResDto
@@ -72,5 +69,11 @@ public class ArchiveService {
             result.add(newsResDto);
         }
         return result;
+    }
+    /*
+     * TOTAL SEARCH
+     */
+    public List<NewsResDto> totalSearchNews(String subject, String searchBody) throws IOException {
+        return changeToNewsResDto(openSearchService.totalSearchNewsTb("tb_crwl_news", subject, searchBody));
     }
 }
