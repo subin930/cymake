@@ -11,10 +11,11 @@ const token = localStorage.getItem("token");
 const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
-/*const testfun = () => {
-    console.log("testfun played");
-    router.push("/signup");
-};*/
+
+const title = ref('no title');
+const imgUrl = ref(null);
+const newsLink = ref('no link');
+
 const fetchCarNews = async () => {
   subject.value = "car";
   try {
@@ -53,9 +54,7 @@ const setTokenCar = () => {
 const setTokenBeauty = () => {
     localStorage.setItem("contentToken", 1);
 }
-const title = ref('no title');
-const imgUrl = ref(null);
-const newsLink = ref('no link');
+
 
 onMounted(fetchCarNews);
 onMounted(fetchBeautyNews);
