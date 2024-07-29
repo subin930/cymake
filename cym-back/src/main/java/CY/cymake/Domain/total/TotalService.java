@@ -20,11 +20,9 @@ public class TotalService {
     private final ArchiveService archiveService;
     public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException {
         List<PostListResDto> searchDrive = driveService.searchPost(user, searchBody);
-        List<NewsResDto> searchArchive1 = archiveService.searchNews("car", searchBody);
-        List<NewsResDto> searchArchive2 = archiveService.searchNews("beauty", searchBody);
-        // 두 리스트를 하나의 리스트로 합침
-        List<NewsResDto> searchArchive = new ArrayList<>(searchArchive1);
-        searchArchive.addAll(searchArchive2);
-        return new TotalSearchDto(searchArchive, searchDrive);
+        List<NewsResDto> searchArchiveCar = archiveService.searchNews("car", searchBody);
+        List<NewsResDto> searchArchiveBeauty = archiveService.searchNews("beauty", searchBody);
+
+        return new TotalSearchDto(searchArchiveCar, searchArchiveBeauty, searchDrive);
     }
 }
