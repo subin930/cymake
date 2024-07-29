@@ -21,12 +21,21 @@ const handleNewFileUpload = (event) => {
     fileName.value = Newfile.value.name;
   }
 };
+const formatSize = (size) => {
+  return (size  / (1024 * 1024)).toFixed(3); // 3자리 소수점으로 표현
+};
 
 const fileModify = async (close) => {
   const formData = new FormData();
   formData.append('postTitle', title.value);
   formData.append('originalFilename', originalFileName.value);
   formData.append('file', Newfile.value);
+
+  const newFileData = {
+    postTitle: title.value,
+    fileName:Newfile.value ? Newfile.value.name : originalFileName.value,
+    size: Newfile.value ? formatSize(Newfile.value.size) : fileSize.value,
+  }
   try {
     const response = await axios.put(`/v1/drive/edit`, formData, {
       headers: {
@@ -35,7 +44,7 @@ const fileModify = async (close) => {
     });
     console.log(response.data.message);
     resetForm();
-    emit('fileModified');
+    emit('fileModified', { originalFileName, newFileData });
     close(); // 파일 수정 성공 시 Popper 닫기
   } catch (error) {
     console.log(title.value);

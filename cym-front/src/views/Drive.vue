@@ -5,7 +5,7 @@ import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
 import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
 import FileUploadBtn from '@/components/Drive/FileUploadBtn.vue'
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from 'axios'
 
 const token = localStorage.getItem("token");
@@ -21,6 +21,52 @@ const router = useRouter();
   }
 );*/
 const content = ref([]);
+const searchBody = ref('');
+const searchResults = ref([]);
+const totalSize = ref(0);
+const usagePercentage = ref(0);
+
+const handleSearch = async () => {
+    console.log(searchBody.value);
+    if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
+        try {
+            const response = await axios.get('/v1/drive/search', {
+                params: {
+                    searchBody: searchBody.value
+                },
+                headers: {
+                'Authorization': `Bearer ${token}`
+                }
+            });
+            searchResults.value = response.data.content;
+            content.value = searchResults.value;
+        } catch (error) {
+            console.error('Error fetching search results:', error);
+        }
+    } else {
+        searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+    }
+};
+const updateFile = async({ originalFileName, newFileData }) => {
+  const index = content.value.findIndex(item => item.fileName === originalFileName.value);
+  console.log(originalFileName.value);
+  if (index !== -1) {
+    // Create a new object to trigger reactivity
+    content.value[index] = {
+      ...content.value[index],
+      postTitle: newFileData.postTitle,
+      fileName: newFileData.fileName,
+      size: newFileData.size
+    };
+    console.log(content.value[index]);
+  } else {
+    console.error('File not found');
+  }
+};
+
+const removeFile = async(originalFileName) => {
+  content.value = content.value.filter(item => item.fileName !== originalFileName.value);
+};
 
 const fetchData = async () => {
   try {
@@ -29,6 +75,8 @@ const fetchData = async () => {
         'Authorization': `Bearer ${token}`
       }});
     content.value = response.data.content;
+    setTotalSize();
+    setUsagePercentage();
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -38,6 +86,17 @@ onMounted(fetchData);
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+const setTotalSize = () => {
+  totalSize.value = content.value.reduce((total, item) => total + item.size, 0).toFixed(3);
+  console.log(totalSize.value);
+};
+
+const setUsagePercentage = () => {
+  const size = parseFloat(totalSize.value);
+  usagePercentage.value = ((size / 10) * 100).toFixed(2); //데이터가 적은 상태이기에 UI 확인 위해 임의로 10MB로 한계 설정
+  console.log(usagePercentage.value);
 };
 </script>
 
@@ -49,9 +108,10 @@ const formatDate = (dateString) => {
         </div>
         <div class="row d-flex align-items-center justify-content-between m-3">
             <!-- Form element -->
-            <form class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
-                <input type="search" class="form-control" placeholder="search..." aria-label="Search">
-                <button type="button" class="btn btn-outline-secondary">검색</button>
+            <form @submit.prevent="handleSearch" class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
+              <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
+              v-model="searchBody">
+              <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
             </form>
 
             <!-- FileUploadBtn element -->
@@ -59,6 +119,16 @@ const formatDate = (dateString) => {
                 <FileUploadBtn @fileUploaded="fetchData"/>
                 
             </div>
+        </div>
+        <div class="justify-content-start m-3">
+          <div class="row-col-4 d-flex align-items-center m-3">
+          <p class="col-1" style="font-size: .8rem; margin-bottom: 0;">자료실 사용량</p>
+          <p class="col-3 text-end" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 10 MB</p>
+          </div>
+          <div class="progress col-4 m-3" role="progressbar" aria-label="통합 자료실 사용량" aria-valuenow="usagePercentage" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" :style="{ width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
+            <p class="px-1" style="font-size: .8rem;">{{ usagePercentage }}%</p>
+          </div>
         </div>
         <div class="container m-3 d-flex">
             <table class="table table-hover table-bordered">
@@ -84,8 +154,8 @@ const formatDate = (dateString) => {
                         <td>{{  item.id  }}</td>
                         <td>{{ item.username }}</td>
                         <td>{{ formatDate(item.uploadDate) }}</td>
-                        <td><FileModifyBtn :file="item" @fileModified="fetchData"/></td>
-                        <td><FileDeleteBtn :file="item" @fileDeleted="fetchData"/></td>
+                        <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
+                        <td><FileDeleteBtn :file="item" @fileDeleted="removeFile"/></td>
                     </tr>
                 </tbody>
             </table>
