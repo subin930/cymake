@@ -20,7 +20,7 @@ const handleSearch = async () => {
     console.log(searchBody.value);
     if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
         try {
-            const response = await axios.get('/v1/archive/${subject.value}/search', {
+            const response = await axios.get('/v1/archive/total/${subject.value}/search', {
                 params: {
                     searchBody: searchBody.value
                 },
@@ -29,9 +29,12 @@ const handleSearch = async () => {
                 }
             });
             searchResults.value = response.data.content;
+            console.log(response.data.content);
             if (subject.value === "car"){
+                console.log("searched Car");
                 contentCar.value = searchResults.value;
             } else {
+              console.log("searched Beauty");
                 contentBeauty.value = searchResults.value;
             }
         } catch (error) {
@@ -77,12 +80,26 @@ const openModal = (titleVal, imgUrlVal, linkVal) => {
     modalInstance.show();
 };
 
+const setSubject = () => {
+  console.log(contentToken.value);
+  if (contentToken.value =='0') {
+    subject.value = 'car';
+    console.log("set subject car");
+  }
+  else {
+    subject.value = 'beauty';
+    console.log("set subject beauty");
+  }
+  console.log(subject.value);
+}
+
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
 
 onMounted(fetchCarNews);
 onMounted(fetchBeautyNews);
+onMounted(setSubject);
 </script>
 
 <template>
@@ -94,15 +111,15 @@ onMounted(fetchBeautyNews);
         <div class="container m-3">
             <div class="row">
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio1" value="0">
+                    <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio1" value="0" @change="setSubject">
                     <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '0' }" for="btnradio1" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
 
-                    <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio2" value="1">
+                    <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio2" value="1" @change="setSubject">
                     <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '1' }" for="btnradio2" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
                 </div>
             </div>
             <div class="row d-flex align-items-center">
-                <form class="input-group mt-3 mb-3" role="search">
+                <form @submit.prevent="handleSearch" class="input-group mt-3 mb-3" role="search">
                     <input type="search" class="form-control" placeholder="Please input" aria-label="Search"
                     v-model="searchBody">
                     <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
