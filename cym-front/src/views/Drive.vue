@@ -95,7 +95,7 @@ const setTotalSize = () => {
 
 const setUsagePercentage = () => {
   const size = parseFloat(totalSize.value);
-  usagePercentage.value = ((size / 10) * 100).toFixed(2);
+  usagePercentage.value = ((size / 10) * 100).toFixed(2); //데이터가 적은 상태이기에 UI 확인 위해 임의로 10MB로 한계 설정
   console.log(usagePercentage.value);
 };
 </script>
@@ -120,13 +120,16 @@ const setUsagePercentage = () => {
                 
             </div>
         </div>
-        <div class="row d-flex justify-content-start m-2">
-          <div class="progress">
-            <div class="progress-bar" :style="{ width: usagePercentage + '%', backgroundColor: '#7248BD' }" role="progressbar">
-              {{ totalSize }} MB / 3072 MB
-            </div>
+        <div class="justify-content-start m-3">
+          <div class="row-col-4 d-flex align-items-center m-3">
+          <p class="col-1" style="font-size: .8rem; margin-bottom: 0;">자료실 사용량</p>
+          <p class="col-3 text-end" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 10 MB</p>
           </div>
-        </div> 
+          <div class="progress col-4 m-3" role="progressbar" aria-label="통합 자료실 사용량" aria-valuenow="usagePercentage" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" :style="{ width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
+            <p class="px-1" style="font-size: .8rem;">{{ usagePercentage }}%</p>
+          </div>
+        </div>
         <div class="container m-3 d-flex">
             <table class="table table-hover table-bordered">
                 <thead class="table-head">
