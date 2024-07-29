@@ -40,9 +40,10 @@ const router = createRouter({
       component: () => import('@/views/MyPage.vue')
     },
     {
-      path: '/search',
-      name: 'search',
-      component: () => import('@/views/Search.vue')
+      path: '/search/:searchBody',
+      name: 'Search',
+      component: () => import('@/views/Search.vue'),
+      props: true,
     }
   ]
 })

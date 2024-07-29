@@ -6,7 +6,17 @@ const router = useRouter();
 
 const token = ref(localStorage.getItem("token"));
 const username = ref(localStorage.getItem("username"));
+const searchBody = ref('');
 
+const totalSearch = async () => {
+  console.log(searchBody.value);
+  try {
+    router.push(`/search/${searchBody.value}`);
+  }
+  catch (error) {
+      console.error('Failed to navigate:', error);
+  }
+}
 const Logout = () => {
   //다시 로그인창으로 돌아가는
   localStorage.clear();
@@ -38,8 +48,9 @@ const SignUp = () => {
       </div>
   
       <div class="d-flex align-items-center">
-        <form v-if="token !== null" class="w-20 me-1" role="search">
-          <input type="search" class="form-control" placeholder="total search" aria-label="Search">
+        <form  @submit.prevent="totalSearch" v-if="token !== null" class="w-20 me-1" role="search">
+          <input type="search" class="form-control" placeholder="total search" aria-label="Search"
+          v-model="searchBody">
         </form>
         <button v-if="token !== null" type="button" class="btn btn-outline-light me-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;  color: #7248BD;" @click="Search()"><span class="material-symbols-outlined">saved_search</span></button>
         
