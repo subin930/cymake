@@ -127,9 +127,8 @@ public class DriveService {
     /*
      * post 리스트 전송
      */
-    public List<PostListResDto> getPostList(CustomUserInfoDto user) throws IOException, Exception {
+    public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
-        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         System.out.println(directory);
 
@@ -152,7 +151,8 @@ public class DriveService {
     /*
      * post 검색
      */
-    public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws IOException {
+    public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws Exception {
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
 
     }

@@ -189,6 +189,9 @@ public class OpenSearchService {
      * 데이터 추출 및 업로드
      */
     public void bulkUploadData(List<Map<String, Object>> dataList, String tbName, String idField) throws IOException {
+        if(dataList.isEmpty()) {
+            return;
+        }
         BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
 
         for (Map<String, Object> data : dataList) {
@@ -325,69 +328,13 @@ public class OpenSearchService {
      */
     public SearchDriveDto totalSearchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
         SearchDriveDto searchDriveDto = new SearchDriveDto();
-        Set<PostSearchResultDto> resultsSet = new HashSet<>();
-        String company_code = user.getCompanyCode().getCode();
-        System.out.println(company_code);
-        // 파일 이름으로 검색
-        SearchRequest searchRequest1 = SearchRequest.of(s -> s
-                .index(index)
-                .query(q -> q
-                        .bool(b -> b
-                                .must(m -> m
-                                        .wildcard(w -> w
-                                                .field("file_name")
-                                                .value("*" + searchBody + "*")
-                                        )
-                                )
-                        )
-                )
-        );
-
-        // 검색 요청 실행
-        SearchResponse<PostSearchResultDto> searchResponse1 = client.search(searchRequest1, PostSearchResultDto.class);
-
-        // 검색 결과 리스트에 넣기
-        List<Hit<PostSearchResultDto>> hits1 = searchResponse1.hits().hits();
-        for (Hit<PostSearchResultDto> hit : hits1) {
-            if(Objects.requireNonNull(hit.source()).getCompany_code().equals(company_code)) {
-                PostSearchResultDto data = hit.source();
-                resultsSet.add(data);
-            }
-        }
-
-        // post title로 검색
-        SearchRequest searchRequest2 = SearchRequest.of(s -> s
-                .index(index)
-                .query(q -> q
-                        .bool(b -> b
-                                .must(m -> m
-                                        .wildcard(w -> w
-                                                .field("post_title")
-                                                .value("*" + searchBody + "*")
-                                        )
-                                )
-                        )
-                )
-        );
-
-        // 검색 요청 실행
-        SearchResponse<PostSearchResultDto> searchResponse2 = client.search(searchRequest2, PostSearchResultDto.class);
-
-        // 검색 결과 리스트에 넣기
-        List<Hit<PostSearchResultDto>> hits2 = searchResponse2.hits().hits();
-        for (Hit<PostSearchResultDto> hit : hits2) {
-            if(Objects.requireNonNull(hit.source()).getCompany_code().equals(company_code)) {
-                PostSearchResultDto data = hit.source();
-                resultsSet.add(data);
-            }
-        }
-        List<PostSearchResultDto> resultsList = new ArrayList<>(resultsSet);
+        List<PostSearchResultDto> resultsList = searchFileTb(user, index, searchBody);
         // 결과 리스트를 최신순으로 정렬하고 상위 12개만 반환
         searchDriveDto.setPostSearchResultDto(resultsList.stream()
                 .sorted(Comparator.comparing(PostSearchResultDto::getUpload_date).reversed())
                 .limit(10)
                 .collect(Collectors.toList()));
-        searchDriveDto.setNum(resultsSet.size());
+        searchDriveDto.setNum(resultsList.size());
         return searchDriveDto;
     }
 
@@ -397,43 +344,12 @@ public class OpenSearchService {
      */
     public SearchArchiveDto totalSearchNewsTb(String index, String subject, String searchBody) throws IOException {
         SearchArchiveDto searchArchiveDto = new SearchArchiveDto();
-        Set<NewsSearchResultDto> resultsSet = new HashSet<>();
-        /*
-         * 1. title로 검색
-         */
-        SearchRequest searchRequest1 = SearchRequest.of(s -> s
-                .index(index)
-                .query(q -> q
-                        .bool(b -> b
-                                .must(m -> m
-                                        .wildcard(w -> w
-                                                .field("title")
-                                                .value("*" + searchBody + "*")
-                                        )
-                                )
-                                .must(m -> m
-                                        .term(t -> t
-                                                .field("subject")
-                                                .value(FieldValue.of(subject))
-                                        )
-                                )
-                        )
-                )
-        );
-
-        //검색 요청 실행
-        SearchResponse<NewsSearchResultDto> searchResponse1 = client.search(searchRequest1,NewsSearchResultDto.class);
-        //검색 결과 리스트에 넣기
-        List<Hit<NewsSearchResultDto>> hits1 = searchResponse1.hits().hits();
-        for (Hit<NewsSearchResultDto> hit: hits1) {
-            NewsSearchResultDto data = hit.source();
-            resultsSet.add(data);
-        }
-        List<NewsSearchResultDto> resultsList = new ArrayList<>(resultsSet);
+        List<NewsSearchResultDto> resultsList = searchNewsTb(index, subject, searchBody);
+        System.out.println(resultsList);
         searchArchiveDto.setNewsSearchResultDto(resultsList.stream()
                 .limit(12)
                 .collect(Collectors.toList()));
-        searchArchiveDto.setNum(resultsSet.size());
+        searchArchiveDto.setNum(resultsList.size());
         return searchArchiveDto;
     }
 }

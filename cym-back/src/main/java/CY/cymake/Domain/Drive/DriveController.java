@@ -80,7 +80,11 @@ public class DriveController {
      */
     @GetMapping(value = "/search")
     @Operation(description = "post 검색")
-    public CommonResult<List<PostListResDto>> searchPost(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestParam(value = "searchBody") String searchBody) throws IOException {
-        return globalResponseHandler.SendSuccessAndContent(driveService.searchPost(customUserDetails.getUser(), searchBody));
+    public CommonResult<List<PostListResDto>> searchPost(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestParam(value = "searchBody", required = false) String searchBody) throws Exception {
+        if(searchBody == null) {
+            return globalResponseHandler.SendSuccessAndContent(driveService.getPostList(customUserDetails.getUser()));
+        }
+        else
+            return globalResponseHandler.SendSuccessAndContent(driveService.searchPost(customUserDetails.getUser(), searchBody));
     }
 }
