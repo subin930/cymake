@@ -13,7 +13,7 @@ const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
 
-const searchBody = ref('');
+const searchBody = ref(localStorage.getItem("searchBody"));
 const searchResults = ref([]);
 
 const handleSearch = async () => {
@@ -31,11 +31,11 @@ const handleSearch = async () => {
             searchResults.value = response.data.content;
             console.log(response.data.content);
             if (subject.value === "car"){
-                console.log("searched Car");
-                contentCar.value = searchResults.value;
+              console.log("searched Car");
+              contentCar.value = searchResults.value;
             } else {
               console.log("searched Beauty");
-                contentBeauty.value = searchResults.value;
+              contentBeauty.value = searchResults.value;
             }
         } catch (error) {
             console.error('Error fetching search results:', error);
@@ -91,25 +91,38 @@ const setSubject = () => {
     console.log("set subject beauty");
   }
   console.log(subject.value);
+
+  if(searchBody.value !== null) {
+    console.log('has SearchBody: '+searchBody.value);
+    handleSearch();
+  }
 }
 
+//통합 검색에서 더 많은 결과 보기로 넘어온 경우 검색 결과가 바로 뜨도록 하는 함수
+const checkSearch = () => {
+  if(searchBody.value !== null) {
+    console.log('has SearchBody: '+searchBody.value);
+    handleSearch();
+    localStorage.removeItem("searchBody");
+  }
+  else {
+    console.log('no SearchBody');
+    fetchCarNews();
+    fetchBeautyNews();
+  }
+}
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
 
-const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-};
 
-onMounted(fetchCarNews);
-onMounted(fetchBeautyNews);
 onMounted(setSubject);
+onMounted(checkSearch);
 </script>
 
 <template>
     <Header></Header>
-    <div class="container  justify-content-center">        
+    <div class="container  justify-content-center">
         <div class="m-3 mt-4 text-center">
             <p class="fw-bold fs-3">지식아카이브</p>
         </div>
@@ -129,42 +142,38 @@ onMounted(setSubject);
                     v-model="searchBody">
                     <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
                 </form>
-                
+
             </div>
             <div class="container text-start justify-content-between">
                 <div v-if="contentToken =='0'" class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                          <button type="button"
-                          class="btn news-btn text-start"
-                          style="font-size: .8rem; font-weight: bold"
-                          @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
-                            <div class = "news-image-wrapper">
-                              <img :src="carNews.imgUrl" alt="news image" class="news-image">
-                            </div>
-                            <br/>
-                            <p class="news-title ms-1">{{ carNews.title }}</p>
-                            <br/>
-                            <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formatDate(carNews.uploadDate) }}</p>
-                          </button>
+                        <button type="button"
+                        class="btn news-btn text-start"
+                        style="font-size: .8rem; font-weight: bold"
+                        @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
+                        <img :src="carNews.imgUrl" alt="news image" class="news-image">
+                        <br/>
+                        <p class="news-title ms-1">{{ carNews.title }}</p>
+                        <br/>
+                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
+                        </button>
                     </div>
                     </div>
                 </div>
                 <div v-if="contentToken =='1'" class="row g-3">
                     <div v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                          <button type="button"
-                          class="btn news-btn text-start"
-                          style="font-size: .8rem; font-weight: bold"
-                          @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)"> 
-                            <div class = "news-image-wrapper">
-                              <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
-                            </div>
-                            <br/>
-                            <p class="news-title ms-1">{{ beautyNews.title }}</p>
-                            <br/>
-                            <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formatDate(beautyNews.uploadDate) }}</p>
-                          </button>
+                        <button type="button"
+                        class="btn news-btn text-start"
+                        style="font-size: .8rem; font-weight: bold"
+                        @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
+                        <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
+                        <br/>
+                        <p class="news-title ms-1">{{ beautyNews.title }}</p>
+                        <br/>
+                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
+                        </button>
                     </div>
                     </div>
                 </div>
@@ -180,42 +189,18 @@ onMounted(setSubject);
     border-color:#7248BD;
 }
 .news-btn {
-  border-radius: 0px;
-  border-color:#E7E7E9;
+  border-radius: 0;
+  border-color:#6D6D6D;
   display: flex;
   flex-direction: column;
   padding: 0%;
-  width: 100%; /* Set the width of the image */
+  width: 10rem; /* Set the width of the image */
   height: 20rem;
   text-overflow: ellipsis;
 }
-.news-image-wrapper {
-  height: 50%;
-  width: 100%;
-  background-color: #F2F2F2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 .news-image {
-  max-width: 100%;
-  max-height: 100%; /* Set the height of the image */
-  object-fit: cover;
-}
-.news-title {
-  flex: 0 0 auto;
-  font-size: 0.8rem;
-  font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  margin-top: 5px;
-}
-.news-date {
-  flex: 0 0 auto;
-  font-size: 0.6rem;
-  color: #6D6D6D;
-  margin-top: auto;
+  width: 100%; /* Set the width of the image */
+  height: 12rem; /* Set the height of the image */
 }
 .test-btn:hover {
   color: #7248BD; /* 마우스를 올렸을 때의 색상 */
