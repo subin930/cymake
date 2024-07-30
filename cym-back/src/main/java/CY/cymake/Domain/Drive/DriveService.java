@@ -169,11 +169,4 @@ public class DriveService {
         }
         return result;
     }
-    /*
-     * TOTAL SEARCH
-     */
-    public List<PostListResDto> totalSearchPost(CustomUserInfoDto user, String searchBody) throws IOException {
-        return changeToPostList(user, openSearchService.totalSearchFileTb(user, "tb_file", searchBody));
-
-    }
 }

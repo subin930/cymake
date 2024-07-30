@@ -18,12 +18,24 @@ import java.util.List;
 @AllArgsConstructor
 public class TotalSearchDto {
     @NotBlank
+    @Schema(description = "지식 아카이브 검색 결과 개수(car)")
+    private int numCar;
+
+    @NotBlank
     @Schema(description = "지식 아카이브 검색 결과 리스트(car)")
     private List<NewsResDto> archiveCarSearchResult;
 
     @NotBlank
+    @Schema(description = "지식 아카이브 검색 결과 개수(beauty)")
+    private int numBeauty;
+
+    @NotBlank
     @Schema(description = "지식 아카이브 검색 결과 리스트(beauty)")
     private List<NewsResDto> archiveBeautySearchResult;
+
+    @NotBlank
+    @Schema(description = "통합 자료실 검색 결과 개수")
+    private int numDrive;
 
     @NotBlank
     @Schema(description = "통합 자료실 검색 결과 리스트")

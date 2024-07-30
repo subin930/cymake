@@ -2,7 +2,11 @@ package CY.cymake.OpenSearch;
 
 import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
+import CY.cymake.Domain.total.Dto.SearchArchiveDto;
+import CY.cymake.Domain.total.Dto.SearchDriveDto;
+import CY.cymake.Exception.UserNotFoundException;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.mapping.*;
@@ -319,7 +323,8 @@ public class OpenSearchService {
      * 조건: 회사 코드
      * 로 검색
      */
-    public List<PostSearchResultDto> totalSearchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
+    public SearchDriveDto totalSearchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
+        SearchDriveDto searchDriveDto = new SearchDriveDto();
         Set<PostSearchResultDto> resultsSet = new HashSet<>();
         String company_code = user.getCompanyCode().getCode();
         System.out.println(company_code);
@@ -378,17 +383,20 @@ public class OpenSearchService {
         }
         List<PostSearchResultDto> resultsList = new ArrayList<>(resultsSet);
         // 결과 리스트를 최신순으로 정렬하고 상위 12개만 반환
-        return resultsList.stream()
+        searchDriveDto.setPostSearchResultDto(resultsList.stream()
                 .sorted(Comparator.comparing(PostSearchResultDto::getUpload_date).reversed())
                 .limit(10)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        searchDriveDto.setNum(resultsSet.size());
+        return searchDriveDto;
     }
 
     /*
      * 데이터 검색(tb_crwl_news)
      * 1. 뉴스 제목 title
      */
-    public List<NewsSearchResultDto> totalSearchNewsTb(String index, String subject, String searchBody) throws IOException {
+    public SearchArchiveDto totalSearchNewsTb(String index, String subject, String searchBody) throws IOException {
+        SearchArchiveDto searchArchiveDto = new SearchArchiveDto();
         Set<NewsSearchResultDto> resultsSet = new HashSet<>();
         /*
          * 1. title로 검색
@@ -422,9 +430,10 @@ public class OpenSearchService {
             resultsSet.add(data);
         }
         List<NewsSearchResultDto> resultsList = new ArrayList<>(resultsSet);
-        return resultsList.stream()
+        searchArchiveDto.setNewsSearchResultDto(resultsList.stream()
                 .limit(12)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        searchArchiveDto.setNum(resultsSet.size());
+        return searchArchiveDto;
     }
-
 }

@@ -122,7 +122,7 @@ onMounted(checkSearch);
 
 <template>
     <Header></Header>
-    <div class="container  justify-content-center">        
+    <div class="container  justify-content-center">
         <div class="m-3 mt-4 text-center">
             <p class="fw-bold fs-3">지식아카이브</p>
         </div>
@@ -142,14 +142,14 @@ onMounted(checkSearch);
                     v-model="searchBody">
                     <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
                 </form>
-                
+
             </div>
             <div class="container text-start justify-content-between">
                 <div v-if="contentToken =='0'" class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                        <button type="button" 
-                        class="btn news-btn text-start" 
+                        <button type="button"
+                        class="btn news-btn text-start"
                         style="font-size: .8rem; font-weight: bold"
                         @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
                         <img :src="carNews.imgUrl" alt="news image" class="news-image">
@@ -164,8 +164,8 @@ onMounted(checkSearch);
                 <div v-if="contentToken =='1'" class="row g-3">
                     <div v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                        <button type="button" 
-                        class="btn news-btn text-start" 
+                        <button type="button"
+                        class="btn news-btn text-start"
                         style="font-size: .8rem; font-weight: bold"
                         @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
                         <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
@@ -177,7 +177,7 @@ onMounted(checkSearch);
                     </div>
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
     </div>
     <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
