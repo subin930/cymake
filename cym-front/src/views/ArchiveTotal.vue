@@ -2,6 +2,7 @@
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import NewsModal from '@/components/common/NewsModal.vue';
+import NewsItem from '@/components/common/NewsItem.vue';
 import { ref, onMounted, watch } from "vue";
 import axios from 'axios';
 
@@ -115,11 +116,6 @@ const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
 
-const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
 onMounted(setSubject);
 onMounted(checkSearch);
 </script>
@@ -152,36 +148,26 @@ onMounted(checkSearch);
                 <div v-if="contentToken =='0'" class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                        <button type="button"
-                        class="btn news-btn text-start"
-                        style="font-size: .8rem; font-weight: bold"
-                        @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
-                        <div class = "news-image-wrapper">
-                          <img :src="carNews.imgUrl" alt="news image" class="news-image">
-                        </div>
-                        <br/>
-                        <p class="news-title ms-1">{{ carNews.title }}</p>
-                        <br/>
-                        <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formatDate(carNews.uploadDate) }}</p>
-                        </button>
+                          <NewsItem
+                            :title="carNews.title"
+                            :imgUrl="carNews.imgUrl"
+                            :newsLink="carNews.newsLink"
+                            :uploadDate="carNews.uploadDate"
+                            :openModal="openModal"
+                          />
                     </div>
                     </div>
                 </div>
                 <div v-if="contentToken =='1'" class="row g-3">
                     <div v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                        <button type="button"
-                        class="btn news-btn text-start"
-                        style="font-size: .8rem; font-weight: bold"
-                        @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
-                        <div class = "news-image-wrapper">
-                          <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
-                        </div>
-                        <br/>
-                        <p class="news-title ms-1">{{ beautyNews.title }}</p>
-                        <br/>
-                        <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formatDate(beautyNews.uploadDate) }}</p>
-                        </button>
+                          <NewsItem
+                            :title="beautyNews.title"
+                            :imgUrl="beautyNews.imgUrl"
+                            :newsLink="beautyNews.newsLink"
+                            :uploadDate="beautyNews.uploadDate"
+                            :openModal="openModal"
+                          />
                     </div>
                     </div>
                 </div>
@@ -190,48 +176,3 @@ onMounted(checkSearch);
     </div>
     <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
 </template>
-
-<style scoped>
-.news-btn:hover {
-    color: #7248BD;
-    border-color:#7248BD;
-}
-.news-btn {
-  border-radius: 0px;
-  border-color:#E7E7E9;
-  display: flex;
-  flex-direction: column;
-  padding: 0%;
-  width: 100%; /* Set the width of the image */
-  height: 20rem;
-  text-overflow: ellipsis;
-}
-.news-image-wrapper {
-  height: 50%;
-  width: 100%;
-  background-color: #F2F2F2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.news-image {
-  max-width: 100%;
-  max-height: 100%; /* Set the height of the image */
-  object-fit: cover;
-}
-.news-title {
-  flex: 0 0 auto;
-  font-size: 0.8rem;
-  font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  margin-top: 5px;
-}
-.news-date {
-  flex: 0 0 auto;
-  font-size: 0.6rem;
-  color: #6D6D6D;
-  margin-top: auto;
-}
-</style>
