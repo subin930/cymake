@@ -44,9 +44,6 @@ const handleSearch = async () => {
         }
     } else {
         searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
-        fetchCarNews();
-        fetchBeautyNews();
-        setSubject();
     }
 };
 
