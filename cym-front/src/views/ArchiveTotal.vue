@@ -20,7 +20,7 @@ const searchResults = ref([]);
 const handleSearch = async () => {
     console.log(searchBody.value);
     console.log(subject.value);
-    if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
+    //if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
                 params: {
@@ -42,9 +42,9 @@ const handleSearch = async () => {
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
-    } else {
-        searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
-    }
+    //} //else {
+      //  searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+    //}
 };
 
 const fetchCarNews = async () => {
