@@ -19,6 +19,7 @@ const searchResults = ref([]);
 
 const handleSearch = async () => {
     console.log(searchBody.value);
+    console.log(subject.value);
     if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
@@ -110,6 +111,7 @@ const checkSearch = () => {
     console.log('no SearchBody');
     fetchCarNews();
     fetchBeautyNews();
+    setSubject();
   }
 }
 const title = ref('no title');
