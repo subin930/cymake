@@ -13,6 +13,21 @@ const password = ref("");
 const errorMessage = ref("");
 
 const Login = async () => {
+    // Null 또는 빈 값 확인
+    if (!companyCode.value) {
+    errorMessage.value = "회사코드를 입력하세요.";
+    }
+    if (!id.value) {
+        errorMessage.value = "아이디를 입력하세요.";
+    }
+    if (!password.value) {
+        errorMessage.value = "비밀번호를 입력하세요.";
+    }
+
+    // 에러 메시지가 존재하면 서버 요청을 보내지 않음
+    if (errorMessage.value.length > 0) {
+        return;
+    }
     await axios.post(`/v1/auth/login`, {
         companyCode: companyCode.value,
         id: id.value,
@@ -92,8 +107,6 @@ const updatePassword = (event) => {
                         <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
                     </div>
                 </div>
-
-        
     </div>
     
 </template>
