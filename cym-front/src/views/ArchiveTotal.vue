@@ -44,6 +44,9 @@ const handleSearch = async () => {
         }
     } else {
         searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+        fetchCarNews();
+        fetchBeautyNews();
+        setSubject();
     }
 };
 
@@ -102,7 +105,7 @@ const setSubject = () => {
 
 //통합 검색에서 더 많은 결과 보기로 넘어온 경우 검색 결과가 바로 뜨도록 하는 함수
 const checkSearch = () => {
-  if(searchBody.value !== null) {
+  if(searchBody.value !== null  && searchBody.value !== ''  && searchBody.value !== '0') {
     console.log('has SearchBody: '+searchBody.value);
     handleSearch();
     localStorage.removeItem("searchBody");

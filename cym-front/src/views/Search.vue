@@ -34,7 +34,6 @@ const handleSearch = async () => {
                 'Authorization': `Bearer ${token}`
                 }
             });
-            localStorage.setItem("searchBody", searchBody.value);
             contentCar.value = response.data.content.archiveCarSearchResult;
             contentBeauty.value = response.data.content.archiveBeautySearchResult;
             content.value = response.data.content.driveSearchResult;
@@ -59,9 +58,11 @@ const openModal = (titleVal, imgUrlVal, linkVal) => {
 };
 const setTokenCar = () => {
     localStorage.setItem("contentToken", 0);
+    localStorage.setItem("searchBody", searchBody.value);
 }
 const setTokenBeauty = () => {
     localStorage.setItem("contentToken", 1);
+    localStorage.setItem("searchBody", searchBody.value);
 }
 
 //Drive
@@ -69,7 +70,9 @@ const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 };
-
+const setDriveSearch = () => {
+    localStorage.setItem("searchBody", searchBody.value);
+}
 onMounted(handleSearch);
 watch(() => route.params.searchBody, (newSearchBody) => {
   searchBody.value = newSearchBody;
@@ -131,7 +134,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
             </div>
             <div class="row justify-content-between">
                 <p class="col-6 px-1 fw-bold">통합 자료실 {{ contentLength }}</p>
-                <a class="col-2 nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
+                <a class="col-2 nav-link active mt-1 px-2" @click="setDriveSearch" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container drive-container m-3 d-flex">
                 <table class="table table-hover table-bordered">
