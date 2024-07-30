@@ -13,7 +13,7 @@ const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
 
-const searchBody = ref('');
+const searchBody = ref(localStorage.getItem("searchBody"));
 const searchResults = ref([]);
 
 const handleSearch = async () => {
@@ -31,11 +31,11 @@ const handleSearch = async () => {
             searchResults.value = response.data.content;
             console.log(response.data.content);
             if (subject.value === "car"){
-                console.log("searched Car");
-                contentCar.value = searchResults.value;
+              console.log("searched Car");
+              contentCar.value = searchResults.value;
             } else {
               console.log("searched Beauty");
-                contentBeauty.value = searchResults.value;
+              contentBeauty.value = searchResults.value;
             }
         } catch (error) {
             console.error('Error fetching search results:', error);
@@ -91,15 +91,33 @@ const setSubject = () => {
     console.log("set subject beauty");
   }
   console.log(subject.value);
+
+  if(searchBody.value !== null) {
+    console.log('has SearchBody: '+searchBody.value);
+    handleSearch();
+  }
 }
 
+//통합 검색에서 더 많은 결과 보기로 넘어온 경우 검색 결과가 바로 뜨도록 하는 함수
+const checkSearch = () => {
+  if(searchBody.value !== null) {
+    console.log('has SearchBody: '+searchBody.value);
+    handleSearch();
+    localStorage.removeItem("searchBody");
+  }
+  else {
+    console.log('no SearchBody');
+    fetchCarNews();
+    fetchBeautyNews();
+  }
+}
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
 
-onMounted(fetchCarNews);
-onMounted(fetchBeautyNews);
+
 onMounted(setSubject);
+onMounted(checkSearch);
 </script>
 
 <template>

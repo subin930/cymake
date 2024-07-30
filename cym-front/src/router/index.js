@@ -30,7 +30,7 @@ const router = createRouter({
       component: () => import('@/views/Drive.vue')
     },
     {
-      path: '/archive/total',
+      path: '/archive/total/:searchBody?',
       name: 'ArchiveTotal',
       component: () => import('@/views/ArchiveTotal.vue')
     },

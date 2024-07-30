@@ -21,7 +21,7 @@ const router = useRouter();
   }
 );*/
 const content = ref([]);
-const searchBody = ref('');
+const searchBody = ref(localStorage.getItem("searchBody"));
 const searchResults = ref([]);
 const totalSize = ref(0);
 const usagePercentage = ref(0);
@@ -82,7 +82,19 @@ const fetchData = async () => {
   }
 };
 
-onMounted(fetchData);
+const checkSearch = () => {
+  if(searchBody.value !== null) {
+    console.log('has SearchBody: '+searchBody.value);
+    handleSearch();
+    localStorage.removeItem("searchBody");
+  }
+  else {
+    console.log('no SearchBody');
+    fetchData();
+  }
+}
+onMounted(checkSearch);
+
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(dateString).toLocaleDateString(undefined, options);

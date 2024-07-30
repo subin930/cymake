@@ -3,12 +3,16 @@
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import NewsModal from '@/components/common/NewsModal.vue';
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import axios from 'axios'
 
 const token = localStorage.getItem("token");
 const route = useRoute();
 const searchBody = ref(route.params.searchBody);
+const totalLength = ref(0);
+const contentCarLength = computed(() => contentCar.value.length);
+const contentBeautyLength = computed(() => contentBeauty.value.length);
+const contentLength = computed(() => content.value.length);
 //Archive
 const title = ref('no title');
 const imgUrl = ref(null);
@@ -30,10 +34,11 @@ const handleSearch = async () => {
                 'Authorization': `Bearer ${token}`
                 }
             });
-            
+            localStorage.setItem("searchBody", searchBody.value);
             contentCar.value = response.data.content.archiveCarSearchResult;
             contentBeauty.value = response.data.content.archiveBeautySearchResult;
             content.value = response.data.content.driveSearchResult;
+            totalLength.value = contentCar.value.length + contentBeauty.value.length + content.value.length;
             console.log(response.data.content);
         } catch (error) {
             console.error('Error fetching search results:', error);
@@ -52,6 +57,12 @@ const openModal = (titleVal, imgUrlVal, linkVal) => {
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
 };
+const setTokenCar = () => {
+    localStorage.setItem("contentToken", 0);
+}
+const setTokenBeauty = () => {
+    localStorage.setItem("contentToken", 1);
+}
 
 //Drive
 const formatDate = (dateString) => {
@@ -71,12 +82,12 @@ watch(() => route.params.searchBody, (newSearchBody) => {
     <div class="container-fluid m-3">
         <div class="m-3 mt-4 text-center">
             <p class="fw-bold fs-3">"{{ searchBody }}"에 대한 검색 결과</p>
-            <p>0 개의 검색 결과가 있습니다.</p>
+            <p>{{ totalLength }} 개의 검색 결과가 있습니다.</p>
         </div>
         <div>
             <div class="row justify-content-between">
-                <p class="px-1 fw-bold">자동차 산업 정보</p>
-                <a class="nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
+                <p class="col-6 px-1 fw-bold">자동차 산업 정보  {{ contentCarLength }}</p>
+                <a class="col-2 nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between mb-3">
                 <div class="row g-3">
@@ -97,8 +108,8 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </div>
             </div> 
             <div class="row justify-content-between">
-                <p class="px-1 fw-bold">화장품 산업 정보</p>
-                <a class="nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
+                <p class="col-6 px-1 fw-bold">화장품 산업 정보  {{ contentBeautyLength }}</p>
+                <a class="col-2 nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container text-start justify-content-between mb-3">
                 <div class="row g-3">
@@ -119,7 +130,8 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </div>
             </div>
             <div class="row justify-content-between">
-                <p class="px-1 fw-bold">통합 자료실</p>
+                <p class="col-6 px-1 fw-bold">통합 자료실 {{ contentLength }}</p>
+                <a class="col-2 nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container drive-container m-3 d-flex">
                 <table class="table table-hover table-bordered">
@@ -152,6 +164,12 @@ watch(() => route.params.searchBody, (newSearchBody) => {
 </template>
 
 <style scoped>
+.nav-link.active {
+    color: #6D6D6D;
+}
+.nav-link.active:hover {
+    color: #7248BD;
+}
 .btn {
     border-color:#6D6D6D
 }
