@@ -55,6 +55,10 @@ const setTokenBeauty = () => {
     localStorage.setItem("contentToken", 1);
 }
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 
 onMounted(fetchCarNews);
 onMounted(fetchBeautyNews);
@@ -80,11 +84,13 @@ onMounted(fetchBeautyNews);
                         class="btn news-btn text-start" 
                         style="font-size: .8rem; font-weight: bold"
                         @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
-                        <img :src="carNews.imgUrl" alt="news image" class="news-image">
+                        <div class = "news-image-wrapper">
+                          <img :src="carNews.imgUrl" alt="news image" class="news-image">
+                        </div>
                         <br/>
                         <p class="news-title ms-1">{{ carNews.title }}</p>
                         <br/>
-                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
+                        <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formatDate(carNews.uploadDate) }}</p>
                         </button>
                     </div>
                     </div>
@@ -104,11 +110,13 @@ onMounted(fetchBeautyNews);
                         class="btn news-btn text-start" 
                         style="font-size: .8rem; font-weight: bold"
                         @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
-                        <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
+                        <div class = "news-image-wrapper">
+                          <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
+                        </div>
                         <br/>
                         <p class="news-title ms-1">{{ beautyNews.title }}</p>
                         <br/>
-                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
+                        <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formatDate(beautyNews.uploadDate) }}</p>
                         </button>
                     </div>
                     </div>
@@ -139,17 +147,41 @@ onMounted(fetchBeautyNews);
     border-color:#7248BD;
 }
 .news-btn {
-  border-radius: 0;
+  border-radius: 0px;
+  border-color:#E7E7E9;
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
   padding: 0%;
-  width: 10rem; /* Set the width of the image */
+  width: 100%; /* Set the width of the image */
   height: 20rem;
   text-overflow: ellipsis;
 }
+.news-image-wrapper {
+  height: 50%;
+  width: 100%;
+  background-color: #F2F2F2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .news-image {
-  width: 100%; /* Set the width of the image */
-  height: 12rem; /* Set the height of the image */
+  max-width: 100%;
+  max-height: 100%; /* Set the height of the image */
+  object-fit: cover;
+}
+.news-title {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  margin-top: 5px;
+}
+.news-date {
+  flex: 0 0 auto;
+  font-size: 0.6rem;
+  color: #6D6D6D;
+  margin-top: auto;
 }
 </style>
