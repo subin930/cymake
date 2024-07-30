@@ -13,6 +13,7 @@ const password = ref("");
 const errorMessage = ref("");
 
 const Login = async () => {
+    errorMessage.value = "";
     // Null 또는 빈 값 확인
     if (!companyCode.value) {
     errorMessage.value = "회사코드를 입력하세요.";
