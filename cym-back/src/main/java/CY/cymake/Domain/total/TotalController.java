@@ -1,6 +1,8 @@
 package CY.cymake.Domain.total;
 
 import CY.cymake.Domain.total.Dto.TotalSearchDto;
+import CY.cymake.OpenSearch.DataExtractor;
+import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Response.CommonResult;
 import CY.cymake.Response.GlobalResponseHandler;
 import CY.cymake.Security.CustomUserDetails;
@@ -23,10 +25,14 @@ import java.io.IOException;
 public class TotalController {
     private final GlobalResponseHandler globalResponseHandler;
     private final TotalService totalService;
+    private final OpenSearchService openSearchService;
+    private final DataExtractor dataExtractor;
 
     @GetMapping(value = "/search")
     @Operation(description = "통합 검색")
-    public CommonResult<TotalSearchDto> searchTotal(@AuthenticationPrincipal CustomUserDetails user, @Valid @RequestParam(value = "searchBody") String searchBody) throws IOException {
+    public CommonResult<TotalSearchDto> searchTotal(@AuthenticationPrincipal CustomUserDetails user, @Valid @RequestParam(value = "searchBody") String searchBody) throws Exception {
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
+        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
         return globalResponseHandler.SendSuccessAndContent(totalService.searchTotal(user.getUser(), searchBody));
     }
 }

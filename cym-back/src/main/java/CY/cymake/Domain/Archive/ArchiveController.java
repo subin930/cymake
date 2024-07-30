@@ -41,7 +41,11 @@ public class    ArchiveController {
      */
     @Operation(description = "주제 별 뉴스 기사 검색")
     @GetMapping(value = "/total/{subject}/search")
-    public CommonResult<List<NewsResDto>> searchNews(@PathVariable(value = "subject") String subject, @RequestParam(value = "searchBody") String searchBody) throws IOException {
-        return globalResponseHandler.SendSuccessAndContent(archiveService.searchNews(subject, searchBody));
+    public CommonResult<List<NewsResDto>> searchNews(@PathVariable(value = "subject") String subject, @RequestParam(value = "searchBody", required = false) String searchBody) throws Exception {
+        if(searchBody == null) {
+            return globalResponseHandler.SendSuccessAndContent(archiveService.getTotalNews(subject));
+        }
+        else
+            return globalResponseHandler.SendSuccessAndContent(archiveService.searchNews(subject, searchBody));
     }
 }

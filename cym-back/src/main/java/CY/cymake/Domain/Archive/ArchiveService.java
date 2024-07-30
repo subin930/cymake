@@ -24,7 +24,6 @@ public class ArchiveService {
 
     public List<NewsResDto> getTotalNews(String subject) throws IOException, Exception {
         //openSearchService.deleteNewsIndex(); //test 용. 실제 코드에서는 삭제
-        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
         List<CrwlNewsEntity> total = crwlNewsRepository.findBySubjectOrderByUploadDateDesc(subject);
         List<NewsResDto> list = new ArrayList<>();
         for(CrwlNewsEntity news: total) {
@@ -56,7 +55,8 @@ public class ArchiveService {
     /*
      * 뉴스 검색
      */
-    public List<NewsResDto> searchNews(String subject, String searchBody) throws IOException {
+    public List<NewsResDto> searchNews(String subject, String searchBody) throws Exception, IOException {
+        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
         return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody));
     }
     /*

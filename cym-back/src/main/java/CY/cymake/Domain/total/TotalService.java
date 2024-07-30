@@ -32,8 +32,8 @@ public class TotalService {
 
     public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException {
         SearchDriveDto searchDrive = openSearchService.totalSearchFileTb(user, "tb_file", searchBody);
-        SearchArchiveDto searchArchiveCar = openSearchService.totalSearchNewsTb("tb_file", "car", searchBody);
-        SearchArchiveDto searchArchiveBeauty = openSearchService.totalSearchNewsTb("tb_file", "beauty", searchBody);
+        SearchArchiveDto searchArchiveCar = openSearchService.totalSearchNewsTb("tb_crwl_news", "car", searchBody);
+        SearchArchiveDto searchArchiveBeauty = openSearchService.totalSearchNewsTb("tb_crwl_news", "beauty", searchBody);
 
         return new TotalSearchDto(searchArchiveCar.getNum(), changeToNewsResDto(searchArchiveCar.getNewsSearchResultDto()),
                 searchArchiveBeauty.getNum(), changeToNewsResDto(searchArchiveBeauty.getNewsSearchResultDto()),
