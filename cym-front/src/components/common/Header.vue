@@ -41,7 +41,7 @@ const SignUp = () => {
 
 
 <template>
-    <header class="d-flex flex-wrap align-items-center justify-content-between px-3 py-2 border-bottom" style="background-color: #FFFFFF;">
+    <header class="d-flex flex-wrap align-items-center justify-content-between px-3 py-2 border-bottom fixed-header" style="background-color: #FFFFFF;">
       <div class="d-flex align-items-center">
         <a href="/archive">
             <img src="@/assets/CYMAKE.jpg" style="height: 3rem;"/>
@@ -72,9 +72,25 @@ const SignUp = () => {
         </div>
       </div>
     </header>
+    <div class="content-wrapper">
+    <slot></slot> <!-- 메인 콘텐츠가 들어갈 자리 -->
+    </div>
 </template>
 
 <style scoped>
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 65px;
+  background-color: #fff; /* 배경색 */
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* 다른 콘텐츠보다 위에 위치하게 설정 */
+}
+.content-wrapper {
+  margin-top: 85px; /* 헤더의 높이만큼 추가 */
+}
 .nav-link.active {
   color: #3b3b3b;
 }
