@@ -10,11 +10,16 @@ const searchBody = ref('');
 
 const totalSearch = async () => {
   console.log(searchBody.value);
-  try {
-    router.push(`/search/${searchBody.value}`);
-  }
-  catch (error) {
+  if(searchBody.value && searchBody.value.trim() !== ''){
+    try {
+      router.push(`/search/${searchBody.value}`);
+    }
+    catch (error) {
       console.error('Failed to navigate:', error);
+    }
+  }
+  else {
+    console.log('searchBody has no value')
   }
 }
 const Logout = () => {

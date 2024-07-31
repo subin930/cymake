@@ -10,10 +10,10 @@ import axios from 'axios'
 const token = localStorage.getItem("token");
 const route = useRoute();
 const searchBody = ref(route.params.searchBody);
-const totalLength = ref(0);
-const contentCarLength = computed(() => contentCar.value.length);
-const contentBeautyLength = computed(() => contentBeauty.value.length);
-const contentLength = computed(() => content.value.length);
+const numTotal = ref(0);
+const numCar = ref(0);
+const numBeauty = ref(0);
+const numDrive = ref(0);
 //Archive
 const title = ref('no title');
 const imgUrl = ref(null);
@@ -38,7 +38,10 @@ const handleSearch = async () => {
             contentCar.value = response.data.content.archiveCarSearchResult;
             contentBeauty.value = response.data.content.archiveBeautySearchResult;
             content.value = response.data.content.driveSearchResult;
-            totalLength.value = contentCar.value.length + contentBeauty.value.length + content.value.length;
+            numCar.value = response.data.content.numCar;
+            numBeauty.value = response.data.content.numBeauty;
+            numDrive.value = response.data.content.numDrive;
+            numTotal.value = numCar.value + numBeauty.value + numDrive.value;
             console.log(response.data.content);
         } catch (error) {
             console.error('Error fetching search results:', error);
@@ -86,11 +89,11 @@ watch(() => route.params.searchBody, (newSearchBody) => {
     <div class="container-fluid m-3">
         <div class="m-3 mt-4 text-center">
             <p class="fw-bold fs-3">"{{ searchBody }}"에 대한 검색 결과</p>
-            <p>{{ totalLength }} 개의 검색 결과가 있습니다.</p>
+            <p>{{ numTotal }} 개의 검색 결과가 있습니다.</p>
         </div>
         <div>
             <div class="row justify-content-between">
-                <p class="col-6 px-1 fw-bold">자동차 산업 정보  {{ contentCarLength }}</p>
+                <p class="col-6 px-1 fw-bold">자동차 산업 정보  {{ numCar }}</p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between mb-3">
@@ -109,7 +112,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </div>
             </div> 
             <div class="row justify-content-between">
-                <p class="col-6 px-1 fw-bold">화장품 산업 정보  {{ contentBeautyLength }}</p>
+                <p class="col-6 px-1 fw-bold">화장품 산업 정보  {{ numBeauty }}</p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container text-start justify-content-between mb-3">
@@ -128,7 +131,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </div>
             </div>
             <div class="row justify-content-between">
-                <p class="col-6 px-1 fw-bold">통합 자료실 {{ contentLength }}</p>
+                <p class="col-6 px-1 fw-bold">통합 자료실 {{ numDrive }}</p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setDriveSearch" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container drive-container m-3 d-flex">
