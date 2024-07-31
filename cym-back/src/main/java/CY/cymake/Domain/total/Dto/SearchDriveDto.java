@@ -18,10 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 public class SearchDriveDto {
     @NotBlank
-    @Schema(description = "지식 아카이브 검색 결과 개수")
+    @Schema(description = "통합 자료실 검색 결과 개수")
     private int num;
 
     @NotBlank
-    @Schema(description = "지식 아카이브 검색 결과 리스트")
+    @Schema(description = "통합 자료실 검색 결과 리스트")
     List<PostSearchResultDto> postSearchResultDto;
 }

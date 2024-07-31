@@ -3,6 +3,7 @@
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import NewsModal from '@/components/common/NewsModal.vue';
+import NewsItem from '@/components/common/NewsItem.vue';
 import { ref, onMounted, watch, computed } from "vue";
 import axios from 'axios'
 
@@ -96,16 +97,13 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 <div class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                        <button type="button" 
-                        class="btn news-btn text-start" 
-                        style="font-size: .8rem; font-weight: bold"
-                        @click="openModal(carNews.title, carNews.imgUrl, carNews.newsLink)">
-                        <img :src="carNews.imgUrl" alt="news image" class="news-image">
-                        <br/>
-                        <p class="news-title ms-1">{{ carNews.title }}</p>
-                        <br/>
-                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ carNews.uploadDate }}</p>
-                        </button>
+                        <NewsItem
+                            :title="carNews.title"
+                            :imgUrl="carNews.imgUrl"
+                            :newsLink="carNews.newsLink"
+                            :uploadDate="carNews.uploadDate"
+                            :openModal="openModal"
+                          />
                     </div>
                     </div>
                 </div>
@@ -118,16 +116,13 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 <div class="row g-3">
                     <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
-                        <button type="button" 
-                        class="btn news-btn text-start" 
-                        style="font-size: .8rem; font-weight: bold"
-                        @click="openModal(beautyNews.title, beautyNews.imgUrl, beautyNews.newsLink)">
-                        <img :src="beautyNews.imgUrl" alt="news image" class="news-image">
-                        <br/>
-                        <p class="news-title ms-1">{{ beautyNews.title }}</p>
-                        <br/>
-                        <p class="ms-1" style="font-size: .6rem; font-weight:normal">{{ beautyNews.uploadDate }}</p>
-                        </button>
+                            <NewsItem
+                            :title="beautyNews.title"
+                            :imgUrl="beautyNews.imgUrl"
+                            :newsLink="beautyNews.newsLink"
+                            :uploadDate="beautyNews.uploadDate"
+                            :openModal="openModal"
+                          />
                     </div>
                     </div>
                 </div>
