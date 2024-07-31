@@ -88,12 +88,12 @@ watch(() => route.params.searchBody, (newSearchBody) => {
     <Header></Header>
     <div class="container-fluid m-3">
         <div class="m-3 mt-4 text-center">
-            <p class="fw-bold fs-3">"{{ searchBody }}"에 대한 검색 결과</p>
-            <p>{{ numTotal }} 개의 검색 결과가 있습니다.</p>
+            <p class="fw-bold fs-3"><span style = "color: #7248BD;">"{{ searchBody }}"</span>에 대한 검색 결과</p>
+            <p><span style = "color: #7248BD;">{{ numTotal }}</span> 개의 검색 결과가 있습니다.</p>
         </div>
         <div>
             <div class="row justify-content-between">
-                <p class="col-6 px-1 fw-bold">자동차 산업 정보  {{ numCar }}</p>
+                <p class="col-6 px-1 fw-bold">자동차 산업 정보    <span style = "color: #7248BD;">{{ numCar }}</span></p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container text-center justify-content-between mb-3">
@@ -112,7 +112,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </div>
             </div> 
             <div class="row justify-content-between">
-                <p class="col-6 px-1 fw-bold">화장품 산업 정보  {{ numBeauty }}</p>
+                <p class="col-6 px-1 fw-bold">화장품 산업 정보  <span style = "color: #7248BD;">{{ numBeauty }}</span></p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container text-start justify-content-between mb-3">
@@ -131,7 +131,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </div>
             </div>
             <div class="row justify-content-between">
-                <p class="col-6 px-1 fw-bold">통합 자료실 {{ numDrive }}</p>
+                <p class="col-6 px-1 fw-bold">통합 자료실  <span style = "color: #7248BD;">{{ numDrive }}</span></p> 
                 <a class="col-2 nav-link active mt-1 px-2" @click="setDriveSearch" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
             <div class="container drive-container m-3 d-flex">
