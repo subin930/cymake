@@ -115,8 +115,8 @@ const setUsagePercentage = () => {
 
 <template>
     <Header></Header>
-    <div class="container-fluid">        
-        <div class="m-3 mt-4">
+    <div class="container-fluid" style="background-color: #F5F6FA;">        
+        <div class="m-3 mt-4 title">
             <p class="fw-bold fs-3">통합 자료실</p>
         </div>
         <div class="row d-flex align-items-center justify-content-between m-3">
@@ -178,6 +178,9 @@ const setUsagePercentage = () => {
 </template>
 
 <style scoped>
+.title {
+  padding: 20px;
+}
 .table {
     font-size: .8rem;
 }

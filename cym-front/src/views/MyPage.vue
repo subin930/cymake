@@ -22,8 +22,8 @@ const OpenChangeModal = () => {
 
 <template>
     <Header></Header>
-    <div class="container text-center align-items-center justify-content-between">        
-        <div class="m-3 mt-4">
+    <div class="container text-center align-items-center justify-content-between" style="background-color: #F5F6FA;">        
+        <div class="m-3 mt-4 title">
             <p class="fw-bold fs-3">나의 정보</p>
         </div>
 
@@ -67,3 +67,9 @@ const OpenChangeModal = () => {
     </div>
     <PasswordChangeModal></PasswordChangeModal>
 </template>
+
+<style scoped>
+.title {
+    padding: 20px;
+}
+</style>

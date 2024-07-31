@@ -89,7 +89,7 @@ const SignUp = () => {
   z-index: 1000; /* 다른 콘텐츠보다 위에 위치하게 설정 */
 }
 .content-wrapper {
-  margin-top: 85px; /* 헤더의 높이만큼 추가 */
+  margin-top: 65px; /* 헤더의 높이만큼 추가 */
   
 }
 .nav-link.active {

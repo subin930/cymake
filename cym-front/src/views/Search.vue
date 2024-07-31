@@ -86,8 +86,8 @@ watch(() => route.params.searchBody, (newSearchBody) => {
 
 <template>
     <Header></Header>
-    <div class="container-fluid m-3">
-        <div class="m-3 mt-4 text-center">
+    <div class="container-fluid m-3" style="background-color: #F5F6FA;">
+        <div class="m-3 mt-4 text-center title">
             <p class="fw-bold fs-3">"{{ searchBody }}"에 대한 검색 결과</p>
             <p>{{ numTotal }} 개의 검색 결과가 있습니다.</p>
         </div>
@@ -165,6 +165,9 @@ watch(() => route.params.searchBody, (newSearchBody) => {
 </template>
 
 <style scoped>
+.title {
+    padding: 20px;
+}
 .nav-link.active {
     color: #6D6D6D;
 }

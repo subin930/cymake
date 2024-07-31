@@ -63,8 +63,8 @@ onMounted(fetchBeautyNews);
 <template>
     <Header></Header>
     
-    <div class="container-fluid">        
-        <div class="m-3 mt-4 text-center">
+    <div class="container-fluid" style="background-color: #F5F6FA;">        
+        <div class="m-3 mt-4 text-center title">
             <p class="fw-bold fs-3">지식아카이브</p>
         </div>
         <div class="container m-3">
@@ -115,6 +115,9 @@ onMounted(fetchBeautyNews);
 </template>
 
 <style scoped>
+.title {
+  padding: 20px;
+}
 .nav-link.active {
     color: #6D6D6D;
 }
