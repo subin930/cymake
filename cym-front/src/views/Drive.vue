@@ -28,7 +28,7 @@ const usagePercentage = ref(0);
 
 const handleSearch = async () => {
     console.log(searchBody.value);
-    if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
+    if (searchBody.value && searchBody.value.trim() !== '') { // 최소 1글자 이상일 때 검색
         try {
             const response = await axios.get('/v1/drive/search', {
                 params: {
@@ -45,6 +45,7 @@ const handleSearch = async () => {
         }
     } else {
         searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+        fetchData();
     }
 };
 const updateFile = async({ originalFileName, newFileData }) => {
@@ -83,7 +84,7 @@ const fetchData = async () => {
 };
 
 const checkSearch = () => {
-  if(searchBody.value !== null) {
+  if(searchBody.value && searchBody.value.trim() !== '') {
     console.log('has SearchBody: '+searchBody.value);
     handleSearch();
     localStorage.removeItem("searchBody");

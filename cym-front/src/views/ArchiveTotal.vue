@@ -20,7 +20,7 @@ const searchResults = ref([]);
 const handleSearch = async () => {
     console.log(searchBody.value);
     console.log(subject.value);
-    //if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
+    if (searchBody.value && searchBody.value.trim() !== '') { // 빈 값이 아닐 때
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
                 params: {
@@ -42,9 +42,12 @@ const handleSearch = async () => {
         } catch (error) {
             console.error('Error fetching search results:', error);
         }
-    //} //else {
-      //  searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
-    //}
+    } else {
+      console.log('no SearchBody - handleSearch');
+      fetchCarNews();
+      fetchBeautyNews();
+      setSubject();
+    }
 };
 
 const fetchCarNews = async () => {
@@ -94,7 +97,7 @@ const setSubject = () => {
   }
   console.log(subject.value);
 
-  if(searchBody.value !== null) {
+  if(searchBody.value && searchBody.value.trim() !== '') {
     console.log('has SearchBody: '+searchBody.value);
     handleSearch();
   }
@@ -102,7 +105,7 @@ const setSubject = () => {
 
 //통합 검색에서 더 많은 결과 보기로 넘어온 경우 검색 결과가 바로 뜨도록 하는 함수
 const checkSearch = () => {
-  if(searchBody.value !== null  && searchBody.value !== ''  && searchBody.value !== '0') {
+  if(searchBody.value && searchBody.value.trim() !== '') {
     console.log('has SearchBody: '+searchBody.value);
     handleSearch();
     localStorage.removeItem("searchBody");
