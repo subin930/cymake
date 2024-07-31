@@ -168,27 +168,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
 .nav-link.active:hover {
     color: #7248BD;
 }
-.btn {
-    border-color:#6D6D6D
-}
-.btn:hover {
-    color: #7248BD;
-    border-color:#7248BD;
-}
-.news-btn {
-  border-radius: 0;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  padding: 0%;
-  width: 10rem; /* Set the width of the image */
-  height: 20rem;
-  text-overflow: ellipsis;
-}
-.news-image {
-  width: 100%; /* Set the width of the image */
-  height: 12rem; /* Set the height of the image */
-}
+
 .table {
     font-size: .8rem;
 }
