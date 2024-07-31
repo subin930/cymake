@@ -90,6 +90,7 @@ const SignUp = () => {
 }
 .content-wrapper {
   margin-top: 85px; /* 헤더의 높이만큼 추가 */
+  
 }
 .nav-link.active {
   color: #3b3b3b;

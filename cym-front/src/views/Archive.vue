@@ -94,7 +94,7 @@ onMounted(fetchBeautyNews);
                     <a class="nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div class="container text-start justify-content-between">
-                <div class="row g-3">
+                <div class="row">
                     <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
                           <NewsItem
