@@ -74,7 +74,7 @@ const updatePassword = (event) => {
 
 <template>
     <InitialHeader></InitialHeader>
-    <div class="container-sm text-center" style="background-color: #F5F6FA;">        
+    <div class="container-sm text-center">        
         <div class="m-3 mt-4 title">
             <p class="fw-bold fs-3">로그인</p>
         </div>
@@ -113,7 +113,4 @@ const updatePassword = (event) => {
 </template>
 
 <style scoped>
-.title {
-    padding: 20px;
-}
 </style>

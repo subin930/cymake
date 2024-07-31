@@ -63,7 +63,7 @@ onMounted(fetchBeautyNews);
 <template>
     <Header></Header>
     
-    <div class="container-fluid" style="background-color: #F5F6FA;">        
+    <div class="container-fluid">        
         <div class="m-3 mt-4 text-center title">
             <p class="fw-bold fs-3">지식아카이브</p>
         </div>

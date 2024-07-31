@@ -115,7 +115,7 @@ const setUsagePercentage = () => {
 
 <template>
     <Header></Header>
-    <div class="container-fluid" style="background-color: #F5F6FA;">        
+    <div class="container-fluid">        
         <div class="m-3 mt-4 title">
             <p class="fw-bold fs-3">통합 자료실</p>
         </div>

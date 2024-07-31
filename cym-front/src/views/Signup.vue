@@ -57,7 +57,7 @@ const Signup = handleSubmit(async (values) => {
 
 <template>
     <InitialHeader></InitialHeader>
-    <div class="container-sm" style="background-color: #F5F6FA;">
+    <div class="container-sm">
         <div class="m-3 mt-4 title">
             <p class="fw-bold fs-3">회원가입</p>
         </div>

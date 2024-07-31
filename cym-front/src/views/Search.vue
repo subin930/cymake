@@ -106,7 +106,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                             :newsLink="carNews.newsLink"
                             :uploadDate="carNews.uploadDate"
                             :openModal="openModal"
-                          />
+                        />
                     </div>
                     </div>
                 </div>
@@ -161,7 +161,8 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 </table>
             </div>
         </div>
-    </div>    
+    </div>
+    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>    
 </template>
 
 <style scoped>

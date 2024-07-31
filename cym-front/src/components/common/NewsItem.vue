@@ -42,6 +42,7 @@
 .news-btn {
   border-radius: 0px;
   border-color:#E7E7E9;
+  background-color: #FFFFFF;
   display: flex;
   flex-direction: column;
   padding: 0%;
