@@ -11,6 +11,7 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.mapping.*;
 import org.opensearch.client.opensearch.core.*;
+import org.opensearch.client.opensearch.core.bulk.BulkResponseItem;
 import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.opensearch.indices.CreateIndexRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexRequest;
@@ -64,7 +65,7 @@ public class OpenSearchService {
                         .properties("news_id", new Property.Builder().long_(new LongNumberProperty.Builder().build()).build())
                         .properties("img_url", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("news_link", new Property.Builder().text(new TextProperty.Builder().build()).build())
-                        .properties("subject", new Property.Builder().date(new DateProperty.Builder().build()).build())
+                        .properties("subject", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("title", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("upload_date", new Property.Builder().date(new DateProperty.Builder().format("strict_date_optional_time||epoch_millis").build()).build())
                         .properties("url", new Property.Builder().text(new TextProperty.Builder().build()).build())
@@ -207,7 +208,12 @@ public class OpenSearchService {
 
         BulkResponse bulkResponse = client.bulk(bulkRequestBuilder.build());
         if (bulkResponse.errors()) {
-            System.out.println("Bulk upload failed with errors: " + bulkResponse);
+            System.out.println("Bulk upload failed with errors:");
+            for (BulkResponseItem item : bulkResponse.items()) {
+                if (item.error() != null) {
+                    System.err.println("Error indexing document ID " + item.id() + ": " + item.error().reason());
+                }
+            }
         } else {
             System.out.println("Bulk upload succeeded.");
         }
