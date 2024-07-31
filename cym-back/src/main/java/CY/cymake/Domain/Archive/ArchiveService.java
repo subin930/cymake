@@ -56,7 +56,6 @@ public class ArchiveService {
      * 뉴스 검색
      */
     public List<NewsResDto> searchNews(String subject, String searchBody) throws Exception, IOException {
-        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
         return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody));
     }
     /*

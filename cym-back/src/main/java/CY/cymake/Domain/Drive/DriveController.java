@@ -34,17 +34,20 @@ public class DriveController {
     public CommonResult<String> upload(
             @Parameter(required = true, description = "파일 업로드 요청 정보") @Valid @RequestPart(value = "file") MultipartFile multipartFile, @Valid @RequestPart(value = "title") String postTitle,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
-    ) throws IOException {
+    ) throws IOException, Exception {
         return globalResponseHandler.SendSuccessAndContent(driveService.uploadFile(customUserDetails.getUser(), multipartFile, postTitle));
     }
     /*
      * 파일 다운로드
      */
+    /*
     @GetMapping(value = "/download")
     @Operation(description = "파일 다운로드")
     public ResponseEntity<byte[]> download(@RequestParam(value = "filename") String filename, @AuthenticationPrincipal CustomUserDetails user) throws IOException{
         return driveService.download(user.getUser(), filename);
     }
+
+     */
     /*
      * 파일 삭제
      */

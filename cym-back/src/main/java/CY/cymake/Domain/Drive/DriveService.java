@@ -33,7 +33,7 @@ public class DriveService {
     private final OpenSearchService openSearchService;
     private final DataExtractor dataExtractor;
 
-    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException {
+    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
         if(siteUser.isEmpty()) {
             throw new UserNotFoundException("파일 업로드에 실패했습니다.");
@@ -53,15 +53,19 @@ public class DriveService {
                 .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
                 .build();
         fileRepository.save(file);
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         return fileUrl;
     }
     /*
      * 파일 다운로드
      */
+    /*
     public ResponseEntity<byte[]> download(CustomUserInfoDto user, String filename) throws IOException {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         return s3Service.download(directory, filename);
     }
+
+     */
     /*
      * 파일 삭제
      */
@@ -76,6 +80,8 @@ public class DriveService {
             //일치하지 않을 경우
             throw new FileDeleteFailedException("파일 삭제에 실패하였습니다.");
         }
+        //opensearch 인덱스에서 삭제
+        openSearchService.deleteFileData(file.getId());
 
         //3. s3에서 삭제 로직 수행
         s3Service.deleteFile(directory, filename);
@@ -106,6 +112,7 @@ public class DriveService {
         //3. db수정
         file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())));
         fileRepository.save(file);
+        //openSearchService.upsertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, Timestamp.valueOf(LocalDateTime.now()), postTitle, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), file.getUploadDate(), file.getCompanyCode().getCode(), file.getUploader().getId());
     }
 
     /*
@@ -152,7 +159,6 @@ public class DriveService {
      * post 검색
      */
     public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws Exception {
-        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
 
     }

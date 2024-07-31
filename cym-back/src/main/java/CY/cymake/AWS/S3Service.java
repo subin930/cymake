@@ -123,7 +123,7 @@ public class S3Service {
         DecimalFormat df = new DecimalFormat("#.###");
         return Double.parseDouble(df.format(size));
     }
-
+/*
     public ResponseEntity<byte[]> download(String directory, String filename) throws IOException {
         String path = directory + filename;
         S3Object awsS3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
@@ -134,10 +134,9 @@ public class S3Service {
         httpHeaders.setContentType(MediaType.parseMediaType(awsS3Object.getObjectMetadata().getContentType()));
         httpHeaders.setContentLength(bytes.length);
         httpHeaders.setContentDispositionFormData("attachment", downloadedFileName);
-
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
     }
-
+ */
     /*
      * 파일 삭제
      */
