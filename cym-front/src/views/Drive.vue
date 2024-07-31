@@ -146,7 +146,7 @@ const setUsagePercentage = () => {
         <div class="container m-3 d-flex">
             <table class="table table-hover table-bordered">
                 <thead class="table-head">
-                    <tr>
+                    <tr class="table-light">
                     <th scope="col"> </th>
                     <th scope="col">제목</th>
                     <th scope="col">파일명</th>
@@ -180,6 +180,9 @@ const setUsagePercentage = () => {
 <style scoped>
 .table {
     font-size: .8rem;
+}
+.table-head {
+  background-color:antiquewhite
 }
 .container {
     overflow-y: scroll;
