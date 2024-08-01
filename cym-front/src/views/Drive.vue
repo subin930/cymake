@@ -119,7 +119,7 @@ const setUsagePercentage = () => {
         <div class="m-3 mt-4 title">
             <p class="fw-bold fs-3">통합 자료실</p>
         </div>
-        <div class="row d-flex align-items-center justify-content-between m-3">
+        <div class="row d-flex align-items-center justify-content-between m-3"  style="border-top-width: 1px; border-top-style: solid; border-top-color: #DFE0E0;border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #DFE0E0;">
             <!-- Form element -->
             <form @submit.prevent="handleSearch" class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
               <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
