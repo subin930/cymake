@@ -58,6 +58,9 @@
   justify-content: center;
   align-items: center;
 }
+.news-image-wrapper:hover {
+  color: black; /* 마우스 오버 시에도 글자색을 검정색으로 유지 */
+}
 .news-image {
   max-width: 100%;
   max-height: 100%; /* Set the height of the image */

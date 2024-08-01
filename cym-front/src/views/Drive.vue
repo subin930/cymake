@@ -128,7 +128,7 @@ const setUsagePercentage = () => {
               <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
               v-model="searchBody">
               <button type="button" class="btn btn-outline-secondary" 
-              style="border-color:darkgray" @click="handleSearch">검색</button>
+              style="border-color:#D6D8DB" @click="handleSearch">검색</button>
             </form>
 
             <!-- FileUploadBtn element -->
@@ -137,20 +137,18 @@ const setUsagePercentage = () => {
                 
             </div>
         </div>
-        <div class="justify-content-start m-3">
-          <div class="row-col-4 d-flex align-items-center m-3">
-          <p class="col-1" style="font-size: .8rem; margin-bottom: 0;">자료실 사용량</p>
-          <p class="col-3 text-end" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 10 MB</p>
+        <div class="container d-flex justify-content-start align-items-center ms-4 me-4" style="background-color: #EAECF0; padding: 15px 0; border-radius: 10px;">
+          <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">자료실 사용량</p>
+          <div class="progress col-3" style="vertical-align: middle; background-color:#DDDDDD;" role="progressbar" aria-label="통합 자료실 사용량" aria-valuenow="usagePercentage" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" :style=" { width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
+            <p class="px-1" style="font-size: .7rem; font-weight: bold; color:#FFFFFF">{{ usagePercentage }}%</p>
           </div>
-          <div class="progress col-4 m-3" role="progressbar" aria-label="통합 자료실 사용량" aria-valuenow="usagePercentage" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" :style="{ width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
-            <p class="px-1" style="font-size: .8rem;">{{ usagePercentage }}%</p>
-          </div>
+          <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 10 MB</p>
         </div>
-        <div class="container m-3 d-flex">
+        <div class="container table-wrapper m-3 mt-4 d-flex">
             <table class="table table-hover table-bordered border-light-subtle">
                 <thead class="table-head">
-                    <tr class="table-light">
+                    <tr class="table-light border-light-subtle">
                     <th scope="col"> </th>
                     <th scope="col">제목</th>
                     <th scope="col">파일명</th>
@@ -183,15 +181,17 @@ const setUsagePercentage = () => {
 
 <style scoped>
 .title {
-  padding: 20px;
+  padding-top: 20px;
+  padding-left: 20px;
 }
 .table {
-    font-size: .8rem;
+  font-size: .7rem;
+  vertical-align: middle;
 }
 .table-head {
   background-color:antiquewhite
 }
-.container {
+.table-wrapper {
     overflow-y: scroll;
     max-height: 60vh;
 }
@@ -201,5 +201,8 @@ const setUsagePercentage = () => {
 }
 .download-link:hover {
   color: #7248BD;
+}
+.form-control::placeholder {
+  opacity: .5;
 }
 </style>

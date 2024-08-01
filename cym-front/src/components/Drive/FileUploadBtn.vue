@@ -3,10 +3,10 @@
     <button
       type="button"
       class="btn btn-secondary mx-4"
-      style="border-radius: 20px; background-color: #7248BD;"
+      style="border-radius: 20px; background-color: #7248BD; font-size:.8rem;"
       ref="triggerButton"
     >
-      파일등록
+      <i class="bi bi-plus-lg"></i> 파일등록 
     </button>
     <template #content="{ close }">
       <div class="align-items-center justify-content-center">
@@ -26,7 +26,7 @@
           <div class="row button-group d-flex justify-content-center mb-2">
             <button
               type="button"
-              @click="close"
+              @click="cancel(close)"
               class="btn btn-secondary cancel-button col-3 mx-3"
               style="border-radius: 20px; font-size:0.9rem"
             >
@@ -85,7 +85,10 @@ const fileUpload = async (close) => {
 const submitForm = (close) => {
   fileUpload(close);
 };
-
+const cancel = (close) => {
+  resetForm();
+  close();
+}
 const resetForm = () => {
   title.value = '';
   fileSize.value = 0;

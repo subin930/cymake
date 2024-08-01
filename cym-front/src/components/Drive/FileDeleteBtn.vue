@@ -33,8 +33,9 @@ watchEffect(() => {
 </script>
 
 <template>
-    <button type="button" class="btn btn-outline-secondary btn-sm" @click="deleteFile()" >
-        <i class="bi bi-trash"></i>
+    <button type="button" class="btn btn-outline-secondary btn-sm" @click="deleteFile()"
+    style="font-size: .7rem" >
+      <i class="bi bi-x-lg"></i>
     </button>
 </template>
 

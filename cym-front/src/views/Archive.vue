@@ -63,16 +63,16 @@ onMounted(fetchBeautyNews);
 <template>
     <Header></Header>
     
-    <div class="container-fluid">        
+    <div class="container-fluid justify-content-center">        
         <div class="m-3 mt-4 text-center title">
             <p class="fw-bold fs-3">지식아카이브</p>
         </div>
-        <div class="container m-3">
+        <div class="container m-3 justify-content-between">
             <div class="row row-cols-auto">
                     <p class="px-1 fw-bold">자동차 산업 정보</p>
                     <a class="nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
-            <div class="container text-center justify-content-between">
+            <div class="container text-start justify-content-between">
                 <div class="row g-3">
                     <div  v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -127,50 +127,5 @@ onMounted(fetchBeautyNews);
   
 .nav-link.active:hover .material-symbols-outlined {
     color: #7248BD; 
-}
-.btn {
-    border-color:#6D6D6D
-}
-.btn:hover {
-    color: #7248BD;
-    border-color:#7248BD;
-}
-.news-btn {
-  border-radius: 0px;
-  border-color:#E7E7E9;
-  display: flex;
-  flex-direction: column;
-  padding: 0%;
-  width: 100%; /* Set the width of the image */
-  height: 20rem;
-  text-overflow: ellipsis;
-}
-.news-image-wrapper {
-  height: 50%;
-  width: 100%;
-  background-color: #F2F2F2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.news-image {
-  max-width: 100%;
-  max-height: 100%; /* Set the height of the image */
-  object-fit: cover;
-}
-.news-title {
-  flex: 0 0 auto;
-  font-size: 0.8rem;
-  font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  margin-top: 5px;
-}
-.news-date {
-  flex: 0 0 auto;
-  font-size: 0.6rem;
-  color: #6D6D6D;
-  margin-top: auto;
 }
 </style>

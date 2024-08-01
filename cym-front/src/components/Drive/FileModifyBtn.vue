@@ -83,7 +83,7 @@ watchEffect(() => {
 
 <template>
     <Popper arrow>
-        <button type="button" class="btn btn-outline-secondary btn-sm">
+        <button type="button" class="btn btn-outline-secondary btn-sm" style="font-size:.7rem;">
             <i class="bi bi-pencil-square"></i>
         </button>
         <template #content="{ close }">

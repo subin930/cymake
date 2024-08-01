@@ -8,6 +8,10 @@ const token = ref(localStorage.getItem("token"));
 const username = ref(localStorage.getItem("username"));
 const searchBody = ref('');
 
+const isActive = (path) => {
+  return route.path === path;
+};
+
 const totalSearch = async () => {
   console.log(searchBody.value);
   if(searchBody.value && searchBody.value.trim() !== ''){
@@ -21,6 +25,9 @@ const totalSearch = async () => {
   else {
     console.log('searchBody has no value')
   }
+}
+const ChatSearch = async () => {
+  console.log("챗봇 구현 전");
 }
 const Logout = () => {
   //다시 로그인창으로 돌아가는
@@ -47,8 +54,8 @@ const SignUp = () => {
             <img src="@/assets/CYMAKE.jpg" style="height: 3rem;"/>
         </a>
         <ul class="nav ms-1">
-          <li><a class="nav-link active archive-link" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/archive"><span class="material-symbols-outlined" style="font-size:1rem">description</span>지식아카이브</a></li>
-          <li><a class="nav-link active drive-link" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:1rem">attach_file</span>통합 자료실</a></li>
+          <li><a  :class="['nav-link', { 'active': isActive('/archive') }]" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/archive"><span class="material-symbols-outlined" style="font-size:1rem">description</span>지식아카이브</a></li>
+          <li><a  :class="['nav-link', { 'active': isActive('/drive') }]" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:1rem">attach_file</span>통합 자료실</a></li>
         </ul>
       </div>
   
@@ -57,9 +64,9 @@ const SignUp = () => {
           <input type="search" class="form-control" placeholder="total search" aria-label="Search"
           v-model="searchBody">
           <button type="button" class="btn btn-outline-secondary"
-          style="border-color: darkgray" @click="totalSearch"><i class="bi bi-search"></i></button>
+          style="border-color: #D6D8DB" @click="totalSearch"><i class="bi bi-search"></i></button>
         </form>
-        <button v-if="token !== null" type="button" class="btn btn-outline-light me-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;  color: #7248BD;" @click="Search()"><span class="material-symbols-outlined">saved_search</span></button>
+        <button v-if="token !== null" type="button" class="btn btn-outline-light me-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;  color: #7248BD;" @click="ChatSearch()"><span class="material-symbols-outlined">saved_search</span></button>
         
         <button v-if="token === null" type="button" class="btn btn-outline-light me-2 btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; color: #7248BD;" @click="SignUp()">Sign Up</button>
         <button v-if="token === null" type="button" class="btn btn-outline-light text-white btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; background-color: #7248BD;" @click="Login()">Login</button>
@@ -87,24 +94,35 @@ const SignUp = () => {
   width: 100%;
   height: 65px;
   background-color: #fff; /* 배경색 */
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   z-index: 1000; /* 다른 콘텐츠보다 위에 위치하게 설정 */
+}
+.form-control::placeholder {
+  opacity: .5;
 }
 .content-wrapper {
   margin-top: 65px; /* 헤더의 높이만큼 추가 */
   
 }
-.nav-link.active {
+.nav-link {
   color: #3b3b3b;
 }
-.nav-link.active:hover {
+.nav-link:hover {
   color: #7248BD;
 }
   
-.nav-link.active:hover .material-symbols-outlined {
+.nav-link:hover .material-symbols-outlined {
   color: #7248BD;
+}
+.nav-link.active {
+  color: #7248BD; /* 활성화된 링크의 글씨 색상 */
 }
 .dropdown-item:hover {
   color: #7248BD;
+  background-color: #F1EDF8;
+}
+.dropdown-item:active {
+  color: #7248BD;
+  background-color: #F1EDF8;
 }
 </style>
