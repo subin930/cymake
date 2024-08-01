@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
 
@@ -22,6 +22,7 @@ const handleNewFileUpload = (event) => {
   }
 };
 const formatSize = (size) => {
+  console.log(title.value+originalFileName.value);
   return (size  / (1024 * 1024)).toFixed(3); // 3자리 소수점으로 표현
 };
 
@@ -43,8 +44,10 @@ const fileModify = async (close) => {
       }
     });
     console.log(response.data.message);
-    resetForm();
+    console.log(originalFileName.value);
+    console.log(newFileData);
     emit('fileModified', { originalFileName, newFileData });
+    resetForm();
     close(); // 파일 수정 성공 시 Popper 닫기
   } catch (error) {
     console.log(title.value);
@@ -60,12 +63,22 @@ const resetForm = () => {
   
   fileSize.value = 0;
   file.value = null;
+  title.value = '';
+  originalFileName.value = '';
+  fileName.value = '';
   // 파일 입력 필드 초기화
   const fileInput = document.getElementById('file');
   if (fileInput) {
     fileInput.value = null;
   }
 };
+
+watchEffect(() => {
+  title.value = props.file.postTitle;
+  fileSize.value = props.file.size;
+  originalFileName.value = props.file.fileName;
+  fileName.value = props.file.fileName;
+});
 </script>
 
 <template>

@@ -135,17 +135,18 @@ onMounted(checkSearch);
             <div class="row">
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                     <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio1" value="0" @change="setSubject">
-                    <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '0' }" for="btnradio1" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
+                    <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '0' }" for="btnradio1" style = "--bs-btn-active-color: #f2f2f2; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
 
                     <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio2" value="1" @change="setSubject">
-                    <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '1' }" for="btnradio2" style = "--bs-btn-active-color: #FFFFFF; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
+                    <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '1' }" for="btnradio2" style = "--bs-btn-active-color: #f2f2f2; --bs-btn-active-bg: #7248BD; --bs-btn-bg: #F5F6FA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
                 </div>
             </div>
             <div class="row d-flex align-items-center">
                 <form @submit.prevent="handleSearch" class="input-group mt-3 mb-3" role="search">
                     <input type="search" class="form-control" placeholder="Please input" aria-label="Search"
                     v-model="searchBody">
-                    <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
+                    <button type="button" class="btn btn-outline-secondary"
+                    style="border-color: darkgray" @click="handleSearch"><i class="bi bi-search"></i></button>
                 </form>
 
             </div>

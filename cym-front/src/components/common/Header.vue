@@ -53,9 +53,11 @@ const SignUp = () => {
       </div>
   
       <div class="d-flex align-items-center">
-        <form  @submit.prevent="totalSearch" v-if="token !== null" class="w-20 me-1" role="search">
+        <form  @submit.prevent="totalSearch" v-if="token !== null" class="input-group w-20 me-1" role="search">
           <input type="search" class="form-control" placeholder="total search" aria-label="Search"
           v-model="searchBody">
+          <button type="button" class="btn btn-outline-secondary"
+          style="border-color: darkgray" @click="totalSearch"><i class="bi bi-search"></i></button>
         </form>
         <button v-if="token !== null" type="button" class="btn btn-outline-light me-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;  color: #7248BD;" @click="Search()"><span class="material-symbols-outlined">saved_search</span></button>
         

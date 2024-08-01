@@ -49,6 +49,9 @@ const handleSearch = async () => {
     }
 };
 const updateFile = async({ originalFileName, newFileData }) => {
+  console.log('updatefile');
+  console.log(originalFileName.value);
+  console.log(newFileData);
   const index = content.value.findIndex(item => item.fileName === originalFileName.value);
   console.log(originalFileName.value);
   if (index !== -1) {
@@ -116,7 +119,7 @@ const setUsagePercentage = () => {
 <template>
     <Header></Header>
     <div class="container-fluid">        
-        <div class="m-3 mt-4 title">
+        <div class="m-1 title">
             <p class="fw-bold fs-3">통합 자료실</p>
         </div>
         <div class="row d-flex align-items-center justify-content-between m-3"  style="border-top-width: 1px; border-top-style: solid; border-top-color: #DFE0E0;border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #DFE0E0;">
@@ -124,7 +127,8 @@ const setUsagePercentage = () => {
             <form @submit.prevent="handleSearch" class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
               <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
               v-model="searchBody">
-              <button type="button" class="btn btn-outline-secondary" @click="handleSearch">검색</button>
+              <button type="button" class="btn btn-outline-secondary" 
+              style="border-color:darkgray" @click="handleSearch">검색</button>
             </form>
 
             <!-- FileUploadBtn element -->
@@ -144,7 +148,7 @@ const setUsagePercentage = () => {
           </div>
         </div>
         <div class="container m-3 d-flex">
-            <table class="table table-hover table-bordered">
+            <table class="table table-hover table-bordered border-light-subtle">
                 <thead class="table-head">
                     <tr class="table-light">
                     <th scope="col"> </th>

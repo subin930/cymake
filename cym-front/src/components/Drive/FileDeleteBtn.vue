@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { ref, watchEffect } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
@@ -7,7 +7,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['fileDeleted']);
 const token = localStorage.getItem("token");
-const originalFileName = props.file.fileName;
+const originalFileName = ref(props.file.fileName);
 
 const deleteFile = async() => {
     try {
@@ -19,6 +19,7 @@ const deleteFile = async() => {
         'Authorization': `Bearer ${token}`
       }});
     console.log(response.data.message);
+    console.log(originalFileName.value);
     emit('fileDeleted', originalFileName);
   } catch (error) {
     console.log(props.file.fileName);
@@ -26,7 +27,9 @@ const deleteFile = async() => {
     console.error('파일 삭제 오류:', error);
   }
 }
-
+watchEffect(() => {
+  originalFileName.value = props.file.fileName;
+});
 </script>
 
 <template>
