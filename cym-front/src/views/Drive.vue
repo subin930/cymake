@@ -25,11 +25,15 @@ const searchBody = ref(localStorage.getItem("searchBody"));
 const searchResults = ref([]);
 const totalSize = ref(0);
 const usagePercentage = ref(0);
+const loading = ref(false); // 로딩 상태 관리
 
 const handleSearch = async () => {
-    console.log(searchBody.value);
+  
+    
     if (searchBody.value && searchBody.value.trim() !== '') { // 최소 1글자 이상일 때 검색
-        try {
+      loading.value = true;  
+      console.log(searchBody.value);
+      try {
             const response = await axios.get('/v1/drive/search', {
                 params: {
                     searchBody: searchBody.value
@@ -42,11 +46,14 @@ const handleSearch = async () => {
             content.value = searchResults.value;
         } catch (error) {
             console.error('Error fetching search results:', error);
+        } finally {
+        loading.value = false; // 검색 완료 후 로딩 상태 false
         }
     } else {
+      console.log('no searchBody!!');
         searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
         fetchData();
-    }
+    } 
 };
 const updateFile = async({ originalFileName, newFileData }) => {
   console.log('updatefile');
@@ -73,6 +80,7 @@ const removeFile = async(originalFileName) => {
 };
 
 const fetchData = async () => {
+  loading.value = true;
   try {
     const response = await axios.get(`/v1/drive/list`, {
       headers: {
@@ -83,6 +91,8 @@ const fetchData = async () => {
     setUsagePercentage();
   } catch (error) {
     console.error('Error fetching data:', error);
+  } finally {
+    loading.value = false; // 데이터 가져오기 완료 후 로딩 상태 false
   }
 };
 
@@ -125,10 +135,10 @@ const setUsagePercentage = () => {
         <div class="row d-flex align-items-center justify-content-between m-3"  style="border-top-width: 1px; border-top-style: solid; border-top-color: #DFE0E0;border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #DFE0E0;">
             <!-- Form element -->
             <form @submit.prevent="handleSearch" class="input-group col-md-6 col-lg-4 mt-3 mb-3" role="search" style="width: 300px;">
-              <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
+              <input type="search" class="form-control" placeholder="Search..." aria-label="Search" style="font-size: .8rem;"
               v-model="searchBody">
-              <button type="button" class="btn btn-outline-secondary" 
-              style="border-color:#D6D8DB" @click="handleSearch">검색</button>
+              <button type="button" class="btn btn-outline-secondary search-btn" 
+              style="border-color:#D6D8DB; font-size: .8rem;" @click="handleSearch">검색</button>
             </form>
 
             <!-- FileUploadBtn element -->
@@ -139,16 +149,21 @@ const setUsagePercentage = () => {
         </div>
         <div class="container d-flex justify-content-start align-items-center ms-4 me-4" style="background-color: #EAECF0; padding: 15px 0; border-radius: 10px;">
           <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">자료실 사용량</p>
-          <div class="progress col-3" style="vertical-align: middle; background-color:#DDDDDD;" role="progressbar" aria-label="통합 자료실 사용량" aria-valuenow="usagePercentage" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress col-3" style="border-radius: 20px; vertical-align: middle; background-color:#DDDDDD;" role="progressbar" aria-label="통합 자료실 사용량" aria-valuenow="usagePercentage" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-bar" :style=" { width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
             <p class="px-1" style="font-size: .7rem; font-weight: bold; color:#FFFFFF">{{ usagePercentage }}%</p>
           </div>
           <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 10 MB</p>
         </div>
-        <div class="container table-wrapper m-3 mt-4 d-flex">
-            <table class="table table-hover table-bordered border-light-subtle">
+        <div v-if="loading" class="text-center my-4">
+            <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div v-else class="container table-wrapper m-3 mt-4 d-flex">
+            <table class="table table-hover table-bordered">
                 <thead class="table-head">
-                    <tr class="table-light border-light-subtle">
+                    <tr class="table-light">
                     <th scope="col"> </th>
                     <th scope="col">제목</th>
                     <th scope="col">파일명</th>
@@ -180,6 +195,9 @@ const setUsagePercentage = () => {
 </template>
 
 <style scoped>
+.table tbody tr:hover td, .table tbody tr:hover th {
+  background-color: rgb(254, 254, 254);
+}
 .title {
   padding-top: 20px;
   padding-left: 20px;
@@ -187,9 +205,10 @@ const setUsagePercentage = () => {
 .table {
   font-size: .7rem;
   vertical-align: middle;
+  background-color:white;
 }
 .table-head {
-  background-color:antiquewhite
+  background-color:#FAFAFA;
 }
 .table-wrapper {
     overflow-y: scroll;
@@ -204,5 +223,13 @@ const setUsagePercentage = () => {
 }
 .form-control::placeholder {
   opacity: .5;
+}
+.search-btn:hover {
+  background-color: darkgray;
+}
+input:focus {
+  outline: none;
+  border-color: #7248BD;
+  box-shadow: 0 0 0 0 rgba(114, 72, 189, 0.25);
 }
 </style>

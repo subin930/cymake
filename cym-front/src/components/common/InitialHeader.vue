@@ -9,7 +9,7 @@ const router = useRouter();
 
 
 <template>
-    <header class="d-flex flex-wrap justify-content-center px-3 py-2 border-bottom" style="border-color: #00A5BD;">
+    <header class="init-header d-flex flex-wrap justify-content-center px-3 py-2 border-bottom" style="border-color: #00A5BD;">
         <div class="d-flex">
             <a href="/login">
                 <img src="@/assets/CYMAKE.jpg" style="height: 3rem;"/>
@@ -22,7 +22,7 @@ const router = useRouter();
 </template>
 
 <style scoped>
-.fixed-header {
+.init-header {
   position: fixed;
   top: 0;
   left: 0;

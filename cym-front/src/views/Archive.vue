@@ -64,8 +64,8 @@ onMounted(fetchBeautyNews);
     <Header></Header>
     
     <div class="container-fluid justify-content-center">        
-        <div class="m-3 mt-4 text-center title">
-            <p class="fw-bold fs-3">지식아카이브</p>
+        <div class="m-3 text-center title">
+            <p class="fw-bolder fs-3">지식아카이브</p>
         </div>
         <div class="container m-3 justify-content-between">
             <div class="row row-cols-auto">

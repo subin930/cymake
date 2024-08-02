@@ -2,7 +2,7 @@
   <Popper arrow>
     <button
       type="button"
-      class="btn btn-secondary mx-4"
+      class="btn btn-secondary me-3"
       style="border-radius: 20px; background-color: #7248BD; font-size:.8rem;"
       ref="triggerButton"
     >
@@ -10,16 +10,16 @@
     </button>
     <template #content="{ close }">
       <div class="align-items-center justify-content-center">
-        <div class="row w-100 text-center mb-3">
+        <div class="row w-100 text-center me-2">
           <p style="font-size: 1.1rem; font-weight:bold">파일등록</p>
         </div>
         <form @submit.prevent="submitForm(close)">
           <div class="form-group mb-3">
-            <label for="title" class="px-2" style="font-size: 0.9rem">제목</label>
+            <label for="title" class="px-2 col-2 text-end me-3" style="font-size: 0.9rem">제목</label>
             <input type="text" class="w-75" style="font-size: 0.9rem" id="title" v-model="title" required />
           </div>
           <div class="form-group mb-3">
-            <label for="file" class="px-2" style="font-size: 0.9rem">파일첨부</label>
+            <label for="file" class="px-2  text-start" style="font-size: 0.9rem">파일첨부</label>
             <input type="file" style="font-size: 0.9rem" id="file" @change="handleFileUpload" required />
             <p class="px-2" style="font-size: .8rem">현재 {{ fileSize }}MB / (첨부파일 : 30MB로 제한)</p>
           </div>
@@ -45,6 +45,20 @@
     </template>
   </Popper>
 </template>
+
+
+<style>
+:root {
+  --popper-theme-background-color: #ffffff;
+  --popper-theme-background-color-hover: #ececec;
+  --popper-theme-text-color: #000000;
+  --popper-theme-border-radius: 18px;
+  --popper-theme-border-width: 1px;
+  --popper-theme-border-style: solid;
+  --popper-theme-border-color: #c9c9c9;
+  --popper-theme-padding: 30px;
+}
+</style>
 
 <script setup>
 import { ref } from "vue";
@@ -100,16 +114,3 @@ const resetForm = () => {
   }
 };
 </script>
-
-<style>
-:root {
-  --popper-theme-background-color: #ffffff;
-  --popper-theme-background-color-hover: #ececec;
-  --popper-theme-text-color: #000000;
-  --popper-theme-border-radius: 18px;
-  --popper-theme-border-width: 1px;
-  --popper-theme-border-style: solid;
-  --popper-theme-border-color: #c9c9c9;
-  --popper-theme-padding: 32px;
-}
-</style>

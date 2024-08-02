@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import Chat from '@/components/common/Chat.vue';
 const route = useRoute();
 const router = useRouter();
 
@@ -54,7 +55,7 @@ const SignUp = () => {
             <img src="@/assets/CYMAKE.jpg" style="height: 3rem;"/>
         </a>
         <ul class="nav ms-1">
-          <li><a  :class="['nav-link', { 'active': isActive('/archive') }]" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/archive"><span class="material-symbols-outlined" style="font-size:1rem">description</span>지식아카이브</a></li>
+          <li><a  :class="['nav-link', { 'active': isActive('/archive')|| isActive('/archive/total') }]" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/archive"><span class="material-symbols-outlined" style="font-size:1rem">description</span>지식아카이브</a></li>
           <li><a  :class="['nav-link', { 'active': isActive('/drive') }]" aria-current="page" style="font-size: 1rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:1rem">attach_file</span>통합 자료실</a></li>
         </ul>
       </div>
@@ -66,7 +67,7 @@ const SignUp = () => {
           <button type="button" class="btn btn-outline-secondary"
           style="border-color: #D6D8DB" @click="totalSearch"><i class="bi bi-search"></i></button>
         </form>
-        <button v-if="token !== null" type="button" class="btn btn-outline-light me-1" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem;  color: #7248BD;" @click="ChatSearch()"><span class="material-symbols-outlined">saved_search</span></button>
+        <Chat></Chat>
         
         <button v-if="token === null" type="button" class="btn btn-outline-light me-2 btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; color: #7248BD;" @click="SignUp()">Sign Up</button>
         <button v-if="token === null" type="button" class="btn btn-outline-light text-white btn-sm" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .9rem; border-color: #7248BD; background-color: #7248BD;" @click="Login()">Login</button>
@@ -124,5 +125,10 @@ const SignUp = () => {
 .dropdown-item:active {
   color: #7248BD;
   background-color: #F1EDF8;
+}
+input:focus {
+  outline: none;
+  border-color: #7248BD;
+  box-shadow: 0 0 0 0 rgba(114, 72, 189, 0.25);
 }
 </style>

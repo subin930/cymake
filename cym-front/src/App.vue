@@ -4,9 +4,12 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
-  <div class="app-container">
-    <RouterView />
-  </div>
+  <Suspense>
+    <div class="app-container">
+      <RouterView />
+    </div>
+  </Suspense>
+  
 </template>
 
 <style>

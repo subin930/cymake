@@ -11,9 +11,9 @@
       <br/>
       <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formattedDate }}</p>
     </button>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
   import { computed } from 'vue';
   import { defineProps } from 'vue';
   

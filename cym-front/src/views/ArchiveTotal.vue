@@ -8,8 +8,10 @@ import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
-const contentToken = ref(localStorage.getItem("contentToken"));
 const token = localStorage.getItem("token");
+const loading = ref(false); //로딩 
+
+const contentToken = ref(localStorage.getItem("contentToken"));
 const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
@@ -21,6 +23,7 @@ const handleSearch = async () => {
     console.log(searchBody.value);
     console.log(subject.value);
     if (searchBody.value && searchBody.value.trim() !== '') { // 빈 값이 아닐 때
+        loading.value = true;
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
                 params: {
@@ -41,6 +44,8 @@ const handleSearch = async () => {
             }
         } catch (error) {
             console.error('Error fetching search results:', error);
+        } finally {
+          loading.value = false;
         }
     } else {
       console.log('no SearchBody - handleSearch');
@@ -136,11 +141,11 @@ onMounted(checkSearch);
                 <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                     <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio1" value="0" @change="setSubject">
                     <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '0' }" for="btnradio1" 
-                    style = "border: 1px solid #E3E3E3; --bs-btn-active-color: #f2f2f2; --bs-btn-active-bg: #7248BD; --bs-btn-bg:#FAFAFA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
+                    style = "border: 1px solid #E3E3E3; --bs-btn-active-color: #f2f2f2; --bs-btn-active-bg: #7248BD; --bs-btn-bg:#FAFAFA; font-size:1.1rem; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-left-radius: 0px;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>자동차 산업 정보</label>
 
                     <input type="radio" v-model="contentToken" class="btn-check col-6" name="btnradio" id="btnradio2" value="1" @change="setSubject">
                     <label autocomplete="off" class="btn fw-bold { 'active': contentToken === '1' }" for="btnradio2" 
-                    style = "border: 1px solid #E3E3E3; --bs-btn-active-color: #f2f2f2; --bs-btn-active-bg: #7248BD; --bs-btn-bg:#FAFAFA; font-size:1.1rem;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
+                    style = "border: 1px solid #E3E3E3; --bs-btn-active-color: #f2f2f2; --bs-btn-active-bg: #7248BD; --bs-btn-bg:#FAFAFA; font-size:1.1rem; border-top-left-radius: 20px; border-top-right-radius: 20px; border-bottom-right-radius: 0px;"><span class="material-symbols-outlined" style="font-size:1.1rem">description</span>화장품 산업 정보</label>
                 </div>
             </div>
             <div class="row d-flex align-items-center">
@@ -152,7 +157,12 @@ onMounted(checkSearch);
                 </form>
 
             </div>
-            <div class="container text-start justify-content-between">
+            <div v-if="loading" class="text-center my-4">
+              <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div v-else class="container text-start justify-content-between">
                 <div v-if="contentToken =='0'" class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -189,8 +199,19 @@ onMounted(checkSearch);
 .title {
   padding: 20px;
 }
+input:focus {
+  outline: none;
+  border-color: #7248BD;
+  box-shadow: 0 0 0 0 rgba(114, 72, 189, 0.25);
+}
 .btn-group {
   border-color: #D6D8DB;
+}
+.btn-check {
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+  border-bottom-left-radius: 0px !important; 
+  border-bottom-right-radius: 0px !important;
 }
 .form-control::placeholder {
   opacity: .5;
