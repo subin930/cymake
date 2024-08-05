@@ -1,6 +1,5 @@
 package CY.cymake.Domain.Drive;
 
-import CY.cymake.Domain.Drive.Dto.CrwlResDto;
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Response.CommonBaseResult;
 import CY.cymake.Response.CommonResult;
@@ -12,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,13 +88,5 @@ public class DriveController {
         }
         else
             return globalResponseHandler.SendSuccessAndContent(driveService.searchPost(customUserDetails.getUser(), searchBody));
-    }
-    /*
-     * 전체 크롤링 수 전송 api
-     */
-    @GetMapping(value = "/crwlTotal")
-    @Operation(description = "전체 크롤링 수 전송")
-    public CommonResult<CrwlResDto> getCrwlTotal() {
-        return globalResponseHandler.SendSuccessAndContent(driveService.getCrwlTotal());
     }
 }

@@ -2,12 +2,9 @@ package CY.cymake.Domain.Drive;
 
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
-import CY.cymake.Domain.Drive.Dto.CrwlResDto;
-import CY.cymake.Domain.Drive.Dto.CrwlTotalDto;
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Entity.CompanyEntity;
-import CY.cymake.Entity.CrwlTotalEntity;
 import CY.cymake.Entity.FileEntity;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.FileDeleteFailedException;
@@ -204,30 +201,4 @@ public class DriveService {
         return row;
     }
 
-    /*
-     * 크롤링 총 수
-     */
-    public CrwlResDto getCrwlTotal() {
-        List<CrwlTotalEntity> carEntity = crwlTotalRepository.findBySubjectOrderByDate("car");
-        List<CrwlTotalEntity> beautyEntity = crwlTotalRepository.findBySubjectOrderByDate("beauty");
-        List<CrwlTotalDto> car = convertToDtoList(carEntity);
-        List<CrwlTotalDto> beauty = convertToDtoList(beautyEntity);
-        return CrwlResDto.builder()
-                .carCrwlData(car)
-                .beautyCrwlData(beauty)
-                .build();
-    }
-
-    public CrwlTotalDto convertToDto(CrwlTotalEntity entity) {
-        return CrwlTotalDto.builder()
-                .date(String.valueOf(entity.getDate()))
-                .total(entity.getTotal())
-                .build();
-    }
-
-    public List<CrwlTotalDto> convertToDtoList(List<CrwlTotalEntity> entities) {
-        return entities.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
 }

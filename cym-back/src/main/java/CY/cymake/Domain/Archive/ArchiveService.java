@@ -2,10 +2,14 @@ package CY.cymake.Domain.Archive;
 
 import CY.cymake.Domain.Archive.Dto.NewsResDto;
 import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
+import CY.cymake.Domain.Archive.Dto.CrwlResDto;
+import CY.cymake.Domain.Archive.Dto.CrwlTotalDto;
 import CY.cymake.Entity.CrwlNewsEntity;
+import CY.cymake.Entity.CrwlTotalEntity;
 import CY.cymake.OpenSearch.DataExtractor;
 import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Repository.CrwlNewsRepository;
+import CY.cymake.Repository.CrwlTotalRepository;
 import CY.cymake.Repository.NewsDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class ArchiveService {
     private final CrwlNewsRepository crwlNewsRepository;
     private final DataExtractor dataExtractor;
     private final OpenSearchService openSearchService;
+    private final CrwlTotalRepository crwlTotalRepository;
 
     public List<NewsResDto> getTotalNews(String subject) throws IOException, Exception {
         //openSearchService.deleteNewsIndex(); //test 용. 실제 코드에서는 삭제
@@ -68,5 +74,31 @@ public class ArchiveService {
             result.add(newsResDto);
         }
         return result;
+    }
+    /*
+     * 크롤링 총 수
+     */
+    public CrwlResDto getCrwlTotal() {
+        List<CrwlTotalEntity> carEntity = crwlTotalRepository.findBySubjectOrderByDate("car");
+        List<CrwlTotalEntity> beautyEntity = crwlTotalRepository.findBySubjectOrderByDate("beauty");
+        List<CrwlTotalDto> car = convertToDtoList(carEntity);
+        List<CrwlTotalDto> beauty = convertToDtoList(beautyEntity);
+        return CrwlResDto.builder()
+                .carCrwlData(car)
+                .beautyCrwlData(beauty)
+                .build();
+    }
+
+    public CrwlTotalDto convertToDto(CrwlTotalEntity entity) {
+        return CrwlTotalDto.builder()
+                .date(String.valueOf(entity.getDate()))
+                .total(entity.getTotal())
+                .build();
+    }
+
+    public List<CrwlTotalDto> convertToDtoList(List<CrwlTotalEntity> entities) {
+        return entities.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }
