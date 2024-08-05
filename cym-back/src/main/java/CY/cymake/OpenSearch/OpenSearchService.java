@@ -76,7 +76,31 @@ public class OpenSearchService {
 
         client.indices().create(createIndexRequest);
     }
+    /*
+     * 데이터 추출 및 업로드
+     */
+    public void addAndUpdateFileData(Map<String, Object> data, String idField) throws IOException {
+        BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
+        Object idValue = data.get(idField);
+        String id = idValue != null ? idValue.toString() : null;
+        bulkRequestBuilder.operations(op -> op.index(idx -> idx
+                .index("tb_file")
+                .document(data)
+                .id(id)
+        ));
 
+        BulkResponse bulkResponse = client.bulk(bulkRequestBuilder.build());
+        if (bulkResponse.errors()) {
+            System.out.println("Bulk upload failed with errors:");
+            for (BulkResponseItem item : bulkResponse.items()) {
+                if (item.error() != null) {
+                    System.err.println("Error indexing document ID " + item.id() + ": " + item.error().reason());
+                }
+            }
+        } else {
+            System.out.println("Bulk upload and update succeeded.");
+        }
+    }
     /*
      * 데이터 추가(tb_file)
      */
@@ -99,28 +123,6 @@ public class OpenSearchService {
                 }})
                 .build();
         client.index(request);
-    }
-    public void upsertFileData(long fileId, String fileName, String fileUrl, Timestamp lastEditDate,
-                               String postTitle, String type, Timestamp uploadDate,
-                               String companyCode, String uploader) throws IOException {
-        Map<String, Object> jsonMap = new HashMap<>();
-        jsonMap.put("file_id", fileId);
-        jsonMap.put("file_name", fileName);
-        jsonMap.put("file_url", fileUrl);
-        jsonMap.put("last_edit_date", lastEditDate);
-        jsonMap.put("post_title", postTitle);
-        jsonMap.put("type", type);
-        jsonMap.put("upload_date", uploadDate);
-        jsonMap.put("company_code", companyCode);
-        jsonMap.put("uploader", uploader);
-
-        IndexRequest<Map<String, Object>> indexRequest = new IndexRequest.Builder<Map<String, Object>>()
-                .index("tb_file")
-                .id(String.valueOf(fileId))
-                .document(jsonMap)
-                .build();
-
-        client.index(indexRequest);
     }
 
     /*
@@ -250,7 +252,6 @@ public class OpenSearchService {
     public List<PostSearchResultDto> searchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
         Set<PostSearchResultDto> resultsSet = new HashSet<>();
         String company_code = user.getCompanyCode().getCode();
-        System.out.println(company_code);
         // 파일 이름으로 검색
         SearchRequest searchRequest1 = SearchRequest.of(s -> s
                 .index(index)
@@ -452,7 +453,6 @@ public class OpenSearchService {
     public SearchArchiveDto totalSearchNewsTb(String index, String subject, String searchBody) throws IOException {
         SearchArchiveDto searchArchiveDto = new SearchArchiveDto();
         List<NewsSearchResultDto> resultsList = searchNewsTb(index, subject, searchBody);
-        System.out.println(resultsList);
         searchArchiveDto.setNewsSearchResultDto(resultsList.stream()
                 .limit(12)
                 .collect(Collectors.toList()));

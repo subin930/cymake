@@ -103,16 +103,22 @@ public class DriveService {
         if(newFile == null) {
             file.updatePostTitle(postTitle);
             fileRepository.save(file);
+            Map<String, Object> data = convertFileData(file.getId(), file.getFile(), file.getFileUrl(), postTitle,
+                    file.getType(), file.getUploadDate(), file.getCompanyCode().getCode(),
+                    file.getUploader().getId());
+            openSearchService.addAndUpdateFileData(data, "file_id");
             return;
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
         String directory = "files/" +  user.getCompanyCode().getCode() + "/";
         String fileUrl = s3Service.updateFile(newFile, directory, originalFilename);
-
         //3. db수정
         file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())));
         fileRepository.save(file);
-        //openSearchService.upsertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, Timestamp.valueOf(LocalDateTime.now()), postTitle, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), file.getUploadDate(), file.getCompanyCode().getCode(), file.getUploader().getId());
+        Map<String, Object> data = convertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, postTitle,
+                getExtension(newFile.getOriginalFilename()), file.getUploadDate(), file.getCompanyCode().getCode(),
+                file.getUploader().getId());
+        openSearchService.addAndUpdateFileData(data, "file_id");
     }
 
     /*
@@ -135,7 +141,7 @@ public class DriveService {
      * post 리스트 전송
      */
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
-        //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
+        //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제\
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         System.out.println(directory);
 
@@ -174,5 +180,22 @@ public class DriveService {
             result.add(postListResDto);
         }
         return result;
+    }
+
+    /*
+     *
+     */
+    public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader) {
+        Map<String, Object> row = new HashMap<>();
+        row.put("file_id", fileId);
+        row.put("file_name", filename);
+        row.put("file_url", fileUrl);
+        row.put("last_edit_date",  Timestamp.valueOf(LocalDateTime.now()));
+        row.put("post_title", postTitle);
+        row.put("type", type);
+        row.put("upload_date", uploadDate);
+        row.put("company_code", companyCode);
+        row.put("uploader", uploader);
+        return row;
     }
 }
