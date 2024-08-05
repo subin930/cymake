@@ -5,6 +5,7 @@ import NewsModal from '@/components/common/NewsModal.vue';
 import NewsItem from '@/components/common/NewsItem.vue';
 import { ref, onMounted } from "vue";
 import axios from 'axios'
+import CarGraph from '@/components/Archive/CrawlGraphCar.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -16,6 +17,7 @@ const subject = ref('');
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
+
 
 const fetchCarNews = async () => {
   subject.value = "car";
@@ -55,6 +57,7 @@ const setTokenCar = () => {
 const setTokenBeauty = () => {
     localStorage.setItem("contentToken", 1);
 }
+
 
 onMounted(fetchCarNews);
 onMounted(fetchBeautyNews);
@@ -110,7 +113,7 @@ onMounted(fetchBeautyNews);
             </div> 
         </div>
     </div>
-    
+    <CarGraph :salesData="[65, 59, 80, 81, 56, 55, 40]" />
     <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
 </template>
 

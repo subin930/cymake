@@ -13,7 +13,7 @@
         <div class="row w-100 text-center me-2">
           <p style="font-size: 1.1rem; font-weight:bold">파일등록</p>
         </div>
-        <form @submit.prevent="submitForm(close)">
+        <form @submit.prevent="submitForm(close)" ref="formElement">
           <div class="form-group mb-3">
             <label for="title" class="px-2 col-2 text-end me-3" style="font-size: 0.9rem">제목</label>
             <input type="text" class="w-75" style="font-size: 0.9rem" id="title" v-model="title" required />
@@ -52,20 +52,22 @@
   --popper-theme-background-color: #ffffff;
   --popper-theme-background-color-hover: #ececec;
   --popper-theme-text-color: #000000;
-  --popper-theme-border-radius: 18px;
+  --popper-theme-border-radius: 2px;
   --popper-theme-border-width: 1px;
   --popper-theme-border-style: solid;
-  --popper-theme-border-color: #c9c9c9;
+  --popper-theme-border-color: #e3e3e3;
   --popper-theme-padding: 30px;
 }
 </style>
 
 <script setup>
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
 const emit = defineEmits(['fileUploaded']);
 const token = localStorage.getItem("token");
+
+const formElement = ref(null);
 const title = ref('');
 const fileSize = ref(0);
 const file = ref(null);
@@ -88,6 +90,7 @@ const fileUpload = async (close) => {
       }
     });
     console.log(response.data.message);
+    await nextTick();
     resetForm(); //초기화
     emit('fileUploaded');
     close(); // 파일 업로드 성공 시 Popper 닫기
@@ -105,12 +108,7 @@ const cancel = (close) => {
 }
 const resetForm = () => {
   title.value = '';
-  fileSize.value = 0;
-  file.value = null;
-  // 파일 입력 필드 초기화
-  const fileInput = document.getElementById('file');
-  if (fileInput) {
-    fileInput.value = null;
-  }
+  formElement.value.reset(); // 폼의 모든 입력 필드를 초기화
+  console.log('resetForm');
 };
 </script>

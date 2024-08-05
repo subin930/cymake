@@ -13,9 +13,11 @@
     "axios": "^1.7.2",
     "bootstrap-icons": "^1.11.3",
     "bootstrap-vue": "^2.23.1",
+    "chart.js": "^3.9.1",
     "pinia": "^2.1.7",
     "vee-validate": "^4.13.2",
     "vue": "^3.4.29",
+    "vue-chart-3": "^3.1.8",
     "vue-router": "^4.3.3",
     "vue3-popper": "^1.5.0",
     "yup": "^1.4.0"

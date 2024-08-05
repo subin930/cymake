@@ -101,6 +101,7 @@ const setSubject = () => {
     console.log("set subject beauty");
   }
   console.log(subject.value);
+  scrollToTop(); 
 
   if(searchBody.value && searchBody.value.trim() !== '') {
     console.log('has SearchBody: '+searchBody.value);
@@ -122,6 +123,13 @@ const checkSearch = () => {
     setSubject();
   }
 }
+
+//주제 변경 시 스크롤 초기화
+const scrollToTop = () => {
+  const container = document.querySelector('.news-container');
+  container.scrollTop = 0;
+};
+
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
@@ -162,7 +170,7 @@ onMounted(checkSearch);
                 <span class="visually-hidden">Loading...</span>
               </div>
             </div>
-            <div v-else class="container text-start justify-content-between">
+            <div v-else class="container news-container text-start justify-content-between">
                 <div v-if="contentToken =='0'" class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -215,5 +223,9 @@ input:focus {
 }
 .form-control::placeholder {
   opacity: .5;
+}
+.news-container {
+  overflow-y: scroll;
+  max-height: 100vh;
 }
 </style>

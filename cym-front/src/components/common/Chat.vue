@@ -43,7 +43,7 @@ const sendMessage = () => {
   }
 };
 
-const handleFileUpload = (event) => {
+const handleFileAdded = (event) => {
   uploadedFile.value = event.target.files[0];
   if (uploadedFile) {
     console.log(`파일이 선택되었습니다: ${uploadedFile.name}`);
@@ -84,7 +84,7 @@ onMounted(scrollToBottom);
                 <div class="container chat-input mb-2">
                     <div class="d-block chat-file py-2">
                         <input type="file" style="font-size: 0.9rem" id="file" 
-                        accept=".txt,.md,.html,.doc,.docx,.csv,.xls,.xlsx,.pdf" @change="handleFileUpload"/>
+                        accept=".txt,.md,.html,.doc,.docx,.csv,.xls,.xlsx,.pdf" @change="handleFileAdded"/>
                     </div>
                     <div class="d-inline-flex align-items-center">
                         <textarea v-model="newMessage" @keyup.enter="sendMessage" type="text" class="d-inline form-control"
