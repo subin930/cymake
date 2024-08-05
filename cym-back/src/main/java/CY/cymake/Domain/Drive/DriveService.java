@@ -2,9 +2,12 @@ package CY.cymake.Domain.Drive;
 
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Domain.Drive.Dto.CrwlResDto;
+import CY.cymake.Domain.Drive.Dto.CrwlTotalDto;
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Entity.CompanyEntity;
+import CY.cymake.Entity.CrwlTotalEntity;
 import CY.cymake.Entity.FileEntity;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.FileDeleteFailedException;
@@ -12,10 +15,10 @@ import CY.cymake.Exception.FileUpdateFailedException;
 import CY.cymake.Exception.UserNotFoundException;
 import CY.cymake.OpenSearch.DataExtractor;
 import CY.cymake.OpenSearch.OpenSearchService;
+import CY.cymake.Repository.CrwlTotalRepository;
 import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +36,7 @@ public class DriveService {
     private final FileRepository fileRepository;
     private final OpenSearchService openSearchService;
     private final DataExtractor dataExtractor;
+    private final CrwlTotalRepository crwlTotalRepository;
 
     public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
@@ -141,7 +146,13 @@ public class DriveService {
      * post 리스트 전송
      */
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
-        //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제\
+        //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
+        openSearchService.deleteFileIndex();
+        openSearchService.deleteNewsIndex();
+        openSearchService.createCrwlNewsTb();
+        openSearchService.createFileTb();
+        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         System.out.println(directory);
 
@@ -197,5 +208,32 @@ public class DriveService {
         row.put("company_code", companyCode);
         row.put("uploader", uploader);
         return row;
+    }
+
+    /*
+     * 크롤링 총 수
+     */
+    public CrwlResDto getCrwlTotal() {
+        List<CrwlTotalEntity> carEntity = crwlTotalRepository.findBySubjectOrderByDate("car");
+        List<CrwlTotalEntity> beautyEntity = crwlTotalRepository.findBySubjectOrderByDate("beauty");
+        List<CrwlTotalDto> car = convertToDtoList(carEntity);
+        List<CrwlTotalDto> beauty = convertToDtoList(beautyEntity);
+        return CrwlResDto.builder()
+                .carCrwlData(car)
+                .beautyCrwlData(beauty)
+                .build();
+    }
+
+    public CrwlTotalDto convertToDto(CrwlTotalEntity entity) {
+        return CrwlTotalDto.builder()
+                .date(String.valueOf(entity.getDate()))
+                .total(entity.getTotal())
+                .build();
+    }
+
+    public List<CrwlTotalDto> convertToDtoList(List<CrwlTotalEntity> entities) {
+        return entities.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }
