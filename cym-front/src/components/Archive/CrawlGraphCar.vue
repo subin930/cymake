@@ -36,7 +36,7 @@
     datasets: [
       {
         label: 'Monthly Sales',
-        data: [65, 59, 80, 81, 56, 55, 40],
+        data: props.salesData,
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1

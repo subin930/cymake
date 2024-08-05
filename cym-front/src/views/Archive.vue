@@ -13,6 +13,7 @@ const token = localStorage.getItem("token");
 const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
+const salesData = ref([]);
 
 const title = ref('no title');
 const imgUrl = ref(null);
