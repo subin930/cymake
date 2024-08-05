@@ -2,6 +2,7 @@ package CY.cymake.Entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "tb_news_data")
@@ -25,10 +27,13 @@ public class NewsDataEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CrwlNewsEntity id;
 
-    @Column(name = "summary", nullable = false)
-    private String summary;
+    @ElementCollection
+    @CollectionTable(name = "news_summary", joinColumns = @JoinColumn(name = "news_data_pk"))
+    @Column(name = "summary", nullable = false, length = 500)
+    private List<String> summary;
 
     @ElementCollection
-    @Column(name = "keywords") // , nullable = false 추가하기 나중에
-    private List<String> keywords; //나중에 배열로 저장해보기
+    @CollectionTable(name = "news_keywords", joinColumns = @JoinColumn(name = "news_data_pk"))
+    @Column(name = "keywords", nullable = false, length = 500)
+    private List<String> keywords;
 }

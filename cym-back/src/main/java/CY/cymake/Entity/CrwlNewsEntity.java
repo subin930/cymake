@@ -20,22 +20,22 @@ public class CrwlNewsEntity {
     @Column(name = "news_id")
     private Long id;
 
-    @Column(unique = true, name = "title", nullable = false)
+    @Column(unique = true, name = "title", nullable = false, length = 500)
     private String title;
 
-    @Column(name = "url", nullable = false)
+    @Column(name = "url", nullable = false, length = 500)
     private String url;
 
-    @Column(name = "newsLink", nullable = false)
+    @Column(name = "newsLink", nullable = false, length = 500)
     private String newsLink;
 
-    @Column(name = "imgUrl")
+    @Column(name = "imgUrl", length = 500)
     private String imgUrl;
 
     @Column(name = "uploadDate", nullable = false)
     private Timestamp uploadDate;
 
-    @Column(name = "subject", nullable = false)
+    @Column(name = "subject", nullable = false, length = 500)
     private String subject;
 
 }

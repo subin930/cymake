@@ -46,12 +46,14 @@ public class S3Service {
     public String getBody(String path) throws IOException {
         try {
             S3Object awsS3Object = amazonS3.getObject(bucket, path);
-            S3ObjectInputStream s3is = awsS3Object.getObjectContent();
-            return new String(s3is.readAllBytes(), StandardCharsets.UTF_8);
-        } catch(AmazonS3Exception ae) {
-                throw new IllegalArgumentException(ae.getMessage());
+            try (S3ObjectInputStream s3is = awsS3Object.getObjectContent()) {
+                return new String(s3is.readAllBytes(), StandardCharsets.UTF_8);
+            }
+        } catch (AmazonS3Exception ae) {
+            throw new IllegalArgumentException(ae.getMessage());
         }
     }
+
     /*
      * S3에서 텍스트 파일 읽은 후 제목 & 뉴스 링크 추출 (0: 뉴스 링크 / 1: 뉴스 제목)
      */
@@ -160,6 +162,26 @@ public class S3Service {
         deleteFile(directory, original_filename);
         return uploadFile(multipartFile, path);
     }
-
+    /*
+     * tb_news_data 가져오기
+     */
+    public List<List<String>> getNewsData(String path) throws IOException {
+        String[] bodyList = getBody(path).split("\n");
+        List<List<String>> result = new ArrayList<>();
+        List<String> keywords = List.of(removeBrackets(bodyList[0]).split(","));
+        result.add(keywords);
+        List<String> summary = new ArrayList<>();
+        summary.add(bodyList[1]);
+        summary.add(bodyList[2]);
+        summary.add(bodyList[3]);
+        result.add(summary);
+        return result;
+    }
+    public static String removeBrackets(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        return input.replaceAll("[()]", "");
+    }
 }
 

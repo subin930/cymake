@@ -28,13 +28,13 @@ public class FileEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CompanyEntity companyCode;
 
-    @Column(name = "postTitle", nullable = false)
+    @Column(name = "postTitle", nullable = false, length = 500)
     private String postTitle;
 
-    @Column(name = "file_name", nullable = false)
+    @Column(name = "file_name", nullable = false, length = 500)
     private String file;
 
-    @Column(name = "fileUrl", nullable = false)
+    @Column(name = "fileUrl", nullable = false, length = 500)
     private String fileUrl;
 
     @ManyToOne

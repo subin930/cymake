@@ -16,9 +16,9 @@ public class CompanyEntity {
     @Column(name = "company_id")
     private Long id;
 
-    @Column(name = "code", unique = true, nullable = false)
+    @Column(name = "code", unique = true, nullable = false, length = 500)
     private String code;
 
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(name = "name", unique = true, nullable = false, length = 500)
     private String name;
 }
