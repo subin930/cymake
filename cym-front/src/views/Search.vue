@@ -9,7 +9,9 @@ import axios from 'axios'
 
 const token = localStorage.getItem("token");
 const route = useRoute();
+const loading = ref(false); //로딩 
 const searchBody = ref(route.params.searchBody);
+
 const numTotal = ref(0);
 const numCar = ref(0);
 const numBeauty = ref(0);
@@ -26,7 +28,9 @@ const content = ref([]);
 const handleSearch = async () => {
     console.log(searchBody.value);
     if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
+        
         try {
+            const loading = ref(false); //로딩 
             const response = await axios.get(`/v1/total/search`, {
                 params: {
                     searchBody: searchBody.value
@@ -45,6 +49,8 @@ const handleSearch = async () => {
             console.log(response.data.content);
         } catch (error) {
             console.error('Error fetching search results:', error);
+        } finally {
+            loading.value = false;
         }
     } //else {
         //searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
@@ -96,7 +102,12 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 <p class="col-6 px-1 fw-bold">자동차 산업 정보    <span style = "color: #7248BD;">{{ numCar }}</span></p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
-            <div class="container text-center justify-content-between mb-3">
+            <div v-if="loading" class="text-center my-4">
+              <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div v-else class="container text-center justify-content-between mb-3">
                 <div class="row g-3">
                     <div v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -115,7 +126,12 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 <p class="col-6 px-1 fw-bold">화장품 산업 정보  <span style = "color: #7248BD;">{{ numBeauty }}</span></p>
                 <a class="col-2 nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
-            <div class="container text-start justify-content-between mb-3">
+            <div v-if="loading" class="text-center my-4">
+              <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div v-else class="container text-start justify-content-between mb-3">
                 <div class="row g-3">
                     <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -134,7 +150,12 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                 <p class="col-6 px-1 fw-bold">통합 자료실  <span style = "color: #7248BD;">{{ numDrive }}</span></p> 
                 <a class="col-2 nav-link active mt-1 px-2" @click="setDriveSearch" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/drive"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 결과 보기 〉</a>
             </div>
-            <div class="container drive-container m-3 d-flex">
+            <div v-if="loading" class="text-center my-4">
+              <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div v-else class="container drive-container m-3 d-flex">
                 <table class="table table-hover table-bordered">
                     <thead class="table-head">
                         <tr>

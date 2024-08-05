@@ -13,7 +13,12 @@ const token = localStorage.getItem("token");
 const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
-const salesData = ref([]);
+
+const crwlInfoCar = ref([]);
+const crwlInfoBeauty = ref([]);
+const crwlData = ref([]);
+const titleCar = ref('자동차 누적 크롤링 수');
+const titleBeauty = ref('화장품 누적 크롤링 수');
 
 const title = ref('no title');
 const imgUrl = ref(null);
@@ -32,6 +37,7 @@ const fetchCarNews = async () => {
     console.error('Error fetching data:', error);
   }
 };
+
 const fetchBeautyNews = async () => {
   subject.value = "beauty";
   try {
@@ -44,6 +50,7 @@ const fetchBeautyNews = async () => {
     console.error('Error fetching data:', error);
   }
 };
+
 const openModal = (titleVal, imgUrlVal, linkVal) => {
     title.value = titleVal;
     imgUrl.value = imgUrlVal;
@@ -52,16 +59,34 @@ const openModal = (titleVal, imgUrlVal, linkVal) => {
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
 };
+
 const setTokenCar = () => {
     localStorage.setItem("contentToken", 0);
 }
+
 const setTokenBeauty = () => {
     localStorage.setItem("contentToken", 1);
 }
 
+const fetchCrawlInfo = async() => {
+  try {
+    const response = await axios.get(`/v1/archive/crwlTotal`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }});
+    crwlInfoCar.value = response.data.content.carCrwlData;
+    crwlInfoBeauty.value = response.data.content.beautyCrwlData;
+    console.log(crwlInfoCar.value);
+    console.log(crwlInfoBeauty.value);
+
+  } catch (error) {
+    console.error('Error fetching crawl data:', error);
+  }
+}
 
 onMounted(fetchCarNews);
 onMounted(fetchBeautyNews);
+onMounted(fetchCrawlInfo);
 </script>
 
 <template>
@@ -114,7 +139,15 @@ onMounted(fetchBeautyNews);
             </div> 
         </div>
     </div>
-    <CarGraph :salesData="[65, 59, 80, 81, 56, 55, 40]" />
+    <div class="container m-3 row align-items-center justify-content-center">
+        <div v-if="crwlInfoCar.length > 0" class="col-6">
+            <CarGraph :crwlData="crwlInfoCar" :title="titleCar"></CarGraph>
+        </div>
+        <div v-if="crwlInfoBeauty.length > 0" class="col-6">
+            <CarGraph :crwlData="crwlInfoBeauty" :title="titleBeauty"></CarGraph>
+        </div>
+    </div>
+
     <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
 </template>
 

@@ -14,29 +14,32 @@
   
   const props = defineProps({
     // 예상되는 데이터 구조를 명시적으로 정의 (예: 각 월의 데이터를 포함하는 배열)
-    salesData: Array
+    crwlData: Array,
+    title: String,
   });
   
   const chartOptions = ref({
-    responsive: true,
+    responsive: false,
     plugins: {
       legend: {
+        display: false,
         position: 'top',
       },
       title: {
         display: true,
-        text: 'Monthly Sales Data'
+        text: props.title,
       }
     }
   });
   
   // props로 받은 데이터를 사용하여 chartData를 설정
   const preparedChartData = computed(() => ({
-    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    
+    labels: props.crwlData.map(item => item.date),
     datasets: [
       {
-        label: 'Monthly Sales',
-        data: props.salesData,
+        label: ' ',
+        data: props.crwlData.map(item => item.total),
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1
@@ -45,11 +48,12 @@
   }));
   
   const check = () => {
-    console.log(props.salesData);
+    console.log(props.crwlData.date);
+    console.log(props.crwlData.total);
   }
 onMounted(() => {
-  console.log(props.salesData);
+  console.log(props.crwlData);
 });
-  onMounted(check);
+onMounted(check);
 </script>
   
