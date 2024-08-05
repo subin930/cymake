@@ -147,12 +147,6 @@ public class DriveService {
      */
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
-        openSearchService.deleteFileIndex();
-        openSearchService.deleteNewsIndex();
-        openSearchService.createCrwlNewsTb();
-        openSearchService.createFileTb();
-        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
-        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         System.out.println(directory);
 
