@@ -31,8 +31,6 @@ public class TotalController {
     @GetMapping(value = "/search")
     @Operation(description = "통합 검색")
     public CommonResult<TotalSearchDto> searchTotal(@AuthenticationPrincipal CustomUserDetails user, @Valid @RequestParam(value = "searchBody") String searchBody) throws Exception {
-        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
-        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
         return globalResponseHandler.SendSuccessAndContent(totalService.searchTotal(user.getUser(), searchBody));
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -75,12 +76,36 @@ public class OpenSearchService {
 
         client.indices().create(createIndexRequest);
     }
+    /*
+     * 데이터 추출 및 업로드
+     */
+    public void addAndUpdateFileData(Map<String, Object> data, String idField) throws IOException {
+        BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
+        Object idValue = data.get(idField);
+        String id = idValue != null ? idValue.toString() : null;
+        bulkRequestBuilder.operations(op -> op.index(idx -> idx
+                .index("tb_file")
+                .document(data)
+                .id(id)
+        ));
 
+        BulkResponse bulkResponse = client.bulk(bulkRequestBuilder.build());
+        if (bulkResponse.errors()) {
+            System.out.println("Bulk upload failed with errors:");
+            for (BulkResponseItem item : bulkResponse.items()) {
+                if (item.error() != null) {
+                    System.err.println("Error indexing document ID " + item.id() + ": " + item.error().reason());
+                }
+            }
+        } else {
+            System.out.println("Bulk upload and update succeeded.");
+        }
+    }
     /*
      * 데이터 추가(tb_file)
      */
-    public void addFileData(long fileId, String fileName, String fileUrl, String lastEditDate,
-                            String postTitle, String type, String uploadDate,
+    public void addFileData(long fileId, String fileName, String fileUrl, Timestamp lastEditDate,
+                            String postTitle, String type, Timestamp uploadDate,
                             String companyCode, String uploader) throws IOException {
         IndexRequest<Map<String, Object>> request = new IndexRequest.Builder<Map<String, Object>>()
                 .index("tb_file")
@@ -97,7 +122,6 @@ public class OpenSearchService {
                     put("uploader", uploader);
                 }})
                 .build();
-
         client.index(request);
     }
 
@@ -228,7 +252,6 @@ public class OpenSearchService {
     public List<PostSearchResultDto> searchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
         Set<PostSearchResultDto> resultsSet = new HashSet<>();
         String company_code = user.getCompanyCode().getCode();
-        System.out.println(company_code);
         // 파일 이름으로 검색
         SearchRequest searchRequest1 = SearchRequest.of(s -> s
                 .index(index)
@@ -291,39 +314,118 @@ public class OpenSearchService {
 
     public List<NewsSearchResultDto> searchNewsTb(String index, String subject, String searchBody) throws IOException {
         Set<NewsSearchResultDto> resultsSet = new HashSet<>();
-        /*
-         * 1. title로 검색
-         */
-        SearchRequest searchRequest1 = SearchRequest.of(s -> s
+        int size = 1000; // 한 번에 가져올 최대 결과 수
+        int from = 0; // 시작점
+
+        while (true) {
+            int finalFrom = from;
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(index)
+                    .from(finalFrom)
+                    .size(size)
+                    .query(q -> q
+                            .bool(b -> b
+                                    .must(m -> m
+                                            .wildcard(w -> w
+                                                    .field("title")
+                                                    .value("*" + searchBody + "*")
+                                            )
+                                    )
+                                    .must(m -> m
+                                            .term(t -> t
+                                                    .field("subject")
+                                                    .value(FieldValue.of(subject))
+                                            )
+                                    )
+                            )
+                    )
+            );
+
+            // 검색 요청 실행
+            SearchResponse<NewsSearchResultDto> searchResponse = client.search(searchRequest, NewsSearchResultDto.class);
+            List<Hit<NewsSearchResultDto>> hits = searchResponse.hits().hits();
+
+            // 검색 결과 리스트에 넣기
+            for (Hit<NewsSearchResultDto> hit : hits) {
+                NewsSearchResultDto data = hit.source();
+                resultsSet.add(data);
+            }
+
+            // 더 이상 결과가 없으면 종료
+            if (hits.size() < size) {
+                break;
+            }
+
+            // 다음 페이지로 이동
+            from += size;
+        }
+
+        return new ArrayList<>(resultsSet);
+    }
+    /*
+    public List<PostSearchResultDto> searchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
+    Set<PostSearchResultDto> resultsSet = new HashSet<>();
+    String company_code = user.getCompanyCode().getCode();
+    System.out.println(company_code);
+    int size = 1000; // 한 번에 가져올 최대 결과 수
+    int from = 0; // 시작점
+
+    while (true) {
+        int finalFrom = from;
+        SearchRequest searchRequest = SearchRequest.of(s -> s
                 .index(index)
+                .from(finalFrom)
+                .size(size)
+                .sort(so -> so
+                        .field(f -> f
+                                .field("upload_date") // 정렬할 필드
+                                .order(SortOrder.Desc) // 최신순 정렬
+                        )
+                )
                 .query(q -> q
                         .bool(b -> b
-                                .must(m -> m
+                                .should(sh -> sh
                                         .wildcard(w -> w
-                                                .field("title")
+                                                .field("file_name")
                                                 .value("*" + searchBody + "*")
                                         )
                                 )
-                                .must(m -> m
-                                        .term(t -> t
-                                                .field("subject")
-                                                .value(FieldValue.of(subject))
+                                .should(sh -> sh
+                                        .wildcard(w -> w
+                                                .field("post_title")
+                                                .value("*" + searchBody + "*")
                                         )
                                 )
                         )
                 )
         );
 
-        //검색 요청 실행
-        SearchResponse<NewsSearchResultDto> searchResponse1 = client.search(searchRequest1,NewsSearchResultDto.class);
-        //검색 결과 리스트에 넣기
-        List<Hit<NewsSearchResultDto>> hits1 = searchResponse1.hits().hits();
-        for (Hit<NewsSearchResultDto> hit: hits1) {
-            NewsSearchResultDto data = hit.source();
-            resultsSet.add(data);
+        // 검색 요청 실행
+        SearchResponse<PostSearchResultDto> searchResponse = client.search(searchRequest, PostSearchResultDto.class);
+        List<Hit<PostSearchResultDto>> hits = searchResponse.hits().hits();
+
+        // 검색 결과 리스트에 넣기
+        for (Hit<PostSearchResultDto> hit : hits) {
+            if (Objects.requireNonNull(hit.source()).getCompany_code().equals(company_code)) {
+                PostSearchResultDto data = hit.source();
+                resultsSet.add(data);
+            }
         }
-        return new ArrayList<>(resultsSet);
+
+        // 더 이상 결과가 없으면 종료
+        if (hits.size() < size) {
+            break;
+        }
+
+        // 다음 페이지로 이동
+        from += size;
     }
+
+    return new ArrayList<>(resultsSet);
+}
+
+     */
+
 
     /*
      * 데이터 검색(tb_file)
@@ -351,7 +453,6 @@ public class OpenSearchService {
     public SearchArchiveDto totalSearchNewsTb(String index, String subject, String searchBody) throws IOException {
         SearchArchiveDto searchArchiveDto = new SearchArchiveDto();
         List<NewsSearchResultDto> resultsList = searchNewsTb(index, subject, searchBody);
-        System.out.println(resultsList);
         searchArchiveDto.setNewsSearchResultDto(resultsList.stream()
                 .limit(12)
                 .collect(Collectors.toList()));

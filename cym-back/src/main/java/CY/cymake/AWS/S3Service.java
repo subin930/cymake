@@ -105,7 +105,7 @@ public class S3Service {
         //metadata.setContentType(multipartFile.getContentType());
         try(InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3Client.putObject(new PutObjectRequest(bucket, path, inputStream, metadata));
-                    //.withCannedAcl(CannedAccessControlList.PublicRead));
+            //.withCannedAcl(CannedAccessControlList.PublicRead));
         } catch(IOException e) {
             throw new FileUploadFailedException("파일 업로드에 실패했습니다.", e);
         }
@@ -123,7 +123,7 @@ public class S3Service {
         DecimalFormat df = new DecimalFormat("#.###");
         return Double.parseDouble(df.format(size));
     }
-
+/*
     public ResponseEntity<byte[]> download(String directory, String filename) throws IOException {
         String path = directory + filename;
         S3Object awsS3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
@@ -134,16 +134,14 @@ public class S3Service {
         httpHeaders.setContentType(MediaType.parseMediaType(awsS3Object.getObjectMetadata().getContentType()));
         httpHeaders.setContentLength(bytes.length);
         httpHeaders.setContentDispositionFormData("attachment", downloadedFileName);
-
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
     }
-
+ */
     /*
      * 파일 삭제
      */
     public void deleteFile(String directory, String filename) throws IOException {
         String path = directory + filename;
-        System.out.println(path);
         try{
             amazonS3Client.deleteObject(bucket, path);
         } catch (SdkClientException e) {

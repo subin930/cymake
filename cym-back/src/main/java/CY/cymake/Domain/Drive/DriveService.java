@@ -2,9 +2,12 @@ package CY.cymake.Domain.Drive;
 
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Domain.Drive.Dto.CrwlResDto;
+import CY.cymake.Domain.Drive.Dto.CrwlTotalDto;
 import CY.cymake.Domain.Drive.Dto.PostListResDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Entity.CompanyEntity;
+import CY.cymake.Entity.CrwlTotalEntity;
 import CY.cymake.Entity.FileEntity;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.FileDeleteFailedException;
@@ -12,10 +15,10 @@ import CY.cymake.Exception.FileUpdateFailedException;
 import CY.cymake.Exception.UserNotFoundException;
 import CY.cymake.OpenSearch.DataExtractor;
 import CY.cymake.OpenSearch.OpenSearchService;
+import CY.cymake.Repository.CrwlTotalRepository;
 import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +36,9 @@ public class DriveService {
     private final FileRepository fileRepository;
     private final OpenSearchService openSearchService;
     private final DataExtractor dataExtractor;
+    private final CrwlTotalRepository crwlTotalRepository;
 
-    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException {
+    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
         if(siteUser.isEmpty()) {
             throw new UserNotFoundException("파일 업로드에 실패했습니다.");
@@ -53,15 +58,19 @@ public class DriveService {
                 .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
                 .build();
         fileRepository.save(file);
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         return fileUrl;
     }
     /*
      * 파일 다운로드
      */
+    /*
     public ResponseEntity<byte[]> download(CustomUserInfoDto user, String filename) throws IOException {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         return s3Service.download(directory, filename);
     }
+
+     */
     /*
      * 파일 삭제
      */
@@ -76,6 +85,8 @@ public class DriveService {
             //일치하지 않을 경우
             throw new FileDeleteFailedException("파일 삭제에 실패하였습니다.");
         }
+        //opensearch 인덱스에서 삭제
+        openSearchService.deleteFileData(file.getId());
 
         //3. s3에서 삭제 로직 수행
         s3Service.deleteFile(directory, filename);
@@ -97,15 +108,22 @@ public class DriveService {
         if(newFile == null) {
             file.updatePostTitle(postTitle);
             fileRepository.save(file);
+            Map<String, Object> data = convertFileData(file.getId(), file.getFile(), file.getFileUrl(), postTitle,
+                    file.getType(), file.getUploadDate(), file.getCompanyCode().getCode(),
+                    file.getUploader().getId());
+            openSearchService.addAndUpdateFileData(data, "file_id");
             return;
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
         String directory = "files/" +  user.getCompanyCode().getCode() + "/";
         String fileUrl = s3Service.updateFile(newFile, directory, originalFilename);
-
         //3. db수정
         file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())));
         fileRepository.save(file);
+        Map<String, Object> data = convertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, postTitle,
+                getExtension(newFile.getOriginalFilename()), file.getUploadDate(), file.getCompanyCode().getCode(),
+                file.getUploader().getId());
+        openSearchService.addAndUpdateFileData(data, "file_id");
     }
 
     /*
@@ -129,6 +147,12 @@ public class DriveService {
      */
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
+        openSearchService.deleteFileIndex();
+        openSearchService.deleteNewsIndex();
+        openSearchService.createCrwlNewsTb();
+        openSearchService.createFileTb();
+        openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
+        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         System.out.println(directory);
 
@@ -152,7 +176,6 @@ public class DriveService {
      * post 검색
      */
     public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws Exception {
-        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
         return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
 
     }
@@ -168,5 +191,49 @@ public class DriveService {
             result.add(postListResDto);
         }
         return result;
+    }
+
+    /*
+     *
+     */
+    public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader) {
+        Map<String, Object> row = new HashMap<>();
+        row.put("file_id", fileId);
+        row.put("file_name", filename);
+        row.put("file_url", fileUrl);
+        row.put("last_edit_date",  Timestamp.valueOf(LocalDateTime.now()));
+        row.put("post_title", postTitle);
+        row.put("type", type);
+        row.put("upload_date", uploadDate);
+        row.put("company_code", companyCode);
+        row.put("uploader", uploader);
+        return row;
+    }
+
+    /*
+     * 크롤링 총 수
+     */
+    public CrwlResDto getCrwlTotal() {
+        List<CrwlTotalEntity> carEntity = crwlTotalRepository.findBySubjectOrderByDate("car");
+        List<CrwlTotalEntity> beautyEntity = crwlTotalRepository.findBySubjectOrderByDate("beauty");
+        List<CrwlTotalDto> car = convertToDtoList(carEntity);
+        List<CrwlTotalDto> beauty = convertToDtoList(beautyEntity);
+        return CrwlResDto.builder()
+                .carCrwlData(car)
+                .beautyCrwlData(beauty)
+                .build();
+    }
+
+    public CrwlTotalDto convertToDto(CrwlTotalEntity entity) {
+        return CrwlTotalDto.builder()
+                .date(String.valueOf(entity.getDate()))
+                .total(entity.getTotal())
+                .build();
+    }
+
+    public List<CrwlTotalDto> convertToDtoList(List<CrwlTotalEntity> entities) {
+        return entities.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

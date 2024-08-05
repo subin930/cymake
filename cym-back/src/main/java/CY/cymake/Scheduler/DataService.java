@@ -37,9 +37,11 @@ public class DataService {
 
         //오늘 날짜 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");  //원하는 형식 지정
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime now = LocalDateTime.now();  //오늘 날짜와 시간 가져옴
         String date = now.format(formatter); //변형
-
+        String date2 = now.format(formatter2);
+        System.out.println(date);
         //주제 목록 설정
         List <String> subjectNames = List.of("car", "beauty");
 
@@ -47,7 +49,7 @@ public class DataService {
             Long total = 0L;
             //해당 디렉토리에 존재하는 파일들의 이름 모두 불러오기
             //List<String> fileNames = s3Service.getFileNames("testcrawl/" + subject + "/article/" + date + "/"); //todo: 이전 시점부터 지금 시점까지 모두 가져오도록 해야함
-            List<String> fileNames = s3Service.getFileNames("testcrawl/" + subject + "/article/" + "20240717" + "/");
+            List<String> fileNames = s3Service.getFileNames("crawl/" + subject + "/article/" + date + "/");
             System.out.println("fileNames: ");
             System.out.println(fileNames);
             /*
@@ -76,7 +78,7 @@ public class DataService {
             //해당 날짜, 주제에 해당하는 tb_crwl_total의 엔티티 만들기
             CrwlTotalEntity crwlTotalEntity = CrwlTotalEntity.builder()
                     .subject(subject)
-                    .date(date)
+                    .date(date2)
                     .total(total)
                     .build();
             crwlTotalRepository.save(crwlTotalEntity);
