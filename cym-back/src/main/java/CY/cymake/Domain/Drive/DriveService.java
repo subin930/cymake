@@ -54,8 +54,8 @@ public class DriveService {
                 .lastEditDate(Timestamp.valueOf(LocalDateTime.now()))
                 .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
                 .build();
-        fileRepository.save(file);
-        openSearchService.bulkUploadData(dataExtractor.extractFileData(), "tb_file", "file_id");
+        FileEntity savedFile = fileRepository.save(file);
+        openSearchService.addAndUpdateFileData(convertFileData(savedFile.getId(), savedFile.getFile(), savedFile.getFileUrl(), savedFile.getPostTitle(), savedFile.getType(), savedFile.getUploadDate(), savedFile.getCompanyCode().getCode(), savedFile.getUploader().getId()), "file_id");
         return fileUrl;
     }
     /*

@@ -33,7 +33,7 @@ public class    ArchiveController {
      */
     @Operation(description = "주제 별 뉴스 기사 조회(n개)")
     @GetMapping(value = "/{subject}")
-    public CommonResult<List<NewsResDto>> getNews(@PathVariable(value = "subject") String subject) {
+    public CommonResult<List<NewsResDto>> getNews(@PathVariable(value = "subject") String subject) throws Exception {
         return globalResponseHandler.SendSuccessAndContent(archiveService.getNews(subject));
     }
     /*

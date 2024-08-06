@@ -1,6 +1,5 @@
 package CY.cymake.Domain.total.Dto;
 
-import CY.cymake.Domain.Archive.Dto.NewsSearchResultDto;
 import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
