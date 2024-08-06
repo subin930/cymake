@@ -30,6 +30,7 @@ const sendMessage = () => {
   if (newMessage.value.trim()) {
     // Add user message to chat
     messages.value.push({ text: newMessage.value + uploadedFile.value, sender: 'user' });
+    
     // Clear input field (메세지와 파일 초기화)
     newMessage.value = '';
     uploadedFile.value = '';
