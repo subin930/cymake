@@ -76,6 +76,7 @@ public class ArchiveService {
     /*
      * 뉴스 검색
      */
+    @Transactional(readOnly = true)
     public List<NewsResDto> searchNews(String subject, String searchBody) throws Exception, IOException {
 
         return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody));
@@ -89,6 +90,8 @@ public class ArchiveService {
         List<NewsResDto> result = new ArrayList<>();
         for(NewsSearchResultDto news: list) {
             CrwlNewsEntity newsData = crwlNewsRepository.findById(news.getNews_id()).orElseThrow(() -> new SearchException("검색에 실패하였습니다."));
+            Hibernate.initialize(newsData.getSummary());
+            Hibernate.initialize(newsData.getKeywords());
             NewsResDto newsResDto = new NewsResDto(
                     newsData.getTitle(),
                     newsData.getUploadDate(),
@@ -104,6 +107,7 @@ public class ArchiveService {
     /*
      * 크롤링 총 수
      */
+    @Transactional(readOnly = true)
     public CrwlResDto getCrwlTotal() {
         List<CrwlTotalEntity> carEntity = crwlTotalRepository.findBySubjectOrderByDate("car");
         List<CrwlTotalEntity> beautyEntity = crwlTotalRepository.findBySubjectOrderByDate("beauty");
@@ -114,14 +118,14 @@ public class ArchiveService {
                 .beautyCrwlData(beauty)
                 .build();
     }
-
+    @Transactional(readOnly = true)
     public CrwlTotalDto convertToDto(CrwlTotalEntity entity) {
         return CrwlTotalDto.builder()
                 .date(String.valueOf(entity.getDate()))
                 .total(entity.getTotal())
                 .build();
     }
-
+    @Transactional(readOnly = true)
     public List<CrwlTotalDto> convertToDtoList(List<CrwlTotalEntity> entities) {
         return entities.stream()
                 .map(this::convertToDto)

@@ -17,6 +17,7 @@ import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class DriveService {
     private final DataExtractor dataExtractor;
     private final CrwlTotalRepository crwlTotalRepository;
 
+    @Transactional(readOnly = true)
     public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
         if(siteUser.isEmpty()) {
@@ -71,6 +73,7 @@ public class DriveService {
     /*
      * 파일 삭제
      */
+    @Transactional(readOnly = true)
     public void deleteFile(CustomUserInfoDto user, String filename) throws IOException {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
         FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), filename).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
@@ -94,6 +97,7 @@ public class DriveService {
     /*
      * 파일 수정
      */
+    @Transactional(readOnly = true)
     public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String originalFilename, String postTitle) throws IOException {
         FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일이 존재하지 않습니다."));
 
@@ -126,6 +130,7 @@ public class DriveService {
     /*
      * 중복되는 이름의 파일 충돌 방지 코드 -> 적용 여부 후에 논의
      */
+    @Transactional(readOnly = true)
     public String createRandomFilename(String originalFilename) {
         int idx = originalFilename.lastIndexOf(".");
         String extension = originalFilename.substring(idx + 1);
@@ -134,6 +139,7 @@ public class DriveService {
     /*
      * 확장자 추출
      */
+    @Transactional(readOnly = true)
     public String getExtension(String originalFilename) {
         int idx = originalFilename.lastIndexOf(".");
         return originalFilename.substring(idx + 1);
@@ -142,6 +148,7 @@ public class DriveService {
     /*
      * post 리스트 전송
      */
+    @Transactional(readOnly = true)
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
         //openSearchService.createFileTb(); //test 용.
@@ -167,6 +174,7 @@ public class DriveService {
     /*
      * post 검색
      */
+    @Transactional(readOnly = true)
     public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws Exception {
         return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
 
@@ -174,6 +182,7 @@ public class DriveService {
     /*
      * PostListDto -> PostSearchResultDto
      */
+    @Transactional(readOnly = true)
     public List<PostListResDto> changeToPostList(CustomUserInfoDto user, List<PostSearchResultDto> list) throws IOException {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         List<PostListResDto> result = new ArrayList<>();
@@ -188,6 +197,7 @@ public class DriveService {
     /*
      *
      */
+    @Transactional(readOnly = true)
     public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader) {
         Map<String, Object> row = new HashMap<>();
         row.put("file_id", fileId);

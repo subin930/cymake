@@ -36,6 +36,7 @@ public class TotalService {
     private final S3Service s3Service;
     private final CrwlNewsRepository crwlNewsRepository;
 
+    @Transactional(readOnly = true)
     public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException, SearchException {
         SearchDriveDto searchDrive = openSearchService.totalSearchFileTb(user, "tb_file", searchBody);
         SearchArchiveDto searchArchiveCar = openSearchService.totalSearchNewsTb("tb_crwl_news", "car", searchBody);
@@ -48,6 +49,7 @@ public class TotalService {
     /*
      * PostListDto -> PostSearchResultDto
      */
+    @Transactional(readOnly = true)
     public List<PostListResDto> changeToPostList(CustomUserInfoDto user, List<PostSearchResultDto> list) throws IOException {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         List<PostListResDto> result = new ArrayList<>();
@@ -66,6 +68,8 @@ public class TotalService {
         List<NewsResDto> result = new ArrayList<>();
         for(NewsSearchResultDto news: list) {
             CrwlNewsEntity newsData = crwlNewsRepository.findById(news.getNews_id()).orElseThrow(() -> new SearchException("검색에 실패하였습니다."));
+            Hibernate.initialize(newsData.getSummary());
+            Hibernate.initialize(newsData.getKeywords());
             NewsResDto newsResDto = new NewsResDto(
                     newsData.getTitle(),
                     newsData.getUploadDate(),
