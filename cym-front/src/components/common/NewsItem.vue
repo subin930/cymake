@@ -2,13 +2,14 @@
     <button type="button"
             class="btn news-btn text-start"
             style="font-size: .8rem; font-weight: bold"
-            @click="openModal(title, imgUrl, newsLink)">
+            @click="openModal(title, imgUrl, newsLink, summary, keywords)">
       <div class="news-image-wrapper">
         <img :src="imgUrl" alt="news image" class="news-image">
       </div>
       <br/>
       <p class="news-title ms-1">{{ title }}</p>
       <br/>
+      <p class="ms-1" style="font-size:.7rem; color:#7248BD; font-weight: normal;">{{ keywords.join(', ') }}</p>
       <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formattedDate }}</p>
     </button>
 </template>
@@ -21,6 +22,8 @@
   const props = defineProps({
     title: String,
     imgUrl: String,
+    keywords: Array,
+    summary: Array,
     newsLink: String,
     uploadDate: String,
     openModal: Function,

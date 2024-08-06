@@ -23,7 +23,8 @@ const titleBeauty = ref('화장품 누적 크롤링 수');
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
-
+const summary = ref([]);
+const keywords = ref([]);
 
 const fetchCarNews = async () => {
   subject.value = "car";
@@ -51,10 +52,13 @@ const fetchBeautyNews = async () => {
   }
 };
 
-const openModal = (titleVal, imgUrlVal, linkVal) => {
+const openModal = (titleVal, imgUrlVal, linkVal, summaryVal, keywordsVal) => {
+    console.log(summaryVal, keywordsVal); 
     title.value = titleVal;
     imgUrl.value = imgUrlVal;
     newsLink.value = linkVal;
+    summary.value = summaryVal;
+    keywords.value = keywordsVal;
     const modalElement = document.getElementById("newsModal");
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
@@ -108,6 +112,8 @@ onMounted(fetchCrawlInfo);
                           <NewsItem
                             :title="carNews.title"
                             :imgUrl="carNews.imgUrl"
+                            :keywords="carNews.keywords"
+                            :summary="carNews.summary"
                             :newsLink="carNews.newsLink"
                             :uploadDate="carNews.uploadDate"
                             :openModal="openModal"
@@ -129,6 +135,8 @@ onMounted(fetchCrawlInfo);
                           <NewsItem
                             :title="beautyNews.title"
                             :imgUrl="beautyNews.imgUrl"
+                            :keywords="beautyNews.keywords"
+                            :summary="beautyNews.summary"
                             :newsLink="beautyNews.newsLink"
                             :uploadDate="beautyNews.uploadDate"
                             :openModal="openModal"
@@ -148,7 +156,7 @@ onMounted(fetchCrawlInfo);
         </div>
     </div>
 
-    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>
+    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink" :summary="summary" :keywords="keywords"></NewsModal>
 </template>
 
 <style scoped>

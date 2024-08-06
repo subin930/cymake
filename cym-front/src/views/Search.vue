@@ -20,6 +20,8 @@ const numDrive = ref(0);
 const title = ref('no title');
 const imgUrl = ref(null);
 const newsLink = ref('no link');
+const summary = ref([]);
+const keywords = ref([]);
 const contentCar = ref([]);
 const contentBeauty = ref([]);
 //Drive
@@ -41,6 +43,7 @@ const handleSearch = async () => {
             });
             contentCar.value = response.data.content.archiveCarSearchResult;
             contentBeauty.value = response.data.content.archiveBeautySearchResult;
+            console.log(contentCar.value);
             content.value = response.data.content.driveSearchResult;
             numCar.value = response.data.content.numCar;
             numBeauty.value = response.data.content.numBeauty;
@@ -58,10 +61,13 @@ const handleSearch = async () => {
 };
 
 //Archive
-const openModal = (titleVal, imgUrlVal, linkVal) => {
+const openModal = (titleVal, imgUrlVal, linkVal, summaryVal, keywordsVal) => {
+    console.log(summaryVal, keywordsVal); 
     title.value = titleVal;
     imgUrl.value = imgUrlVal;
     newsLink.value = linkVal;
+    summary.value = summaryVal;
+    keywords.value = keywordsVal;
     const modalElement = document.getElementById("newsModal");
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
@@ -114,6 +120,8 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                         <NewsItem
                             :title="carNews.title"
                             :imgUrl="carNews.imgUrl"
+                            :keywords="carNews.keywords"
+                            :summary="carNews.summary"
                             :newsLink="carNews.newsLink"
                             :uploadDate="carNews.uploadDate"
                             :openModal="openModal"
@@ -139,6 +147,8 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                             :title="beautyNews.title"
                             :imgUrl="beautyNews.imgUrl"
                             :newsLink="beautyNews.newsLink"
+                            :keywords="beautyNews.keywords"
+                            :summary="beautyNews.summary"
                             :uploadDate="beautyNews.uploadDate"
                             :openModal="openModal"
                           />
@@ -183,7 +193,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
             </div>
         </div>
     </div>
-    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink"></NewsModal>    
+    <NewsModal :title="title" :imgUrl="imgUrl" :newsLink="newsLink" :summary="summary" :keywords="keywords"></NewsModal>    
 </template>
 
 <style scoped>
