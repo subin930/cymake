@@ -106,6 +106,13 @@ public class GlobalExceptionHandler {
         log.error("[GetNewsException Handle] ", e);
         return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
+    //SearchException
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(SearchException.class)
+    public CommonBaseResult searchException(Exception e) {
+        log.error("[SearchException Handle] ", e);
+        return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
 
 /*
 refresh토큰 + redis 이용해 자동 로그인 + 로그아웃 구현 시 사용

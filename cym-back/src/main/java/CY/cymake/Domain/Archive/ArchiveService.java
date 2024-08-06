@@ -7,6 +7,7 @@ import CY.cymake.Domain.Archive.Dto.CrwlTotalDto;
 import CY.cymake.Entity.CrwlNewsEntity;
 import CY.cymake.Entity.CrwlTotalEntity;
 import CY.cymake.Exception.GetNewsException;
+import CY.cymake.Exception.SearchException;
 import CY.cymake.OpenSearch.DataExtractor;
 import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Repository.CrwlNewsRepository;
@@ -76,24 +77,25 @@ public class ArchiveService {
      * 뉴스 검색
      */
     public List<NewsResDto> searchNews(String subject, String searchBody) throws Exception, IOException {
+
         return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody));
     }
     /*
      * NewsSearchResultDto -> NewsResDto
+     * 검색 결과(아이디, subject, title)에서 아이디를 통해 디비에서 정보 불러오기
      */
     @Transactional(readOnly = true)
     public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) throws Exception {
         List<NewsResDto> result = new ArrayList<>();
         for(NewsSearchResultDto news: list) {
-            Hibernate.initialize(news.getSummary());
-            Hibernate.initialize(news.getKeywords());
+            CrwlNewsEntity newsData = crwlNewsRepository.findById(news.getNews_id()).orElseThrow(() -> new SearchException("검색에 실패하였습니다."));
             NewsResDto newsResDto = new NewsResDto(
-                    news.getTitle(),
-                    news.getUpload_date(),
-                    news.getNews_link(),
-                    news.getImg_url(),
-                    news.getSummary(),
-                    news.getKeywords()
+                    newsData.getTitle(),
+                    newsData.getUploadDate(),
+                    newsData.getNewsLink(),
+                    newsData.getImgUrl(),
+                    newsData.getSummary(),
+                    newsData.getKeywords()
             );
             result.add(newsResDto);
         }

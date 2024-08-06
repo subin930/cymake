@@ -62,12 +62,8 @@ public class OpenSearchService {
                 .settings(new IndexSettings.Builder().numberOfShards("4").numberOfReplicas("3").build())
                 .mappings(new TypeMapping.Builder()
                         .properties("news_id", new Property.Builder().long_(new LongNumberProperty.Builder().build()).build())
-                        .properties("img_url", new Property.Builder().text(new TextProperty.Builder().build()).build())
-                        .properties("news_link", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("subject", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("title", new Property.Builder().text(new TextProperty.Builder().build()).build())
-                        .properties("upload_date", new Property.Builder().date(new DateProperty.Builder().format("strict_date_optional_time||epoch_millis").build()).build())
-                        .properties("url", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .build()
                 )
                 .build();
@@ -96,7 +92,33 @@ public class OpenSearchService {
                 }
             }
         } else {
-            System.out.println("Bulk upload and update succeeded.");
+            System.out.println("Bulk upload and update file succeeded.");
+        }
+    }
+
+    /*
+     * 데이터 추출 및 업로드
+     */
+    public void addAndUpdateNewsData(Map<String, Object> data, String idField) throws IOException {
+        BulkRequest.Builder bulkRequestBuilder = new BulkRequest.Builder();
+        Object idValue = data.get(idField);
+        String id = idValue != null ? idValue.toString() : null;
+        bulkRequestBuilder.operations(op -> op.index(idx -> idx
+                .index("tb_crwl_news")
+                .document(data)
+                .id(id)
+        ));
+
+        BulkResponse bulkResponse = client.bulk(bulkRequestBuilder.build());
+        if (bulkResponse.errors()) {
+            System.out.println("Bulk upload failed with errors:");
+            for (BulkResponseItem item : bulkResponse.items()) {
+                if (item.error() != null) {
+                    System.err.println("Error indexing document ID " + item.id() + ": " + item.error().reason());
+                }
+            }
+        } else {
+            System.out.println("Bulk upload and update news succeeded.");
         }
     }
     /*
@@ -126,19 +148,15 @@ public class OpenSearchService {
     /*
      * 데이터 추가(tb_crwl_news)
      */
-    public void addNewsData(long newsId, String imgUrl, String newsLink, String subject,
-                            String title, String uploadDate, String url) throws IOException {
+    public void addNewsData(long newsId, String subject,
+                            String title) throws IOException {
         IndexRequest<Map<String, Object>> request = new IndexRequest.Builder<Map<String, Object>>()
                 .index("tb_crwl_news")
                 .id(String.valueOf(newsId))
                 .document(new HashMap<>() {{
                     put("news_id", newsId);
-                    put("img_url", imgUrl);
-                    put("news_link", newsLink);
                     put("subject", subject);
                     put("title", title);
-                    put("upload_date", uploadDate);
-                    put("url", url);
                 }})
                 .build();
 
@@ -220,7 +238,6 @@ public class OpenSearchService {
         for (Map<String, Object> data : dataList) {
             Object idValue = data.get(idField);
             String id = idValue != null ? idValue.toString() : null;
-
             bulkRequestBuilder.operations(op -> op.index(idx -> idx
                     .index(tbName)
                     .document(data)

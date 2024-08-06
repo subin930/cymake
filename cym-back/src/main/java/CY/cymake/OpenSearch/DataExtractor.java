@@ -1,6 +1,10 @@
 package CY.cymake.OpenSearch;
 
 
+import CY.cymake.Entity.CrwlNewsEntity;
+import CY.cymake.Entity.FileEntity;
+import CY.cymake.Repository.CrwlNewsRepository;
+import CY.cymake.Repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,10 +13,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,31 @@ public class DataExtractor {
     @Value("${spring.datasource.password}")
     private String password;
 
+    private final CrwlNewsRepository crwlNewsRepository;
+    private final FileRepository fileRepository;
+
+    public List<Map<String, Object>> extractFileData() {
+        List<FileEntity> fileEntities = fileRepository.findAll();
+
+        return fileEntities.stream()
+                .filter(Objects::nonNull) // Null 체크
+                .map(file -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("file_id", file.getId());
+                    map.put("file_name", file.getFile());
+                    map.put("file_url", file.getFileUrl());
+                    map.put("last_edit_date", file.getLastEditDate().toInstant().toString());
+                    map.put("post_title", file.getPostTitle());
+                    map.put("type", file.getType());
+                    map.put("upload_date", file.getUploadDate().toInstant().toString());
+                    map.put("company_code", file.getCompanyCode());
+                    map.put("uploader", file.getUploader());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
+    /*
     public List<Map<String, Object>> extractFileData() throws Exception {
         List<Map<String, Object>> dataList = new ArrayList<>();
 
@@ -55,6 +82,9 @@ public class DataExtractor {
         return dataList;
     }
 
+     */
+
+/*
     public List<Map<String, Object>> extractCrwlNewsData() throws Exception {
         List<Map<String, Object>> dataList = new ArrayList<>();
 
@@ -65,12 +95,8 @@ public class DataExtractor {
         while (rs.next()) {
             Map<String, Object> row = new HashMap<>();
             row.put("news_id", rs.getLong("news_id"));
-            row.put("img_url", rs.getString("img_url"));
-            row.put("news_link", rs.getString("news_link"));
             row.put("subject", rs.getString("subject"));
             row.put("title", rs.getString("title"));
-            row.put("upload_date", rs.getTimestamp("upload_date").toInstant().toString());
-            row.put("url", rs.getString("url"));
             // 필요한 다른 필드 추가
             dataList.add(row);
         }
@@ -78,8 +104,25 @@ public class DataExtractor {
         rs.close();
         stmt.close();
         conn.close();
-
         return dataList;
 
     }
+
+ */
+
+    public List<Map<String, Object>> extractCrwlNewsData() {
+        List<CrwlNewsEntity> newsEntities = crwlNewsRepository.findAll();
+
+        return newsEntities.stream()
+                .filter(Objects::nonNull) // Null 체크
+                .map(news -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("news_id", news.getId());
+                    map.put("subject", news.getSubject());
+                    map.put("title", news.getTitle());
+                    return map;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

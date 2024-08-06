@@ -11,8 +11,11 @@ import CY.cymake.Domain.Drive.Dto.PostSearchResultDto;
 import CY.cymake.Domain.total.Dto.SearchArchiveDto;
 import CY.cymake.Domain.total.Dto.SearchDriveDto;
 import CY.cymake.Domain.total.Dto.TotalSearchDto;
+import CY.cymake.Entity.CrwlNewsEntity;
+import CY.cymake.Exception.SearchException;
 import CY.cymake.Exception.UserNotFoundException;
 import CY.cymake.OpenSearch.OpenSearchService;
+import CY.cymake.Repository.CrwlNewsRepository;
 import CY.cymake.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
@@ -31,8 +34,9 @@ public class TotalService {
     private final UsersRepository usersRepository;
     private final OpenSearchService openSearchService;
     private final S3Service s3Service;
+    private final CrwlNewsRepository crwlNewsRepository;
 
-    public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException {
+    public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException, SearchException {
         SearchDriveDto searchDrive = openSearchService.totalSearchFileTb(user, "tb_file", searchBody);
         SearchArchiveDto searchArchiveCar = openSearchService.totalSearchNewsTb("tb_crwl_news", "car", searchBody);
         SearchArchiveDto searchArchiveBeauty = openSearchService.totalSearchNewsTb("tb_crwl_news", "beauty", searchBody);
@@ -58,18 +62,17 @@ public class TotalService {
      * NewsSearchResultDto -> NewsResDto
      */
     @Transactional(readOnly = true)
-    public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) {
+    public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) throws SearchException {
         List<NewsResDto> result = new ArrayList<>();
         for(NewsSearchResultDto news: list) {
-            Hibernate.initialize(news.getSummary());
-            Hibernate.initialize(news.getKeywords());
+            CrwlNewsEntity newsData = crwlNewsRepository.findById(news.getNews_id()).orElseThrow(() -> new SearchException("검색에 실패하였습니다."));
             NewsResDto newsResDto = new NewsResDto(
-                    news.getTitle(),
-                    news.getUpload_date(),
-                    news.getNews_link(),
-                    news.getImg_url(),
-                    news.getSummary(),
-                    news.getKeywords()
+                    newsData.getTitle(),
+                    newsData.getUploadDate(),
+                    newsData.getNewsLink(),
+                    newsData.getImgUrl(),
+                    newsData.getSummary(),
+                    newsData.getKeywords()
             );
             result.add(newsResDto);
         }

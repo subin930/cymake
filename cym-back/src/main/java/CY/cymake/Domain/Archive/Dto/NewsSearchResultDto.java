@@ -19,34 +19,10 @@ public class NewsSearchResultDto {
     Long news_id;
 
     @NotBlank
-    @Schema(description = "img_url")
-    String img_url;
-
-    @NotBlank
-    @Schema(description = "news_link")
-    String news_link;
-
-    @NotBlank
     @Schema(description = "subject")
     String subject;
 
     @NotBlank
     @Schema(description = "title")
     String title;
-
-    @NotBlank
-    @Schema(description = "upload_date")
-    Timestamp upload_date;
-
-    @NotBlank
-    @Schema(description = "url")
-    String url;
-
-    @NotBlank
-    @Schema(description = "summary")
-    List<String> summary;
-
-    @NotBlank
-    @Schema(description = "keywords")
-    List<String> keywords;
 }

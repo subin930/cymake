@@ -144,6 +144,7 @@ public class DriveService {
      */
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
+        //openSearchService.createFileTb(); //test 용.
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         System.out.println(directory);
 
