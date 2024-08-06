@@ -15,7 +15,9 @@ import CY.cymake.Exception.UserNotFoundException;
 import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,10 +57,20 @@ public class TotalService {
     /*
      * NewsSearchResultDto -> NewsResDto
      */
+    @Transactional(readOnly = true)
     public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) {
         List<NewsResDto> result = new ArrayList<>();
         for(NewsSearchResultDto news: list) {
-            NewsResDto newsResDto = new NewsResDto(news.getTitle(), news.getUpload_date(), news.getNews_link(), news.getImg_url());
+            Hibernate.initialize(news.getSummary());
+            Hibernate.initialize(news.getKeywords());
+            NewsResDto newsResDto = new NewsResDto(
+                    news.getTitle(),
+                    news.getUpload_date(),
+                    news.getNews_link(),
+                    news.getImg_url(),
+                    news.getSummary(),
+                    news.getKeywords()
+            );
             result.add(newsResDto);
         }
         return result;

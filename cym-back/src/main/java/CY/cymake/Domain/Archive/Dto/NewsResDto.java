@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @Schema(description = "크롤링된 뉴스 조회 Dto")
@@ -30,4 +31,12 @@ public class NewsResDto {
     @NotBlank
     @Schema(description = "이미지 url")
     private String imgUrl;
+
+    @NotBlank
+    @Schema(description = "요약")
+    private List<String> summary;
+
+    @NotBlank
+    @Schema(description = "키워드")
+    private List<String> keywords;
 }

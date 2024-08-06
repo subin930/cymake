@@ -6,13 +6,15 @@ import CY.cymake.Domain.Archive.Dto.CrwlResDto;
 import CY.cymake.Domain.Archive.Dto.CrwlTotalDto;
 import CY.cymake.Entity.CrwlNewsEntity;
 import CY.cymake.Entity.CrwlTotalEntity;
+import CY.cymake.Exception.GetNewsException;
 import CY.cymake.OpenSearch.DataExtractor;
 import CY.cymake.OpenSearch.OpenSearchService;
 import CY.cymake.Repository.CrwlNewsRepository;
 import CY.cymake.Repository.CrwlTotalRepository;
-import CY.cymake.Repository.NewsDataRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,38 +24,50 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ArchiveService {
-    private final NewsDataRepository newsDataRepository;
     private final CrwlNewsRepository crwlNewsRepository;
     private final DataExtractor dataExtractor;
     private final OpenSearchService openSearchService;
     private final CrwlTotalRepository crwlTotalRepository;
 
+    @Transactional(readOnly = true)
     public List<NewsResDto> getTotalNews(String subject) throws IOException, Exception {
         //openSearchService.deleteNewsIndex(); //test 용. 실제 코드에서는 삭제
         List<CrwlNewsEntity> total = crwlNewsRepository.findBySubjectOrderByUploadDateDesc(subject);
+
         List<NewsResDto> list = new ArrayList<>();
         for(CrwlNewsEntity news: total) {
-            NewsResDto newsResDto = new NewsResDto();
-            newsResDto.setTitle(news.getTitle());
-            newsResDto.setUploadDate(news.getUploadDate());
-            newsResDto.setNewsLink(news.getNewsLink());
-            newsResDto.setImgUrl(news.getImgUrl());
+            Hibernate.initialize(news.getSummary());
+            Hibernate.initialize(news.getKeywords());
+            NewsResDto newsResDto = new NewsResDto(
+                    news.getTitle(),
+                    news.getUploadDate(),
+                    news.getNewsLink(),
+                    news.getImgUrl(),
+                    news.getSummary(),
+                    news.getKeywords()
+            );
             list.add(newsResDto);
         }
         return list;
     }
-
-    public List<NewsResDto> getNews(String subject) {
+    @Transactional(readOnly = true)
+    public List<NewsResDto> getNews(String subject) throws Exception{
         int n = 6;
         List<CrwlNewsEntity> totalDesc = crwlNewsRepository.findBySubjectOrderByUploadDateDesc(subject);
         List<NewsResDto> list = new ArrayList<>();
         for(int i = 0; i < n; ++i) {
             CrwlNewsEntity news = totalDesc.get(i);
-            NewsResDto newsResDto = new NewsResDto();
-            newsResDto.setTitle(news.getTitle());
-            newsResDto.setUploadDate(news.getUploadDate());
-            newsResDto.setNewsLink(news.getNewsLink());
-            newsResDto.setImgUrl(news.getImgUrl());
+            Hibernate.initialize(news.getSummary());
+            Hibernate.initialize(news.getKeywords());
+
+            NewsResDto newsResDto = new NewsResDto(
+                    news.getTitle(),
+                    news.getUploadDate(),
+                    news.getNewsLink(),
+                    news.getImgUrl(),
+                    news.getSummary(),
+                    news.getKeywords()
+            );
             list.add(newsResDto);
         }
         return list;
@@ -67,10 +81,20 @@ public class ArchiveService {
     /*
      * NewsSearchResultDto -> NewsResDto
      */
-    public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) {
+    @Transactional(readOnly = true)
+    public List<NewsResDto> changeToNewsResDto(List<NewsSearchResultDto> list) throws Exception {
         List<NewsResDto> result = new ArrayList<>();
         for(NewsSearchResultDto news: list) {
-            NewsResDto newsResDto = new NewsResDto(news.getTitle(), news.getUpload_date(), news.getNews_link(), news.getImg_url());
+            Hibernate.initialize(news.getSummary());
+            Hibernate.initialize(news.getKeywords());
+            NewsResDto newsResDto = new NewsResDto(
+                    news.getTitle(),
+                    news.getUpload_date(),
+                    news.getNews_link(),
+                    news.getImg_url(),
+                    news.getSummary(),
+                    news.getKeywords()
+            );
             result.add(newsResDto);
         }
         return result;

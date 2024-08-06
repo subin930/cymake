@@ -99,6 +99,14 @@ public class GlobalExceptionHandler {
         log.error("[FileUpdateFailedException Handle] ", e);
         return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
+    //GetNewsException
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(GetNewsException.class)
+    public CommonBaseResult getNewsException(Exception e) {
+        log.error("[GetNewsException Handle] ", e);
+        return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
 /*
 refresh토큰 + redis 이용해 자동 로그인 + 로그아웃 구현 시 사용
     //UnauthorizedException

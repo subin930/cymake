@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Table(name = "tb_crwl_news")
 @Entity
@@ -38,4 +39,13 @@ public class CrwlNewsEntity {
     @Column(name = "subject", nullable = false, length = 500)
     private String subject;
 
+    @ElementCollection
+    @CollectionTable(name = "news_summary", joinColumns = @JoinColumn(name = "news_id"))
+    @Column(name = "summary", nullable = false, length = 500)
+    private List<String> summary;
+
+    @ElementCollection
+    @CollectionTable(name = "news_keywords", joinColumns = @JoinColumn(name = "news_id"))
+    @Column(name = "keywords", nullable = false, length = 500)
+    private List<String> keywords;
 }

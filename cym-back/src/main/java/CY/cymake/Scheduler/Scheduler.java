@@ -20,7 +20,7 @@ public class Scheduler {
     private DataExtractor dataExtractor;
 
     //@Scheduled(fixedRate = 3600000) // 1시간마다 실행
-    @Scheduled(cron = "0 30 8 * * *") //오전 8시 30분에 매일 실행
+    //@Scheduled(cron = "0 30 8 * * *") //오전 8시 30분에 매일 실행
     public void scheduleDateUpdate() throws IOException, Exception {
         System.out.println("suc");
         dataService.updateNewsDB();

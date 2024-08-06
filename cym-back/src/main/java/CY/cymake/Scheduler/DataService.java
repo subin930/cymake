@@ -3,10 +3,8 @@ package CY.cymake.Scheduler;
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Entity.CrwlNewsEntity;
 import CY.cymake.Entity.CrwlTotalEntity;
-import CY.cymake.Entity.NewsDataEntity;
 import CY.cymake.Repository.CrwlTotalRepository;
 import CY.cymake.Repository.CrwlNewsRepository;
-import CY.cymake.Repository.NewsDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,6 @@ public class DataService {
     private final S3Service s3Service;
     private final CrwlNewsRepository crwlNewsRepository;
     private final CrwlTotalRepository crwlTotalRepository;
-    private final NewsDataRepository newsDataRepository;
     /*
      * S3에서 크롤링한 데이터를 읽고 DB에 업데이트.
      * 중복 존재 시 예외 처리(뉴스 제목으로 중복 확인)
@@ -65,6 +62,10 @@ public class DataService {
                 List<String> titleAndLink = s3Service.getTitleAndLink(filename); //파일 제목 & 링크 추출
                 String newsURL = s3Service.getUrl(filename); //뉴스 링크 추출
                 String imgURL = s3Service.getUrl(changeFileExtension(filename, "jpg")); //이미지 url 추출
+
+                int lastSlashIndex = filename.lastIndexOf('/');
+                List<List<String>> newsData = s3Service.getNewsData("crawl/" + subject + "/summary/" + date + "/" + filename.substring(lastSlashIndex + 1));
+
                 if (imgURL == null) {
                     imgURL = "null";
                 }
@@ -75,20 +76,11 @@ public class DataService {
                         .imgUrl(imgURL)
                         .uploadDate(Timestamp.valueOf(LocalDateTime.now())) //예시 날짜
                         .subject(subject)
-                        .build();
-                CrwlNewsEntity savedNews = crwlNewsRepository.save(news);
-                total++;
-                //tb_news_data
-                int lastSlashIndex = filename.lastIndexOf('/');
-                List<List<String>> newsData = s3Service.getNewsData("crawl/" + subject + "/summary/" + date + "/" + filename.substring(lastSlashIndex + 1));
-                System.out.println(newsData);
-
-                NewsDataEntity newsDataEntity = NewsDataEntity.builder()
-                        .id(savedNews)
                         .summary(newsData.get(1))
                         .keywords(newsData.get(0))
                         .build();
-                newsDataRepository.save(newsDataEntity);
+                CrwlNewsEntity savedNews = crwlNewsRepository.save(news);
+                total++;
             }
             //해당 날짜, 주제에 해당하는 tb_crwl_total의 엔티티 만들기
             CrwlTotalEntity crwlTotalEntity = CrwlTotalEntity.builder()
