@@ -100,12 +100,12 @@ onMounted(fetchCrawlInfo);
         <div class="m-3 text-center title">
             <p class="fw-bolder fs-3">지식아카이브</p>
         </div>
-        <div class="container m-3 justify-content-between">
+        <div class="container-fluid m-3 justify-content-center">
             <div class="row row-cols-auto">
-                    <p class="px-1 fw-bold">자동차 산업 정보</p>
-                    <a class="nav-link active mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
+                    <p class="text-start px-1 fw-bold">자동차 산업 정보</p>
+                    <a class="nav-link active text-start mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
-            <div class="container text-start justify-content-between">
+            <div class="container">
                 <div class="row g-3">
                     <div  v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -123,12 +123,12 @@ onMounted(fetchCrawlInfo);
                 </div>
             </div> 
         </div>
-        <div class="container m-3">
+        <div class="container-fluid m-3">
             <div class="row row-cols-auto">
-                    <p class="px-1 fw-bold">화장품 산업 정보</p>
-                    <a class="nav-link active mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
+                    <p class="text-start px-1 fw-bold">화장품 산업 정보</p>
+                    <a class="nav-link active text-start mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
-            <div class="container text-start justify-content-between">
+            <div class="container">
                 <div class="row">
                     <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -147,11 +147,11 @@ onMounted(fetchCrawlInfo);
             </div> 
         </div>
     </div>
-    <div class="container m-3 row align-items-center justify-content-center">
-        <div v-if="crwlInfoCar.length > 0" class="col-6">
+    <div class="container-fluid m-3 row align-items-center justify-content-center">
+        <div v-if="crwlInfoCar.length > 0" class="col">
             <CarGraph :crwlData="crwlInfoCar" :title="titleCar"></CarGraph>
         </div>
-        <div v-if="crwlInfoBeauty.length > 0" class="col-6">
+        <div v-if="crwlInfoBeauty.length > 0" class="col">
             <CarGraph :crwlData="crwlInfoBeauty" :title="titleBeauty"></CarGraph>
         </div>
     </div>
