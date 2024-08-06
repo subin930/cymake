@@ -114,6 +114,14 @@ public class GlobalExceptionHandler {
         return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
+    //ChatException
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ChatException.class)
+    public CommonBaseResult chatException(Exception e) {
+        log.error("[ChatException Handle] ", e);
+        return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+
 /*
 refresh토큰 + redis 이용해 자동 로그인 + 로그아웃 구현 시 사용
     //UnauthorizedException
