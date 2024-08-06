@@ -1,16 +1,19 @@
 <template>
-    <button type="button"
-            class="btn news-btn text-start"
-            style="font-size: .8rem; font-weight: bold"
-            @click="openModal(title, imgUrl, newsLink)">
-      <div class="news-image-wrapper">
-        <img :src="imgUrl" alt="news image" class="news-image">
+  <button type="button"
+          class="btn news-btn text-start"
+          style="font-size: .8rem; font-weight: bold"
+          @click="openModal(title, imgUrl, newsLink, summary, keywords)">
+    <div class="news-image-wrapper">
+      <img :src="imgUrl" alt="news image" class="news-image">
+    </div>
+    <div class="news-content">
+      <p class="news-title">{{ title }}</p>
+      <div class="news-info">
+        <p class="news-keyword">{{ keywords.join(' / ') }}</p>
+        <p class="news-date">{{ formattedDate }}</p>
       </div>
-      <br/>
-      <p class="news-title ms-1">{{ title }}</p>
-      <br/>
-      <p class="news-date ms-1" style="font-size: .6rem; font-weight:normal">{{ formattedDate }}</p>
-    </button>
+    </div>
+  </button>
 </template>
   
 <script setup>
@@ -21,6 +24,8 @@
   const props = defineProps({
     title: String,
     imgUrl: String,
+    keywords: Array,
+    summary: Array,
     newsLink: String,
     uploadDate: String,
     openModal: Function,
@@ -45,11 +50,11 @@
   background-color: #FFFFFF;
   display: flex;
   flex-direction: column;
-  padding: 0%;
-  width: 100%; /* Set the width of the image */
+  padding: 0;
+  width: 100%;
   height: 20rem;
-  text-overflow: ellipsis;
 }
+
 .news-image-wrapper {
   height: 50%;
   width: 100%;
@@ -58,28 +63,43 @@
   justify-content: center;
   align-items: center;
 }
-.news-image-wrapper:hover {
-  color: black; /* 마우스 오버 시에도 글자색을 검정색으로 유지 */
-}
+
 .news-image {
   max-width: 100%;
-  max-height: 100%; /* Set the height of the image */
+  max-height: 100%;
   object-fit: cover;
 }
+
+.news-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  padding: 5px 10px;
+}
+
 .news-title {
-  flex: 0 0 auto;
   font-size: 0.8rem;
   font-weight: bold;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  margin-top: 5px;
 }
+
+.news-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.news-keyword {
+  font-size: 0.7rem;
+  color: #7248BD;
+  font-weight: normal;
+  margin-top: auto; /* 키워드 위치 고정 */
+}
+
 .news-date {
-  flex: 0 0 auto;
   font-size: 0.6rem;
   color: #6D6D6D;
-  margin-top: auto;
 }
   </style>
   
