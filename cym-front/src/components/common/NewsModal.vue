@@ -33,9 +33,9 @@ onMounted(() => {
                 <p class="mt-2" style="color: #7248BD; font-weight: bold">뉴스 요약</p>
                 
                 <ul class="list-group m-2">
-                    <li v-for="summaryItem in summary" :key="summaryItem" class="list-group-item px-2" style="font-size: .9rem;">{{ summaryItem }}</li>
+                    <li v-for="summaryItem in summary" :key="summaryItem" class="list-group-item" style="font-size: .9rem;">{{ summaryItem }}</li>
                 </ul>
-                <p class="news-keyword ms-3" style="color: #7248BD; font-weight: bold; font-size: .9rem;"> {{ keywords.join(' / ') }} </p>
+                <p class="news-keyword ms-3 mt-3" style="color: #7248BD; font-weight: bold; font-size: .9rem;"> {{ keywords.join(' / ') }} </p>
                 <a :href="newsLink" class="news-link mt-2" style="font-size: .9rem; font-weight: bold" target="_blank" rel="noopener noreferrer">뉴스 원문 보기 <i class="bi bi-box-arrow-up-right"></i></a>
             </div>
             <div class="modal-footer">

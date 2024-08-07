@@ -32,7 +32,7 @@ const handleSearch = async () => {
     if (searchBody.value.length > 0) { // 최소 1글자 이상일 때 검색
         
         try {
-            const loading = ref(false); //로딩 
+            loading.value = true; //로딩 
             const response = await axios.get(`/v1/total/search`, {
                 params: {
                     searchBody: searchBody.value
