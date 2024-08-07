@@ -93,13 +93,13 @@ const unregister = async() => {
             <div class="mb-5 row justify-content-center">
                 <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호 변경</label>
                 <div class="col-sm-8 d-inline-flex justify-contetnt-center">
-                    <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#6b42db; border-color:#6b42db; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
+                    <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#7248BD; border-color:#7248BD; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
                 </div>
                 
             </div>
             <div class="d-flex m-5 mt-1 justify-content-center">
-                <button type="button" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="ChangeInfo()">정보수정</button>
-                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="OpenUnregisterModal()">회원탈퇴</button>
+                <button type="button" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;" @click="ChangeInfo()">정보수정</button>
+                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;" @click="OpenUnregisterModal()">회원탈퇴</button>
             </div>
         </div>
     </div>
@@ -120,7 +120,7 @@ const unregister = async() => {
 }
 
 .pwchange-btn:hover {
-    background-color: #8E6DCA !important;
+    background-color:#7248BD !important;
     color: white !important;
     border-color: white !important;
 }

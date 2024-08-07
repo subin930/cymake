@@ -90,7 +90,7 @@ const resetForm = () => {
           </div> 
           <div class="form-group row d-flex mb-3">
             <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
-            <label v-if="file===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
+            <label v-if="file===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.8rem"><i class="bi bi-paperclip"></i>파일첨부</label>
             <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleFileUpload" required />
             <div class="col align-items-center" v-if="file!==null">
               <p class="col mb-1" style="font-size:.8rem;">
