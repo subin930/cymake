@@ -5,6 +5,7 @@ import Popper from "vue3-popper";
 import axios from 'axios';
 const emit = defineEmits(['fileUploaded']);
 const token = localStorage.getItem("token");
+const loading = ref(false);
 
 const formElement = ref(null);
 const title = ref('');
@@ -27,6 +28,7 @@ const fileUpload = async (close) => {
   formData.append('file', file.value);
   formData.append('title', title.value);
   try {
+    loading.value = true;
     const response = await axios.post(`/v1/drive/upload`, formData, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -39,6 +41,8 @@ const fileUpload = async (close) => {
     close(); // 파일 업로드 성공 시 Popper 닫기
   } catch (error) {
     console.error('파일 업로드 오류:', error);
+  } finally {
+    loading.value = false;
   }
 };
 const cancelFile = () => {
@@ -100,7 +104,12 @@ const resetForm = () => {
           
             </div>
           </div>
-          <div class="row button-group d-flex justify-content-center mb-2">
+          <div v-if="loading" class="text-center my-4">
+              <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+          </div>
+          <div v-else class="row button-group d-flex justify-content-center mb-2">
             <button
               type="button"
               @click="cancel(close)"
