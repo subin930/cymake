@@ -80,7 +80,7 @@ public class DriveService {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
         FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), filename).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
         //1. 버킷의 특정 디렉터리로 매핑
-        String directory = "files/" + user.getCompanyCode().getCode() + "/";
+        String path = "files/" + user.getCompanyCode().getCode() + "/" + filename;
 
         //2. 작성자와 일치하는지 확인
         if(!user.getId().equals(file.getUploader().getId())){
@@ -91,7 +91,7 @@ public class DriveService {
         openSearchService.deleteFileData(file.getId());
 
         //3. s3에서 삭제 로직 수행
-        s3Service.deleteFile(directory, filename);
+        s3Service.deleteFile(path);
 
         //4. db에서 삭제 로직 수행
         fileRepository.delete(file);
@@ -99,7 +99,7 @@ public class DriveService {
     /*
      * 파일 수정
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String originalFilename, String postTitle) throws IOException {
         FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일이 존재하지 않습니다."));
 
@@ -118,10 +118,11 @@ public class DriveService {
             return;
         }
         //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
-        String directory = "files/" +  user.getCompanyCode().getCode() + "/";
-        String fileUrl = s3Service.updateFile(newFile, directory, originalFilename);
+        String path = "files/" +  user.getCompanyCode().getCode() + "/" + originalFilename;
+        String newPath = "files/" + user.getCompanyCode().getCode() + "/" + newFile.getOriginalFilename();
+        String fileUrl = s3Service.updateFile(newFile, path, newPath);
         //3. db수정
-        file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(directory + newFile.getOriginalFilename()));
+        file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(newPath));
         fileRepository.save(file);
         Map<String, Object> data = convertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, postTitle,
                 getExtension(newFile.getOriginalFilename()), file.getUploadDate(), file.getCompanyCode().getCode(),
@@ -132,7 +133,7 @@ public class DriveService {
     /*
      * 중복되는 이름의 파일 충돌 방지 코드 -> 적용 여부 후에 논의
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public String createRandomFilename(String originalFilename) {
         int idx = originalFilename.lastIndexOf(".");
         String extension = originalFilename.substring(idx + 1);
@@ -141,7 +142,7 @@ public class DriveService {
     /*
      * 확장자 추출
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public String getExtension(String originalFilename) {
         int idx = originalFilename.lastIndexOf(".");
         return originalFilename.substring(idx + 1);
@@ -150,7 +151,7 @@ public class DriveService {
     /*
      * post 리스트 전송
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public List<PostListResDto> getPostList(CustomUserInfoDto user) throws Exception {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
         //openSearchService.createFileTb(); //test 용.
@@ -175,7 +176,7 @@ public class DriveService {
     /*
      * post 검색
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws Exception {
         return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
 
@@ -183,7 +184,7 @@ public class DriveService {
     /*
      * PostListDto -> PostSearchResultDto
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public List<PostListResDto> changeToPostList(CustomUserInfoDto user, List<PostSearchResultDto> list) throws IOException {
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
         List<PostListResDto> result = new ArrayList<>();

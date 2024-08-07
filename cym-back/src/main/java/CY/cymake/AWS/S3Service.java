@@ -141,8 +141,7 @@ public class S3Service {
     /*
      * 파일 삭제
      */
-    public void deleteFile(String directory, String filename) throws IOException {
-        String path = directory + filename;
+    public void deleteFile(String path) throws IOException {
         try{
             amazonS3Client.deleteObject(bucket, path);
         } catch (SdkClientException e) {
@@ -153,13 +152,12 @@ public class S3Service {
     /*
      * 게시글 수정할 때 파일을 수정하면: 기존 파일 삭제 후 수정
      */
-    public String updateFile(MultipartFile multipartFile, String directory, String original_filename) throws IOException {
+    public String updateFile(MultipartFile multipartFile, String path, String newPath) throws IOException {
         if(multipartFile.isEmpty()) {
             throw new EmptyFileException("파일이 존재하지 않습니다.");
         }
-        String path = directory + multipartFile.getOriginalFilename();
-        deleteFile(directory, original_filename);
-        return uploadFile(multipartFile, path);
+        deleteFile(path);
+        return uploadFile(multipartFile, newPath);
     }
     /*
      * tb_news_data 가져오기
