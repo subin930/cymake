@@ -60,8 +60,6 @@ public class ChatService {
             s3Service.deleteFile("files/search/", file.getOriginalFilename());
         }
         // String을 JSON 형식으로 변환
-        Map<String, Object> responseMap = new HashMap<>();
-        // String을 JSON 형식으로 변환
         JsonNode responseJson;
         try {
             responseJson = objectMapper.readTree(result);
