@@ -130,9 +130,12 @@ onMounted(scrollToBottom);
 
 
 <style scoped>
+.offcanvas {
+  width: 30rem;
+}
 .offcanvas-header {
   border-bottom: 1px solid #ccc; /* Add bottom border to the header */
-    height:30px;
+  height:30px;
 }
 .chat-container {
     display: flex;
@@ -145,10 +148,10 @@ onMounted(scrollToBottom);
 }
 
 .message {
-    padding: 10px;
+    padding: 15px;
     border-radius: 10px;
     margin-bottom: 10px;
-    max-width: 70%;
+    max-width: 80%;
 }
 
 .message.user {
@@ -164,7 +167,7 @@ onMounted(scrollToBottom);
 .chat-input {
     position: fixed;
     bottom: 5px;
-    width: 25rem; /* Adjust for padding of offcanvas */
+    width: 30rem; /* Adjust for padding of offcanvas */
     display: box;
     padding: 5px;
     height: 120px;
@@ -172,7 +175,7 @@ onMounted(scrollToBottom);
 }
 
 .chat-input .form-control {
-    width: 20rem;
+    width: 25rem;
 }
 .chat-input .btn {
     width: 4rem;
