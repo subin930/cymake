@@ -22,7 +22,7 @@ public class ChatController {
     private final GlobalResponseHandler globalResponseHandler;
     private final ChatService chatService;
     @PostMapping(value = "/question", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CommonResult<ChatResDto> chat (@RequestPart(value = "sessionId") String sessionId, @RequestPart(value = "question") String question, @RequestPart MultipartFile file, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+    public CommonResult<ChatResDto> chat (@RequestPart(value = "sessionId") String sessionId, @RequestPart(value = "question") String question, @RequestPart(value = "file", required = false) MultipartFile file, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
         return globalResponseHandler.SendSuccessAndContent(chatService.sendToFlask(sessionId, question, user.getUser().getCompanyCode().getCode(), file));
         //return globalResponseHandler.SendSuccessAndContent(chatService.sendToFlask(sessionId, question, "123"));
     }
