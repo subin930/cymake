@@ -18,10 +18,8 @@ def to_spring():
 
     #Spring에서 받은 데이터를 출력해서 확인
     print(company_code, session_id, question, url)
-    
-    result = chat.doChat(company_code, session_id, question)
+
     try:
-        # Spring에서 받은 데이터를 출력해서 확인
         result = chat.doChat(company_code, session_id, question)
         return json.dumps(result, ensure_ascii=False), 200
     except KeyError as e:
