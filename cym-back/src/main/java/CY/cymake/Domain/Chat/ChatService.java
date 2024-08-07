@@ -1,5 +1,6 @@
 package CY.cymake.Domain.Chat;
 
+import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Chat.Dto.ChatReqDto;
 import CY.cymake.Domain.Chat.Dto.ChatResDto;
 import CY.cymake.Exception.ChatException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,10 +29,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ChatService {
     private final ObjectMapper objectMapper;
-
+    private final S3Service s3Service;
     @Transactional
-    public ChatResDto sendToFlask(String sessionId, String question, String companyCode) throws JsonProcessingException {
-        ChatReqDto chatReqDto = new ChatReqDto(companyCode, question, sessionId);
+    public ChatResDto sendToFlask(String sessionId, String question, String companyCode, MultipartFile file) throws IOException {
+        String fileUrl = s3Service.uploadFile(file, "files/search/" + file.getOriginalFilename());
+        System.out.println(fileUrl);
+        ChatReqDto chatReqDto = new ChatReqDto(companyCode, question, sessionId, fileUrl);
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new CustomResponseErrorHandler());
@@ -48,6 +52,8 @@ public class ChatService {
 
         //Flask 서버로 데이터를 전송하고 받은 응답 값을 return
         String result = restTemplate.postForObject(url, entity, String.class);
+        //파일 s3에서 삭제
+        s3Service.deleteFile("files/search/", file.getOriginalFilename());
         // String을 JSON 형식으로 변환
         Map<String, Object> responseMap = new HashMap<>();
         // String을 JSON 형식으로 변환
