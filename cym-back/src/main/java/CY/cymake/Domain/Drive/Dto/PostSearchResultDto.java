@@ -50,4 +50,8 @@ public class PostSearchResultDto {
     @NotBlank
     @Schema(description = "type")
     String type;
+
+    @NotBlank
+    @Schema(description = "size")
+    Double size;
 }

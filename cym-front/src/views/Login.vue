@@ -81,34 +81,36 @@ const updatePassword = (event) => {
         </div>
 
         <div class="m-5">
-            <div class="mb-3">
+            <form @submit.prevent = "Login">
+                <div class="mb-3">
+                    <div class="mb-3 row">
+                        <label for="inputcompanyCode" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
+                        <div class="col-sm-8">
+                        <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputcompanyCode" @input="updatecompanyCode" @keydown.enter = "Login" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="mb-3 row">
+                        <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
+                        <div class="col-sm-8">
+                        <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputid" @input="updateid" @keydown.enter="Login" required>
+                        </div>
+                    </div>
+                </div>
                 <div class="mb-3 row">
-                    <label for="inputcompanyCode" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
+                    <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputcompanyCode" @input="updatecompanyCode" required>
+                    <input type="password" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="비밀번호를 입력하세요." id="inputPassword" @input="updatePassword" @keydown.enter="Login" required>
                     </div>
                 </div>
-            </div>
-            <div class="mb-3">
-                <div class="mb-3 row">
-                    <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
-                    <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputid" @input="updateid" required>
-                    </div>
+                <div class="d-flex flex-column align-items-center m-5 mt-1">
+                            <button type="button" class="btn text-white btn-outline-secondary w-50" style="font-size: 0.9rem; background-color: #6b42db;" @click="Login()" @submit.prevent = "Login()">로그인</button>
+                            <p v-if="errorMessage" class="text-danger" style="font-size: .7rem; margin-bottom: 0.5rem; margin-top: 0.1rem;">{{ errorMessage }}</p>
+                            <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
                 </div>
-            </div>
-            <div class="mb-3 row">
-                <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호</label>
-                <div class="col-sm-8">
-                <input type="password" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="비밀번호를 입력하세요." id="inputPassword" @input="updatePassword" required>
-                </div>
-            </div>
-            <div class="d-flex flex-column align-items-center m-5 mt-1">
-                        <button type="button" class="btn text-white btn-outline-secondary w-50" style="font-size: 0.9rem; background-color: #6b42db;" @click="Login()" @submit.prevent = "Login()">로그인</button>
-                        <p v-if="errorMessage" class="text-danger" style="font-size: .7rem; margin-bottom: 0.5rem; margin-top: 0.1rem;">{{ errorMessage }}</p>
-                        <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
-                    </div>
-                </div>
+            </form>
+        </div>
     </div>
     
 </template>

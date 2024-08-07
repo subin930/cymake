@@ -3,20 +3,46 @@ import { RouterLink, RouterView } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import PasswordChangeModal from '@/components/MyPage/PasswordChangeModal.vue'
 import { ref } from "vue";
+import axios from 'axios'
+import { useRoute, useRouter } from 'vue-router'
+
 //companyCode, id, username, email, password, passwordCheck
 const modalID = ref('passwordChangeModal');
 
-const token = ref(localStorage.getItem("token"));
+const token = localStorage.getItem("token");
 const username = ref(localStorage.getItem("username"));
 const email = ref(localStorage.getItem("userEmail"));
 const id = ref(localStorage.getItem("userId"));
 
+const route = useRoute();
+const router = useRouter();
+
 const OpenChangeModal = () => {
-    console.log(token);
     const modalElement = document.getElementById(modalID.value);
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
 };
+
+const unregister = async() => {
+    try {
+        console.log(token)
+        const response = await axios.delete(`/v1/users/unregister`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        // 성공적으로 응답을 받은 경우 처리
+        if (response.data) {
+            const { code, message } = response.data;
+            console.log("Unregister Success:", code, message);
+            localStorage.clear();
+            router.push(`/login`)
+        }
+    } catch (error) {
+        console.error("Error unregister:", error);
+    }
+}
 
 </script>
 
@@ -61,7 +87,7 @@ const OpenChangeModal = () => {
             </div>
             <div class="d-flex m-5 mt-1 justify-content-center">
                 <button type="button" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="ChangeInfo()">정보수정</button>
-                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="UserQuit()">회원탈퇴</button>
+                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="unregister()">회원탈퇴</button>
             </div>
         </div>
     </div>

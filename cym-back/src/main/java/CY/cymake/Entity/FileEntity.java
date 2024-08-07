@@ -51,12 +51,16 @@ public class FileEntity {
     @Column(name = "type", nullable = false)
     private String type;
 
-    public void updatePost(String postTitle, String file_name, String fileUrl, String type) {
+    @Column(name = "size", nullable = false)
+    private Double size;
+
+    public void updatePost(String postTitle, String file_name, String fileUrl, String type, Double size) {
         this.postTitle = postTitle;
         this.file = file_name;
         this.fileUrl = fileUrl;
         this.type = type;
         this.lastEditDate = Timestamp.valueOf(LocalDateTime.now());
+        this.size = size;
     }
 
     public void updatePostTitle(String postTitle) {

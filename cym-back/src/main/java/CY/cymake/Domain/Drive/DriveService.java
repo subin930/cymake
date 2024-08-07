@@ -36,9 +36,10 @@ public class DriveService {
     private final DataExtractor dataExtractor;
     private final CrwlTotalRepository crwlTotalRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
+
         if(siteUser.isEmpty()) {
             throw new UserNotFoundException("파일 업로드에 실패했습니다.");
         }
@@ -55,9 +56,10 @@ public class DriveService {
                 .uploadDate(Timestamp.valueOf(LocalDateTime.now()))
                 .lastEditDate(Timestamp.valueOf(LocalDateTime.now()))
                 .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
+                .size(s3Service.getFileSize(path))
                 .build();
         FileEntity savedFile = fileRepository.save(file);
-        openSearchService.addAndUpdateFileData(convertFileData(savedFile.getId(), savedFile.getFile(), savedFile.getFileUrl(), savedFile.getPostTitle(), savedFile.getType(), savedFile.getUploadDate(), savedFile.getCompanyCode().getCode(), savedFile.getUploader().getId()), "file_id");
+        openSearchService.addAndUpdateFileData(convertFileData(savedFile.getId(), savedFile.getFile(), savedFile.getFileUrl(), savedFile.getPostTitle(), savedFile.getType(), savedFile.getUploadDate(), savedFile.getCompanyCode().getCode(), savedFile.getUploader().getId(), savedFile.getSize()), "file_id");
         return fileUrl;
     }
     /*
@@ -73,7 +75,7 @@ public class DriveService {
     /*
      * 파일 삭제
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteFile(CustomUserInfoDto user, String filename) throws IOException {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
         FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), filename).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
@@ -111,7 +113,7 @@ public class DriveService {
             fileRepository.save(file);
             Map<String, Object> data = convertFileData(file.getId(), file.getFile(), file.getFileUrl(), postTitle,
                     file.getType(), file.getUploadDate(), file.getCompanyCode().getCode(),
-                    file.getUploader().getId());
+                    file.getUploader().getId(), file.getSize());
             openSearchService.addAndUpdateFileData(data, "file_id");
             return;
         }
@@ -119,11 +121,11 @@ public class DriveService {
         String directory = "files/" +  user.getCompanyCode().getCode() + "/";
         String fileUrl = s3Service.updateFile(newFile, directory, originalFilename);
         //3. db수정
-        file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())));
+        file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(directory + newFile.getOriginalFilename()));
         fileRepository.save(file);
         Map<String, Object> data = convertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, postTitle,
                 getExtension(newFile.getOriginalFilename()), file.getUploadDate(), file.getCompanyCode().getCode(),
-                file.getUploader().getId());
+                file.getUploader().getId(), file.getSize());
         openSearchService.addAndUpdateFileData(data, "file_id");
     }
 
@@ -153,7 +155,6 @@ public class DriveService {
         //openSearchService.deleteFileIndex(); //test 용. 실제 코드에서는 삭제
         //openSearchService.createFileTb(); //test 용.
         String directory = "files/" + user.getCompanyCode().getCode() + "/";
-        System.out.println(directory);
 
         List<FileEntity> files = fileRepository.findAllByCompanyCode(user.getCompanyCode());
         List<PostListResDto> posts = new ArrayList<>();
@@ -165,7 +166,7 @@ public class DriveService {
                     .username(file.getUploader().getUsername())
                     .fileUrl(file.getFileUrl())
                     .uploadDate(file.getUploadDate())
-                    .size(s3Service.getFileSize(directory, file.getFile()))
+                    .size(file.getSize())
                     .build();
             posts.add(post);
         }
@@ -188,17 +189,17 @@ public class DriveService {
         List<PostListResDto> result = new ArrayList<>();
         for(PostSearchResultDto post: list) {
             String username = usersRepository.findById(post.getUploader()).orElseThrow(() -> new UserNotFoundException("파일 업로더가 존재하지 않습니다.")).getUsername();
-            PostListResDto postListResDto = new PostListResDto(post.getFile_name(), post.getPost_title(), post.getFile_url(), post.getUploader(), username, post.getUpload_date(), s3Service.getFileSize(directory,post.getFile_name()));
+            PostListResDto postListResDto = new PostListResDto(post.getFile_name(), post.getPost_title(), post.getFile_url(), post.getUploader(), username, post.getUpload_date(), post.getSize());
             result.add(postListResDto);
         }
         return result;
     }
 
     /*
-     *
+     * opensearch에 파일 업로드 또는 수정할 때 필요한 코드
      */
-    @Transactional(readOnly = true)
-    public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader) {
+    @Transactional
+    public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader, Double size) {
         Map<String, Object> row = new HashMap<>();
         row.put("file_id", fileId);
         row.put("file_name", filename);
@@ -209,6 +210,7 @@ public class DriveService {
         row.put("upload_date", uploadDate);
         row.put("company_code", companyCode);
         row.put("uploader", uploader);
+        row.put("size", size);
         return row;
     }
 
