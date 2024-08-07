@@ -126,10 +126,16 @@ onMounted(scrollToBottom);
                 </div>
                 <!-- Input for new message -->
                 <div class="container chat-input justify-content-between mb-2">
-                    <div class="d-flex chat-file py-2">
-                        <input type="file" class="form-control" id="file"
-                        accept=".txt,.md,.html,.doc,.docx,.csv,.xls,.xlsx,.pdf" @change="handleFileAdded"/>
-                        <button class="btn btn-outline-secondary ms-auto" style="white-space: pre-wrap; font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
+                    <div class="d-flex chat-file mb-2">
+                        <label v-if="uploadedFile==null" class="input-file-button mx-1" for="file"><i class="bi bi-paperclip"></i>파일첨부</label>
+                          <input type="file" class="form-control input-file" id="file"
+                          accept=".txt,.md,.html,.doc,.docx,.csv,.xls,.xlsx,.pdf" @change="handleFileAdded"/>
+                        <div class="row align-items-center" v-if="uploadedFile!==null">
+                          <p class="col ms-1 mb-1" style="font-size:.8rem;">
+                            {{ uploadedFile.name}}
+                            <button class="cancel-button" style="white-space: pre-wrap; font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
+                          </p>
+                        </div>
                     </div>
                     <div class="d-inline-flex align-items-center">
                         <textarea v-model="newMessage" @keydown="handleTextareaKeydown" 
@@ -184,9 +190,37 @@ onMounted(scrollToBottom);
     align-items: center;
     width: 100%; /* 입력 요소와 버튼을 컨테이너 너비에 맞춤 */
 }
+.input-file {
+  display: none;
+}
+.input-file-button {
+  display: inline-block;
+  padding: 4px;
+  padding-right: 5px;
+  background-color: #7248BD;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: .8rem;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+.cancel-button {
+  padding: 0px 2px 0px 2px; /* 조절 가능한 패딩 */
+  font-size: 0.8rem;
+  color:#7248BD; /* 아이콘 색상 */
+  background-color: #F5F6FA; /* 배경색 */
+  border: none; /* 테두리 제거 */
+  cursor: pointer; /* 마우스 오버 시 커서 변경 */
+  transition: background-color 0.3s; /* 호버 효과를 위한 전환 */
+}
 
-
-
+.cancel-button:hover {
+  color:white;
+  background-color: #7248BD; /* 호버 시 배경색 변경 */
+}
 .chat-input {
     position: fixed;
     bottom: 5px;
