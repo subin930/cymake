@@ -77,11 +77,10 @@ public class UsersService {
         if(siteUser.isEmpty()) {
             throw new UnregisterFailedException("회원탈퇴에 실패하였습니다.");
         }
-
         List<FileEntity> fileList = fileRepository.findAllByUploader(siteUser.get());
         for(FileEntity file: fileList) {
             //s3 버킷에서 파일 삭제
-            s3Service.deleteFile(directory, file.getFile());
+            s3Service.deleteFile(directory + file.getFile());
             //db에서 파일 삭제
             fileRepository.delete(file);
         }

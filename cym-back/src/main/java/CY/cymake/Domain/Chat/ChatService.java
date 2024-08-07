@@ -57,7 +57,7 @@ public class ChatService {
         String result = restTemplate.postForObject(url, entity, String.class);
         if(fileUrl != null) {
             //파일 s3에서 삭제
-            s3Service.deleteFile("files/search/", file.getOriginalFilename());
+            s3Service.deleteFile("files/search/" + file.getOriginalFilename());
         }
         // String을 JSON 형식으로 변환
         JsonNode responseJson;
