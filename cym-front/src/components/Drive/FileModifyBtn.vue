@@ -10,12 +10,14 @@ const title = ref(props.file.postTitle);
 const fileSize = ref(props.file.size);
 const originalFileName = ref(props.file.fileName);
 const fileName = ref(props.file.fileName);
+const currentfile = ref(props.file);
 const Newfile = ref(null);
 const emit = defineEmits(['fileModified']);
 const token = localStorage.getItem("token");
 
 const handleNewFileUpload = (event) => {
   Newfile.value = event.target.files[0];
+  currentfile.value = Newfile.value;
   if (Newfile.value) {
     fileSize.value = (Newfile.value.size / (1024 * 1024)).toFixed(2); // MB 단위로 변환
     fileName.value = Newfile.value.name;
@@ -59,8 +61,22 @@ const submitForm = (close) => {
   fileModify(close);
 };
 
+const cancelFile = () => {
+  console.log(`파일이 선택 취소되었습니다: ${currentfile.name}`);
+  currentfile.value = null;
+  fileSize.value = 0;
+  formElement.value.reset();
+}
+
+const modifyCancel =  async (close) => {
+  console.log('파일 수정 취소');
+  currentfile.value = props.file.value;
+  title.value = props.file.postTitle;
+  fileSize.value = props.file.size;
+  fileName.value = props.file.fileName;
+  close();
+}
 const resetForm = () => {
-  
   fileSize.value = 0;
   file.value = null;
   title.value = '';
@@ -87,34 +103,39 @@ watchEffect(() => {
             <i class="bi bi-pencil-square"></i>
         </button>
         <template #content="{ close }">
-            <div class="align-items-center justify-content-center">
+            <div class="popper-content align-items-center justify-content-center">
                 <div class="row w-100 text-center mb-3">
                     <p style="font-size: 1.1rem; font-weight:bold">파일수정</p>
                 </div>
                 <form @submit.prevent="submitForm(close)">
-                    <div class="form-group mb-3">
-                        <label for="title" class="px-2" style="font-size: 0.9rem">제목</label>
-                        <input type="text" class="w-75" style="font-size: 0.9rem" id="title" v-model="title" required />
+                    <div class="form-group d-flex mb-3">
+                        <label for="title" class="px-2 text-center col-3 me-2" style="font-size: 0.9rem">제목</label>
+                        <input type="text" class="col" style="font-size: 0.9rem" id="title" v-model="title" required />
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="file" class="px-2" style="font-size: 0.9rem">파일첨부</label>
-                        <input type="file" style="font-size: 0.9rem" id="file" @change="handleNewFileUpload" />
-                        <p class="px-2" style="font-size: .8rem">현재 파일: {{ fileName }}</p>
-                        <p class="px-2" style="font-size: .8rem">현재 {{ fileSize }}MB / (첨부파일 : 30MB로 제한)</p>
+                    <div class="form-group d-flex mb-3">
+                      <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
+                      <label v-if="currentfile===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
+                      <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleNewFileUpload" required />
+                      <div class="col align-items-center" v-if="currentfile!==null">
+                        <p class="col mb-1" style="font-size:.8rem;">
+                          {{ fileName }}
+                          <button class="cancel-button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
+                        </p>
+                      </div>
                     </div>
                     <div class="row button-group d-flex justify-content-center mb-2">
                         <button
                             type="button"
-                            @click="close"
-                            class="btn btn-secondary cancel-button col-3 mx-3"
-                            style="border-radius: 20px; font-size:0.9rem"
+                            @click="modifyCancel(close)"
+                            class="btn btn-secondary cancel-button col-3 mx-4"
+                            style="border-radius: 20px; width: 90px; font-size:0.9rem"
                         >
                             취소
                         </button>
                         <button
                             type="submit"
                             class="btn btn-secondary submit-button col-3"
-                            style="border-radius: 20px; font-size: 0.9rem; background-color: #7248BD;"
+                            style="border-radius: 20px; width: 90px; font-size: 0.9rem; background-color: #7248BD;"
                         >
                             등록
                         </button>
@@ -136,6 +157,43 @@ watchEffect(() => {
   --popper-theme-border-style: solid;
   --popper-theme-border-color: #c9c9c9;
   --popper-theme-padding: 32px;
+}
+.popper-content {
+  min-width: 600px; /* Fixed width */
+  max-width: 600px;
+  padding: 0px;
+  background-color: white;
+}
+.file-form {
+  display: none;
+}
+.file-button {
+  display: inline-block;
+  padding: 4px;
+  padding-right: 5px;
+  background-color: #7248BD;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: .8rem;
+  text-align: center;
+  text-decoration: none;
+}
+.cancel-button {
+  padding: 0px 2px 0px 2px; /* 조절 가능한 패딩 */
+  font-size: 0.8rem;
+  color:#7248BD; /* 아이콘 색상 */
+  background-color: #F5F6FA; /* 배경색 */
+  border: none; /* 테두리 제거 */
+  cursor: pointer; /* 마우스 오버 시 커서 변경 */
+}
+.cancel-button:hover {
+  color:white;
+  background-color: #7248BD; /* 호버 시 배경색 변경 */
+}
+.file-size {
+  margin-left:15px;
 }
 .btn {
   border-color: #c9c9c9;

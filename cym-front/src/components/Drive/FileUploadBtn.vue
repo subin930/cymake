@@ -76,16 +76,16 @@ const resetForm = () => {
     </button>
     <template #content="{ close }">
       <div class="popper-content align-items-center justify-content-center">
-        <div class="row text-center me-2">
-          <p style="font-size: 1.1rem; font-weight:bold; padding-left:10rem; padding-right:10rem">파일등록</p>
+        <div class="row text-center justify-content-center me-2">
+          <p style="font-size: 1.1rem; font-weight:bold;">파일등록</p>
         </div>
         <form @submit.prevent="submitForm(close)" ref="formElement">
           <div class="form-group d-flex mb-3">
-            <label for="title" class="px-2 col-3 text-end me-2" style="white-space: nowrap; font-size: 0.9rem">제목</label>
+            <label for="title" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">제목</label>
             <input type="text" class="w-75" style="font-size: 0.9rem" id="title" v-model="title" required />
           </div> 
           <div class="form-group row d-flex mb-3">
-            <label for="file" class="px-2 col-3 text-end me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
+            <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
             <label v-if="file===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
             <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleFileUpload" required />
             <div class="col align-items-center" v-if="file!==null">
@@ -94,21 +94,25 @@ const resetForm = () => {
                 <button class="cancel-button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
               </p>
             </div>
-            <p class="row d-flex jusitfy-content-center" style="font-size: .8rem">현재 {{ fileSize }}MB / (첨부파일 : 30MB로 제한)</p>
+            <div class="row d-flex">
+              <p class="col-3"></p>
+              <p class="col file-size d-flex text-start" style="font-size: .8rem">현재 {{ fileSize }}MB / (첨부파일 : 30MB로 제한)</p>
+          
+            </div>
           </div>
           <div class="row button-group d-flex justify-content-center mb-2">
             <button
               type="button"
               @click="cancel(close)"
-              class="btn btn-secondary cancel-button col-3 mx-3"
-              style="border-radius: 20px; font-size:0.9rem"
+              class="btn btn-secondary cancel-button col-3 mx-4"
+              style="border-radius: 20px; width: 90px; font-size:0.9rem"
             >
               취소
             </button>
             <button
               type="submit"
               class="btn btn-secondary submit-button col-3"
-              style="border-radius: 20px; font-size: 0.9rem; background-color: #7248BD;"
+              style="border-radius: 20px; width: 90px; font-size: 0.9rem; background-color: #7248BD;"
             >
               등록
             </button>
@@ -132,8 +136,8 @@ const resetForm = () => {
   --popper-theme-padding: 30px;
 }
 .popper-content {
-  min-width: 500px; /* Fixed width */
-  max-width: 500px;
+  min-width: 600px; /* Fixed width */
+  max-width: 600px;
   padding: 0px;
   background-color: white;
 }
@@ -152,7 +156,6 @@ const resetForm = () => {
   font-size: .8rem;
   text-align: center;
   text-decoration: none;
-  transition: background-color 0.3s ease;
 }
 .cancel-button {
   padding: 0px 2px 0px 2px; /* 조절 가능한 패딩 */
@@ -161,11 +164,12 @@ const resetForm = () => {
   background-color: #F5F6FA; /* 배경색 */
   border: none; /* 테두리 제거 */
   cursor: pointer; /* 마우스 오버 시 커서 변경 */
-  transition: background-color 0.3s; /* 호버 효과를 위한 전환 */
 }
-
 .cancel-button:hover {
   color:white;
   background-color: #7248BD; /* 호버 시 배경색 변경 */
+}
+.file-size {
+  margin-left:15px;
 }
 </style>
