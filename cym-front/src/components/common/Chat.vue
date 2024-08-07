@@ -1,11 +1,13 @@
 <script setup>
 import { ref, watch, onMounted, nextTick } from 'vue';
+import axios from 'axios';
 
 const token = localStorage.getItem("token");
-
+const sessionId = ref(localStorage.getItem("sessionId"));
 // Chat state (local에 저장할지 session에 저장할지)
 const messages = ref(JSON.parse(localStorage.getItem('chatMessages')) || []);
 const newMessage = ref('');
+const botMessage = ref('');
 const chatMessages = ref(null);
 // Watcher to save messages to sessionStorage whenever messages change
 watch(messages, (newMessages) => {
@@ -26,20 +28,43 @@ const closeChat = () => {
 };
 
 // Function to send a message
-const sendMessage = () => {
+const sendMessage = async() => {
   if (newMessage.value.trim()) {
     // Add user message to chat
     messages.value.push({ text: newMessage.value + uploadedFile.value, sender: 'user' });
-    
-    // Clear input field (메세지와 파일 초기화)
+    console.log(sessionId);
+    let formData = new FormData();
+    formData.append('sessionId', sessionId.value);
+    formData.append('question', newMessage.value);
+    if (uploadedFile.value) {
+      formData.append('file', uploadedFile.value);
+    }
+    // Clear input field (메세지와 파일 초기화) + 자동 스크롤
     newMessage.value = '';
-    uploadedFile.value = '';
-    document.getElementById('file').value = '';
-
+    uploadedFile.value = null;
+    document.getElementById('file').value = null;
+    scrollToBottom();
+    try {
+      const response = await axios.post(`/v1/chat/question`,  formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response.data.message);
+      if(sessionId.value=='0'){
+        sessionId.value = response.data.content.sessionId;
+        localStorage.setItem("sessionId", sessionId.value);
+        console.log(sessionId.value);
+      }
+      botMessage.value = response.data.content.response;
+    } catch (error){
+      console.error('sendMessage error:', error);
+      botMessage.value = '오류가 발생했습니다';
+    }
+  
     // Simulate sending to a chatbot and receiving a response
-    setTimeout(() => {
-      messages.value.push({ text: '챗봇 응답입니다.', sender: 'bot' });
-    }, 1000);
+    messages.value.push({ text: botMessage.value, sender: 'bot' });
     scrollToBottom();
   }
 };
@@ -108,7 +133,7 @@ onMounted(scrollToBottom);
 .chat-container {
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 150px); /* Adjust height based on header and input area */
+    max-height: calc(100vh - 185px); /* Adjust height based on header and input area */
     overflow-y: auto;
     padding-left: 10px;
     padding-right: 10px;
