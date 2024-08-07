@@ -1,12 +1,15 @@
 package CY.cymake.Domain.User;
 
+import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
 import CY.cymake.Domain.User.Dto.UpdateReqDto;
 import CY.cymake.Domain.User.Dto.UserInfoResDto;
 import CY.cymake.Entity.CompanyEntity;
+import CY.cymake.Entity.FileEntity;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.*;
 import CY.cymake.Repository.CompanyRepository;
+import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
 import CY.cymake.Domain.User.Dto.RegisterReqDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -24,6 +29,8 @@ public class UsersService {
     private final UsersRepository usersRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder encoder;
+    private final S3Service s3Service;
+    private final FileRepository fileRepository;
 
     /*
      * 회원가입 처리 로직
@@ -62,13 +69,23 @@ public class UsersService {
      * 회원탈퇴 처리 로직
      */
     @Transactional
-    public void unregister(CustomUserInfoDto user) {
-        //권한 정보에 들어있는데 유저 정보 이용해 회원 탈퇴 처리
+    public void unregister(CustomUserInfoDto user) throws IOException {
+        //권한 정보에 들어있는데 유저 정보 이용해 회원 탈퇴 처리 -> 관련 파일들도 다 삭제
         String id = user.getId();
+        String directory = "files/" + user.getCompanyCode().getCode() + "/";
         Optional<UsersEntity> siteUser = usersRepository.findById(id);
         if(siteUser.isEmpty()) {
             throw new UnregisterFailedException("회원탈퇴에 실패하였습니다.");
         }
+
+        List<FileEntity> fileList = fileRepository.findAllByUploader(siteUser.get());
+        for(FileEntity file: fileList) {
+            //s3 버킷에서 파일 삭제
+            s3Service.deleteFile(directory, file.getFile());
+            //db에서 파일 삭제
+            fileRepository.delete(file);
+        }
+
         usersRepository.delete(siteUser.get());
     }
     /*

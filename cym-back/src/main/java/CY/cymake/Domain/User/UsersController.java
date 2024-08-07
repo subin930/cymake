@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @Tag(name = "User", description = "회원 API")
 @RequestMapping(value = "/v1/users")
 @RestController
@@ -38,7 +40,7 @@ public class UsersController {
      */
     @Operation(description = "회원 탈퇴")
     @DeleteMapping(value = "/unregister")
-    public CommonBaseResult delete(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public CommonBaseResult delete(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         usersService.unregister(customUserDetails.getUser());
         return globalResponseHandler.SendSuccess();
     }
