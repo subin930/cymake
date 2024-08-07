@@ -54,6 +54,7 @@ const sendMessage = async() => {
           'Content-Type': 'multipart/form-data'
         }
       });
+      console.log(formData);
       console.log(response.data.message);
       if(sessionId.value=='0'){
         sessionId.value = response.data.content.sessionId;
@@ -71,6 +72,14 @@ const sendMessage = async() => {
     scrollToBottom();
   }
 };
+const handleTextareaKeydown = (event) => {
+  // Enter를 눌렀을 때 메시지 전송
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();  // 기본 Enter 동작(새 줄 추가)을 막습니다.
+    sendMessage();  // 메시지 전송 함수 호출
+  }
+  // Shift + Enter가 눌리면 기본적으로 새 줄을 추가합니다.
+};
 
 const handleFileAdded = (event) => {
   uploadedFile.value = event.target.files[0];
@@ -80,6 +89,11 @@ const handleFileAdded = (event) => {
   }
 };
 
+const cancelFile = () => {
+  console.log(`파일이 선택 취소되었습니다: ${uploadedFile.name}`);
+  uploadedFile.value = null;
+  document.getElementById('file').value = null;
+}
 //탭 닫았다 키거나 다른 페이지로 넘어갈 시 스크롤 자동으로 아래로 돼있게 뜨게
 const scrollToBottom = () => {
   nextTick(() => {
@@ -104,20 +118,22 @@ onMounted(scrollToBottom);
             <div class="offcanvas-body p-0">
             <!-- Chat messages -->
                 <div class="chat-container" ref="chatMessages" >
-                    <div v-for="(message, index) in messages" :key="index" style="font-size: .9rem; color: #212121;"
+                    <div v-for="(message, index) in messages" :key="index" style="white-space: pre-wrap; font-size: .9rem; color: #212121;"
                     class="message" :class="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}">
                     {{ message.text }}
                     </div>
                     <div v-if="botLoading===true" class="message bot" style="font-size: .9rem; color: #212121;">응답 생성 중입니다...</div>
                 </div>
                 <!-- Input for new message -->
-                <div class="container chat-input mb-2">
-                    <div class="d-block chat-file py-2">
-                        <input type="file" style="font-size: 0.9rem" id="file" 
+                <div class="container chat-input justify-content-between mb-2">
+                    <div class="d-flex chat-file py-2">
+                        <input type="file" class="form-control" id="file"
                         accept=".txt,.md,.html,.doc,.docx,.csv,.xls,.xlsx,.pdf" @change="handleFileAdded"/>
+                        <button class="btn btn-outline-secondary ms-auto" style="white-space: pre-wrap; font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
                     </div>
                     <div class="d-inline-flex align-items-center">
-                        <textarea v-model="newMessage" @keyup.enter="sendMessage" type="text" class="d-inline form-control"
+                        <textarea v-model="newMessage" @keydown="handleTextareaKeydown" 
+                        type="text" class="d-inline form-control"
                         placeholder="질문을 입력하세요..." style="font-size: .9rem; height:80px;">
                         </textarea>
                         <button class="btn btn-primary" @click="sendMessage" style="font-weight: 400">전송</button>
@@ -163,6 +179,13 @@ onMounted(scrollToBottom);
     background-color: #D6D6D6;
     align-self: flex-start;
 }
+.chat-file {
+    display: flex;
+    align-items: center;
+    width: 100%; /* 입력 요소와 버튼을 컨테이너 너비에 맞춤 */
+}
+
+
 
 .chat-input {
     position: fixed;
