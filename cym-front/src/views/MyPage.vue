@@ -5,6 +5,7 @@ import PasswordChangeModal from '@/components/MyPage/PasswordChangeModal.vue'
 import { ref } from "vue";
 import axios from 'axios'
 import { useRoute, useRouter } from 'vue-router'
+import ConfirmUnregisterModal from '@/components/MyPage/ConfirmUnregisterModal.vue';
 
 //companyCode, id, username, email, password, passwordCheck
 const modalID = ref('passwordChangeModal');
@@ -23,6 +24,12 @@ const OpenChangeModal = () => {
     modalInstance.show();
 };
 
+const OpenUnregisterModal = () => {
+    const modalElement = document.getElementById('confirmUnregisterModal');
+    const modalInstance = new bootstrap.Modal(modalElement);
+    modalInstance.show();
+};
+
 const unregister = async() => {
     try {
         console.log(token)
@@ -37,6 +44,11 @@ const unregister = async() => {
             const { code, message } = response.data;
             console.log("Unregister Success:", code, message);
             localStorage.clear();
+            // 모달 닫기
+            const modalElement = document.getElementById('confirmUnregisterModal');
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            modalInstance.hide();
+            
             router.push(`/login`)
         }
     } catch (error) {
@@ -87,11 +99,12 @@ const unregister = async() => {
             </div>
             <div class="d-flex m-5 mt-1 justify-content-center">
                 <button type="button" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="ChangeInfo()">정보수정</button>
-                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="unregister()">회원탈퇴</button>
+                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #6b42db;" @click="OpenUnregisterModal()">회원탈퇴</button>
             </div>
         </div>
     </div>
     <PasswordChangeModal></PasswordChangeModal>
+    <ConfirmUnregisterModal @confirm="unregister"></ConfirmUnregisterModal>
 </template>
 
 <style scoped>
