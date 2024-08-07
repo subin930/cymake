@@ -23,4 +23,7 @@ public class ChatReqDto {
 
     @Schema(description = "세션ID")
     String sessionId;
+
+    @Schema(description = "파일 url")
+    String url;
 }
