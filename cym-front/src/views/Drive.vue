@@ -121,7 +121,7 @@ const setTotalSize = () => {
 
 const setUsagePercentage = () => {
   const size = parseFloat(totalSize.value);
-  usagePercentage.value = ((size / 10) * 100).toFixed(2); //데이터가 적은 상태이기에 UI 확인 위해 임의로 10MB로 한계 설정
+  usagePercentage.value = ((size / 3072) * 100).toFixed(2); 
   console.log(usagePercentage.value);
 };
 </script>
@@ -153,7 +153,7 @@ const setUsagePercentage = () => {
             <div class="progress-bar" :style=" { width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
             <p class="px-1" style="font-size: .7rem; font-weight: bold; color:#FFFFFF">{{ usagePercentage }}%</p>
           </div>
-          <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 10 MB</p>
+          <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 3072 MB</p>
         </div>
         <div v-if="loading" class="text-center my-4">
             <div class="spinner-border text-secondary" role="status">
