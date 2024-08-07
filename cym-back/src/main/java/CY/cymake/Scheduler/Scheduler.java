@@ -23,7 +23,11 @@ public class Scheduler {
     //@Scheduled(cron = "0 30 8 * * *") //오전 8시 30분에 매일 실행
     public void scheduleDateUpdate() throws IOException, Exception {
         System.out.println("suc");
-        dataService.updateNewsDB();
+        dataService.updateNewsDB(); //크롤링 된 뉴스 db에 넣기
+//        openSearchService.deleteNewsIndex();
+//        openSearchService.deleteFileIndex();
+//        openSearchService.createCrwlNewsTb();
+//        openSearchService.createFileTb();
         openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
     }
 }

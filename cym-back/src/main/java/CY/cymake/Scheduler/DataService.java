@@ -39,8 +39,10 @@ public class DataService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");  //원하는 형식 지정
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime now = LocalDateTime.now();  //오늘 날짜와 시간 가져옴
-        String date = now.format(formatter); //변형
-        String date2 = now.format(formatter2);
+        String date = "20240805";
+        String date2 = "2024-08-05";
+        //String date = now.format(formatter); //변형
+        //String date2 = now.format(formatter2);
         System.out.println(date);
         //주제 목록 설정
         List <String> subjectNames = List.of("car", "beauty");
@@ -48,7 +50,7 @@ public class DataService {
         for(String subject: subjectNames) {
             Long total = 0L;
             //해당 디렉토리에 존재하는 파일들의 이름 모두 불러오기
-            //List<String> fileNames = s3Service.getFileNames("testcrawl/" + subject + "/article/" + date + "/"); //todo: 이전 시점부터 지금 시점까지 모두 가져오도록 해야함
+            //List<String> fileNames = s3Service.getFileNames("crawl/" + subject + "/article/" + date + "/"); //todo: 이전 시점부터 지금 시점까지 모두 가져오도록 해야함
             List<String> fileNames = s3Service.getFileNames("crawl/" + subject + "/article/" + date + "/");
             System.out.println("fileNames: ");
             System.out.println(fileNames);
