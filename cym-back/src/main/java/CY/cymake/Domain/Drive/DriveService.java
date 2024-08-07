@@ -36,7 +36,7 @@ public class DriveService {
     private final DataExtractor dataExtractor;
     private final CrwlTotalRepository crwlTotalRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
         if(siteUser.isEmpty()) {
@@ -73,7 +73,7 @@ public class DriveService {
     /*
      * 파일 삭제
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void deleteFile(CustomUserInfoDto user, String filename) throws IOException {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
         FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), filename).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
@@ -197,7 +197,7 @@ public class DriveService {
     /*
      *
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader) {
         Map<String, Object> row = new HashMap<>();
         row.put("file_id", fileId);
