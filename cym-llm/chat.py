@@ -1,13 +1,19 @@
 import boto3
+import time
 from botocore.exceptions import ClientError
 
 def doChat(company_code, session_id, message):
-    bedrock_id = {'0': 'TVZPVRTBPT', 'CYGLOBAL': 'Z6ZUWC2H8P', 'SKKU': 'BWDALJ0XAV'}
+    bedrock_id = {'0': ['TVZPVRTBPT', '0', '0'], 'CYGLOBAL': ['Z6ZUWC2H8P', '9WY4VZ4JMC', '45YIBE4UNU'], 'SKKU': ['BWDALJ0XAV', 'SJFRU8CT35', 'UI3UFR9CB3']}
 
     bedrock_runtime = boto3.client(service_name = "bedrock-agent-runtime",
                         region_name="us-east-1",
                         aws_access_key_id="AKIAUOOO62J7ZF4LQSMU",
                         aws_secret_access_key="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",)
+
+    bedrock_agent = boto3.client(service_name = "bedrock-agent",
+                                 region_name="us-east-1",
+                                 aws_access_key_id="AKIAUOOO62J7ZF4LQSMU",
+                                 aws_secret_access_key="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",)
 
     modelId = 'anthropic.claude-3-haiku-20240307-v1:0'
 
@@ -33,6 +39,18 @@ def doChat(company_code, session_id, message):
 
     if (session_id != '0'):
         input_data['sessionId'] = session_id
+
+    if (company_code != '0'):
+        bedrock_agent.start_ingestion_job(
+            dataSourceId = bedrock_id[company_code][1],
+            knowledgeBaseId = knowledge_base_id
+        )
+        time.sleep(7)
+        bedrock_agent.start_ingestion_job(
+            dataSourceId = bedrock_id[company_code][2],
+            knowledgeBaseId = knowledge_base_id
+        )
+        time.sleep(2)
 
     response = bedrock_runtime.retrieve_and_generate(**input_data)
     
