@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect, nextTick } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
 
@@ -17,8 +17,9 @@ const token = localStorage.getItem("token");
 
 const formElement = ref(null); 
 
-const handleNewFileUpload = (event) => {
+const handleNewFileUpload = async(event) => {
   const newFile = event.target.files[0];
+  console.log('handleUPload');
   if (newFile) {
     Newfile.value = newFile;
     currentfile.value = newFile; // 이 부분에서 객체를 직접 할당
@@ -76,7 +77,7 @@ const submitForm = (close) => {
   fileModify(close);
 };
 
-const cancelFile = () => {
+const cancelFile = async() => {
   console.log(`파일이 선택 취소되었습니다: ${currentfile.value}`);
   currentfile.value = null;
   fileSize.value = 0;
@@ -96,7 +97,7 @@ const modifyCancel =  async (close) => {
   close();
 }
 
-const resetForm = () => {
+const resetForm =async() => {
   fileSize.value = 0;
   file.value = null;
   title.value = '';

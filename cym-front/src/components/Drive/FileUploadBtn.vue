@@ -13,7 +13,7 @@ const fileSize = ref(0);
 const file = ref(null);
 const filename = ref('');
 
-const handleFileUpload = (event) => {
+const handleFileUpload = async (event) => {
   file.value = event.target.files[0];
   console.log(file.value);
   if (file.value) {
@@ -51,7 +51,7 @@ const fileUpload = async (close) => {
     console.log('nofile');
   }
 };
-const cancelFile = () => {
+const cancelFile = async() => {
   console.log(`파일이 선택 취소되었습니다: ${file.value.name}`);
   file.value = null;
   fileSize.value = 0;
