@@ -55,12 +55,12 @@ const handleSearch = async () => {
         fetchData();
     } 
 };
-const updateFile = async({ originalFileName, newFileData }) => {
+const updateFile = async({ fileId, newFileData }) => {
   console.log('updatefile');
-  console.log(originalFileName.value);
+  console.log(fileId.value);
   console.log(newFileData);
-  const index = content.value.findIndex(item => item.fileName === originalFileName.value);
-  console.log(originalFileName.value);
+  const index = content.value.findIndex(item => item.fileId === fileId.value);
+  console.log(fileId.value);
   if (index !== -1) {
     // Create a new object to trigger reactivity
     content.value[index] = {
@@ -75,8 +75,8 @@ const updateFile = async({ originalFileName, newFileData }) => {
   }
 };
 
-const removeFile = async(originalFileName) => {
-  content.value = content.value.filter(item => item.fileName !== originalFileName.value);
+const removeFile = async(fileId) => {
+  content.value = content.value.filter(item => item.fileId !== fileId.value);
 };
 
 const fetchData = async () => {
@@ -181,7 +181,7 @@ const setUsagePercentage = () => {
                         <td>{{ item.postTitle }}</td>
                         <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
                         <td>{{ item.size }}MB</td>
-                        <td>{{  item.id  }}</td>
+                        <td>{{  item.uploader  }}</td>
                         <td>{{ item.username }}</td>
                         <td>{{ formatDate(item.uploadDate) }}</td>
                         <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>

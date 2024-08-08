@@ -7,28 +7,28 @@ const props = defineProps({
 });
 const emit = defineEmits(['fileDeleted']);
 const token = localStorage.getItem("token");
-const originalFileName = ref(props.file.fileName);
+const fileId = ref(props.file.fileId);
 
 const deleteFile = async() => {
     try {
     const response = await axios.delete(`/v1/drive/delete`, {
       params: {
-        filename: props.file.fileName,
+        fileId: props.file.fileId,
       },
       headers: {
         'Authorization': `Bearer ${token}`
       }});
     console.log(response.data.message);
-    console.log(originalFileName.value);
-    emit('fileDeleted', originalFileName);
+    console.log(fileId.value);
+    emit('fileDeleted', fileId);
   } catch (error) {
-    console.log(props.file.fileName);
+    console.log(props.file.fileId);
     console.log('Token:', token);
     console.error('파일 삭제 오류:', error);
   }
 }
 watchEffect(() => {
-  originalFileName.value = props.file.fileName;
+  fileId.value = props.file.fileId;
 });
 </script>
 

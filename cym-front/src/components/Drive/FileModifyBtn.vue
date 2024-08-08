@@ -8,7 +8,7 @@ const props = defineProps({
 });
 const title = ref(props.file.postTitle);
 const fileSize = ref(props.file.size);
-const originalFileName = ref(props.file.fileName);
+const fileId = ref(props.file.fileId);
 const fileName = ref(props.file.fileName);
 const currentfile = ref(props.file);
 const Newfile = ref(null);
@@ -28,36 +28,47 @@ const handleNewFileUpload = (event) => {
   console.log(currentfile.value);
 };
 const formatSize = (size) => {
-  console.log(title.value+originalFileName.value);
+  console.log(title.value+fileName.value);
   return (size  / (1024 * 1024)).toFixed(3); // 3자리 소수점으로 표현
 };
 
 const fileModify = async (close) => {
   const formData = new FormData();
   formData.append('postTitle', title.value);
-  formData.append('originalFilename', originalFileName.value);
+  formData.append('fileId', fileId.value);
   formData.append('file', Newfile.value);
 
   const newFileData = {
     postTitle: title.value,
-    fileName:Newfile.value ? Newfile.value.name : originalFileName.value,
+    fileName:Newfile.value ? Newfile.value.name : fileName.value,
     size: Newfile.value ? formatSize(Newfile.value.size) : fileSize.value,
   }
-  try {
-    const response = await axios.put(`/v1/drive/edit`, formData, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    console.log(response.data.message);
-    console.log(originalFileName.value);
-    console.log(newFileData);
-    emit('fileModified', { originalFileName, newFileData });
-    resetForm();
-    close(); // 파일 수정 성공 시 Popper 닫기
-  } catch (error) {
-    console.log(title.value);
-    console.error('파일 수정 오류:', error);
+  var fileInput = document.getElementById('input-modify-file');
+  if (fileInput.files.length === 0 && !currentfile.value) {
+    console.log("no file and no current file loaded");
+    console.log(currentfile.value);
+  }
+  else {
+    console.log("yes file");
+    try {
+      const response = await axios.put(`/v1/drive/edit`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response.data.message);
+      console.log(fileId.value);
+      console.log(newFileData);
+      emit('fileModified', { fileId, newFileData });
+      resetForm();
+      close(); // 파일 수정 성공 시 Popper 닫기
+    } catch (error) {
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }  
+      console.error('파일 수정 오류:', error);
+    }
   }
 };
 
@@ -77,10 +88,11 @@ const cancelFile = () => {
 
 const modifyCancel =  async (close) => {
   console.log('파일 수정 취소');
-  currentfile.value = props.file.value;
+  currentfile.value = props.file;
   title.value = props.file.postTitle;
   fileSize.value = props.file.size;
   fileName.value = props.file.fileName;
+  console.log(currentfile.value);
   close();
 }
 
@@ -88,7 +100,7 @@ const resetForm = () => {
   fileSize.value = 0;
   file.value = null;
   title.value = '';
-  originalFileName.value = '';
+  fileId.value = 0;
   fileName.value = '';
   // 파일 입력 필드 초기화
   const fileInput = document.getElementById('file');
@@ -102,8 +114,10 @@ onMounted(() => {
   document.getElementById('modifyForm').addEventListener('submit', function(event) {
     var fileInput = document.getElementById('input-modify-file');
     if (fileInput.files.length === 0) {
-      alert('파일을 선택해 주세요.');
-      event.preventDefault(); // 폼 제출 방지
+      if(!currentfile.value){
+        alert('파일을 선택해 주세요.');
+        event.preventDefault(); // 폼 제출 방지
+      }
     }
   })
 });
@@ -111,7 +125,7 @@ onMounted(() => {
 watchEffect(() => {
   title.value = props.file.postTitle;
   fileSize.value = props.file.size;
-  originalFileName.value = props.file.fileName;
+  fileId.value = props.file.fileId;
   fileName.value = props.file.fileName;
 });
 </script>
@@ -134,11 +148,11 @@ watchEffect(() => {
                     <div class="form-group d-flex mb-3">
                       <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
                       <label v-if="currentfile===null" for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
-                        <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" required />
+                        <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" />
                       <div class="col align-items-center" v-if="currentfile!==null">
                         <p class="col mb-1" style="font-size:.8rem;">
                           {{ fileName }}
-                          <button class="cancel-button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
+                          <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
                         </p>
                       </div>
                     </div>
@@ -184,7 +198,7 @@ watchEffect(() => {
   background-color: white;
 }
 .file-form {
-  display: none;
+  opacity: 0;
 }
 .file-button {
   display: inline-block;
