@@ -151,7 +151,7 @@ public class DriveService {
         String newFileUrl = s3Service.updateFile(newFile, path, newPath);
 
         //3-2. db에서 데이터 수정
-        fileEntity.updatePost(postTitle, fileEntity.getOriginalFn(), fileEntity.getS3Fn(), newFileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(newPath));
+        fileEntity.updatePost(postTitle, newFile.getOriginalFilename(), newS3Fn, newFileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(newPath));
         fileRepository.save(fileEntity);
         //3-3. opensearch에서 데이터 수정
         Map<String, Object> data = convertFileData(fileEntity.getId(), fileEntity.getS3Fn(), fileEntity.getOriginalFn()
