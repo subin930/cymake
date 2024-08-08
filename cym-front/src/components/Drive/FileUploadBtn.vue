@@ -46,7 +46,7 @@ const fileUpload = async (close) => {
   }
 };
 const cancelFile = () => {
-  console.log(`파일이 선택 취소되었습니다: ${file.name}`);
+  console.log(`파일이 선택 취소되었습니다: ${file.value.name}`);
   file.value = null;
   fileSize.value = 0;
   document.getElementById('file').value = null;

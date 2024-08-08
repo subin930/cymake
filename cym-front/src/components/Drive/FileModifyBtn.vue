@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
 
@@ -15,13 +15,17 @@ const Newfile = ref(null);
 const emit = defineEmits(['fileModified']);
 const token = localStorage.getItem("token");
 
+const formElement = ref(null); 
+
 const handleNewFileUpload = (event) => {
-  Newfile.value = event.target.files[0];
-  currentfile.value = Newfile.value;
-  if (Newfile.value) {
-    fileSize.value = (Newfile.value.size / (1024 * 1024)).toFixed(2); // MB 단위로 변환
-    fileName.value = Newfile.value.name;
+  const newFile = event.target.files[0];
+  if (newFile) {
+    Newfile.value = newFile;
+    currentfile.value = newFile; // 이 부분에서 객체를 직접 할당
+    fileSize.value = (newFile.size / (1024 * 1024)).toFixed(2);
+    fileName.value = newFile.name;
   }
+  console.log(currentfile.value);
 };
 const formatSize = (size) => {
   console.log(title.value+originalFileName.value);
@@ -62,10 +66,13 @@ const submitForm = (close) => {
 };
 
 const cancelFile = () => {
-  console.log(`파일이 선택 취소되었습니다: ${currentfile.name}`);
+  console.log(`파일이 선택 취소되었습니다: ${currentfile.value}`);
   currentfile.value = null;
   fileSize.value = 0;
-  formElement.value.reset();
+  Newfile.value = null;
+  if (formElement.value) {  // formElement가 존재하는지 확인
+    document.getElementById('input-file').value = null;
+  }
 }
 
 const modifyCancel =  async (close) => {
@@ -76,6 +83,7 @@ const modifyCancel =  async (close) => {
   fileName.value = props.file.fileName;
   close();
 }
+
 const resetForm = () => {
   fileSize.value = 0;
   file.value = null;
@@ -88,6 +96,17 @@ const resetForm = () => {
     fileInput.value = null;
   }
 };
+
+onMounted(() => {
+
+  document.getElementById('modifyForm').addEventListener('submit', function(event) {
+    var fileInput = document.getElementById('input-modify-file');
+    if (fileInput.files.length === 0) {
+      alert('파일을 선택해 주세요.');
+      event.preventDefault(); // 폼 제출 방지
+    }
+  })
+});
 
 watchEffect(() => {
   title.value = props.file.postTitle;
@@ -107,15 +126,15 @@ watchEffect(() => {
                 <div class="row w-100 text-center mb-3">
                     <p style="font-size: 1.1rem; font-weight:bold">파일수정</p>
                 </div>
-                <form @submit.prevent="submitForm(close)">
+                <form @submit.prevent="submitForm(close)" id="modifyForm">
                     <div class="form-group d-flex mb-3">
                         <label for="title" class="px-2 text-center col-3 me-2" style="font-size: 0.9rem">제목</label>
                         <input type="text" class="col" style="font-size: 0.9rem" id="title" v-model="title" required />
                     </div>
                     <div class="form-group d-flex mb-3">
                       <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
-                      <label v-if="currentfile===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
-                      <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleNewFileUpload" required />
+                      <label v-if="currentfile===null" for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
+                        <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" required />
                       <div class="col align-items-center" v-if="currentfile!==null">
                         <p class="col mb-1" style="font-size:.8rem;">
                           {{ fileName }}
