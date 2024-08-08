@@ -121,6 +121,7 @@ public class S3Service {
         S3Object s3Object = amazonS3.getObject(new GetObjectRequest(bucket, path));
         s3Object.close();
         double size = s3Object.getObjectMetadata().getContentLength() /(1.0 * 1024 * 1024);
+        s3Object.close();
         DecimalFormat df = new DecimalFormat("#.###");
         return Double.parseDouble(df.format(size));
     }
