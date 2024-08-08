@@ -14,6 +14,9 @@ const contentCar = ref([]);
 const contentBeauty = ref([]);
 const subject = ref('');
 
+const carLoading = ref(false);
+const beautyLoading = ref(false);
+
 const crwlInfoCar = ref([]);
 const crwlInfoBeauty = ref([]);
 const crwlData = ref([]);
@@ -28,6 +31,7 @@ const keywords = ref([]);
 
 const fetchCarNews = async () => {
   subject.value = "car";
+  carLoading.value = true;
   try {
     const response = await axios.get(`/v1/archive/${subject.value}`, {
       headers: {
@@ -36,11 +40,14 @@ const fetchCarNews = async () => {
     contentCar.value = response.data.content;
   } catch (error) {
     console.error('Error fetching data:', error);
+  } finally {
+    carLoading.value = false;
   }
 };
 
 const fetchBeautyNews = async () => {
   subject.value = "beauty";
+  beautyLoading.value = true;
   try {
     const response = await axios.get(`/v1/archive/${subject.value}`, {
       headers: {
@@ -49,6 +56,8 @@ const fetchBeautyNews = async () => {
     contentBeauty.value = response.data.content;
   } catch (error) {
     console.error('Error fetching data:', error);
+  } finally {
+    beautyLoading.value = false;
   }
 };
 
@@ -105,7 +114,12 @@ onMounted(fetchCrawlInfo);
                     <p class="text-start px-1 fw-bold">자동차 산업 정보</p>
                     <a class="nav-link active text-start mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
-            <div class="container">
+            <div v-if="carLoading" class="text-center my-4">
+                      <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+            </div>
+            <div v-else class="container">
                 <div class="row g-3">
                     <div  v-for="carNews in contentCar" :key="carNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
@@ -128,7 +142,12 @@ onMounted(fetchCrawlInfo);
                     <p class="text-start px-1 fw-bold">화장품 산업 정보</p>
                     <a class="nav-link active text-start mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
-            <div class="container">
+            <div v-if="beautyLoading" class="text-center my-4">
+                      <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+            </div>
+            <div v-else class="container">
                 <div class="row">
                     <div  v-for="beautyNews in contentBeauty" :key="beautyNews.title" class="col-12 col-sm-6 col-md-4 col-lg-2">
                         <div class="col">
