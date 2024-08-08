@@ -47,9 +47,10 @@ const fileModify = async (close) => {
     size: Newfile.value ? formatSize(Newfile.value.size) : fileSize.value,
   }
   var fileInput = document.getElementById('input-modify-file');
-  if (fileInput.files.length === 0 && !currentfile.value) {
-    console.log("no file and no current file loaded");
+  if (!currentfile.value) {
+    console.log("no current file loaded");
     console.log(currentfile.value);
+    console.log(fileInput);
   }
   else {
     console.log("yes file");
@@ -153,9 +154,11 @@ watchEffect(() => {
                     </div>
                     <div class="form-group d-flex mb-3">
                       <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
-                      <label v-if="currentfile===null" for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
+                      <div v-if = "currentfile === null">
+                      <label for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
                         <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" />
-                      <div class="col align-items-center" v-if="currentfile!==null">
+                      </div>
+                        <div v-else class="col align-items-center">
                         <p class="col mb-1" style="font-size:.8rem;">
                           {{ fileName }}
                           <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
