@@ -127,7 +127,7 @@ onMounted(scrollToBottom);
                 <!-- Input for new message -->
                 <div class="container chat-input justify-content-between mb-2">
                     <div class="d-flex chat-file mb-2">
-                        <label v-if="uploadedFile==null" class="input-file-button mx-1" for="file"><i class="bi bi-paperclip"></i>파일첨부</label>
+                        <label v-if="uploadedFile===null" class="input-file-button mx-1" for="file"><i class="bi bi-paperclip"></i>파일첨부</label>
                           <input type="file" class="form-control input-file" id="file"
                           accept=".txt,.md,.html,.doc,.docx,.csv,.xls,.xlsx,.pdf" @change="handleFileAdded"/>
                         <div class="row align-items-center" v-if="uploadedFile!==null">
