@@ -124,6 +124,30 @@ const setUsagePercentage = () => {
   usagePercentage.value = ((size / 3072) * 100).toFixed(2); 
   console.log(usagePercentage.value);
 };
+const downloadFile = async (fileId, fileName) => {
+    try {
+        const response = await axios({
+            url: `/v1/drive/download?fileId=${encodeURIComponent(fileId)}`, //todo: URL을 /v1/drive/download로 수정
+            method: 'GET',
+            responseType: 'blob',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+        console.error('Error downloading file:', error);
+    }
+};
+
+
 </script>
 
 <template>
@@ -179,7 +203,7 @@ const setUsagePercentage = () => {
                     <tr v-for="(item, index) in content" :key="item.id">
                         <td>{{ index+1 }}</td>
                         <td>{{ item.postTitle }}</td>
-                        <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                        <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link" style="max-width: 100px;"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
                         <td>{{ item.size }}MB</td>
                         <td>{{  item.uploader  }}</td>
                         <td>{{ item.username }}</td>
