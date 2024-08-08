@@ -12,9 +12,11 @@ const fileId = ref(props.file.fileId);
 const fileName = ref(props.file.fileName);
 const currentfile = ref(props.file);
 const Newfile = ref(null);
-const emit = defineEmits(['fileModified']);
-const token = localStorage.getItem("token");
 
+const emit = defineEmits(['fileModified']);
+
+const token = localStorage.getItem("token");
+const loading = ref(false);
 const formElement = ref(null); 
 
 const handleNewFileUpload = async(event) => {
@@ -51,6 +53,7 @@ const fileModify = async (close) => {
   }
   else {
     console.log("yes file");
+    loading.value = true;
     try {
       const response = await axios.put(`/v1/drive/edit`, formData, {
         headers: {
@@ -69,6 +72,8 @@ const fileModify = async (close) => {
         console.log(key, value);
       }  
       console.error('파일 수정 오류:', error);
+    } finally {
+      loading.value = false;
     }
   }
 };
@@ -157,7 +162,12 @@ watchEffect(() => {
                         </p>
                       </div>
                     </div>
-                    <div class="row button-group d-flex justify-content-center mb-2">
+                    <div v-if="loading" class="text-center my-4">
+                      <div class="spinner-border text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                    <div v-else class="row button-group d-flex justify-content-center mb-2">
                         <button
                             type="button"
                             @click="modifyCancel(close)"
