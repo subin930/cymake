@@ -121,6 +121,13 @@ public class GlobalExceptionHandler {
         log.error("[ChatException Handle] ", e);
         return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
+    //FileDownloadException
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FileDownloadException.class)
+    public CommonBaseResult fileDownloadException(Exception e) {
+        log.error("[FileDownloadException Handle] ", e);
+        return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
 
 /*
 refresh토큰 + redis 이용해 자동 로그인 + 로그아웃 구현 시 사용
