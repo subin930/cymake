@@ -42,7 +42,7 @@ public class DriveController {
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "파일 업로드")
     public CommonResult<String> upload(
-            @Parameter(required = true, description = "파일 업로드 요청 정보") @Valid @RequestPart(value = "file") MultipartFile multipartFile, @Valid @RequestPart(value = "title") String postTitle,
+            @Parameter(required = true, description = "파일 업로드 요청 정보") @Valid @RequestParam(value = "file") MultipartFile multipartFile, @Valid @RequestParam(value = "title") String postTitle,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) throws IOException, Exception {
         return globalResponseHandler.SendSuccessAndContent(driveService.uploadFile(customUserDetails.getUser(), multipartFile, postTitle));
@@ -90,9 +90,9 @@ public class DriveController {
         @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(description = "파일 수정")
         public CommonBaseResult edit(
-                @Valid @RequestPart(value = "postTitle") String postTitle,
-                @Valid @RequestPart(value = "fileId") Long fileId,
-                @RequestPart(value = "file", required = false) MultipartFile newFile,
+                @Valid @RequestParam(value = "postTitle") String postTitle,
+                @Valid @RequestParam(value = "fileId") Long fileId,
+                @RequestParam(value = "file", required = false) MultipartFile newFile,
                 @AuthenticationPrincipal CustomUserDetails user) throws IOException {
             driveService.updateFile(user.getUser(), newFile, postTitle, fileId);
             return globalResponseHandler.SendSuccess();
