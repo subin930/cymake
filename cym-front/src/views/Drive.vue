@@ -185,25 +185,25 @@ const downloadFile = async (fileId, fileName) => {
             </div>
         </div>
         <div v-else class="container table-wrapper m-3 mt-4 d-flex">
-            <table class="table table-hover table-bordered">
+            <table class="table table-hover table-bordered"  style="table-layout: fixed">
                 <thead class="table-head">
                     <tr class="table-light">
-                    <th scope="col"> </th>
-                    <th scope="col">제목</th>
-                    <th scope="col">파일명</th>
-                    <th scope="col">파일 크기</th>
-                    <th scope="col">업로더 아이디</th>
-                    <th scope="col">등록자</th>
-                    <th scope="col">등록일시</th>
-                    <th scope="col">수정</th>
-                    <th scope="col">삭제</th>
+                    <th width="5%" scope="col"> </th>
+                    <th width="10%"scope="col">제목</th>
+                    <th width="35%" scope="col" >파일명</th>
+                    <th width="10%" scope="col">파일 크기</th>
+                    <th width="10%" scope="col">업로더 아이디</th>
+                    <th width="10%" scope="col">등록자</th>
+                    <th width="12%" scope="col">등록일시</th>
+                    <th width="4%" scope="col">수정</th>
+                    <th width="4%" scope="col">삭제</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in content" :key="item.id">
                         <td>{{ index+1 }}</td>
                         <td>{{ item.postTitle }}</td>
-                        <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link" style="max-width: 100px;"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                        <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
                         <td>{{ item.size }}MB</td>
                         <td>{{  item.uploader  }}</td>
                         <td>{{ item.username }}</td>
