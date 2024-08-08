@@ -16,6 +16,10 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class PostListResDto {
     @NotBlank
+    @Schema(description = "file id")
+    Long fileId;
+
+    @NotBlank
     @Schema(description = "fileName")
     String fileName;
 
@@ -28,8 +32,8 @@ public class PostListResDto {
     String fileUrl;
 
     @NotBlank
-    @Schema(description = "id")
-    String id;
+    @Schema(description = "uploader")
+    String uploader;
 
     @NotBlank
     @Schema(description = "username")

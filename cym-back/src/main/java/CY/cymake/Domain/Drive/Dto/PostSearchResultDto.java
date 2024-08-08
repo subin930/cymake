@@ -16,6 +16,10 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class PostSearchResultDto {
     @NotBlank
+    @Schema(description = "file_id")
+    Long file_id;
+
+    @NotBlank
     @Schema(description = "company_code")
     String company_code;
 
@@ -34,10 +38,6 @@ public class PostSearchResultDto {
     @NotBlank
     @Schema(description = "file_url")
     String file_url;
-
-    @NotBlank
-    @Schema(description = "file_id")
-    String file_id;
 
     @NotBlank
     @Schema(description = "uploader")
