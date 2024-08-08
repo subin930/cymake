@@ -31,8 +31,11 @@ public class FileEntity {
     @Column(name = "postTitle", nullable = false, length = 500)
     private String postTitle;
 
-    @Column(name = "file_name", nullable = false, length = 500)
-    private String file;
+    @Column(name = "original_fn", nullable = false, length = 500)
+    private String originalFn; // 원래 파일 이름 example.txt
+
+    @Column(name = "s3_fn", nullable = false, length = 500)
+    private String s3Fn; //랜덤으로 바뀐 파일 이름(s3에 올라가 있는)
 
     @Column(name = "fileUrl", nullable = false, length = 500)
     private String fileUrl;
@@ -54,9 +57,10 @@ public class FileEntity {
     @Column(name = "size", nullable = false)
     private Double size;
 
-    public void updatePost(String postTitle, String file_name, String fileUrl, String type, Double size) {
+    public void updatePost(String postTitle, String originalFn, String s3Fn, String fileUrl, String type, Double size) {
         this.postTitle = postTitle;
-        this.file = file_name;
+        this.originalFn = originalFn;
+        this.s3Fn = s3Fn;
         this.fileUrl = fileUrl;
         this.type = type;
         this.lastEditDate = Timestamp.valueOf(LocalDateTime.now());

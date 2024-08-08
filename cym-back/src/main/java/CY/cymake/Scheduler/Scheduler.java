@@ -24,10 +24,10 @@ public class Scheduler {
     public void scheduleDateUpdate() throws IOException, Exception {
         System.out.println("suc");
         dataService.updateNewsDB(); //크롤링 된 뉴스 db에 넣기
-//        openSearchService.deleteNewsIndex();
-//        openSearchService.deleteFileIndex();
-//        openSearchService.createCrwlNewsTb();
-//        openSearchService.createFileTb();
+        openSearchService.deleteNewsIndex();
+        openSearchService.deleteFileIndex();
+        openSearchService.createCrwlNewsTb();
+        openSearchService.createFileTb();
         openSearchService.bulkUploadData(dataExtractor.extractCrwlNewsData(), "tb_crwl_news", "news_id");
     }
 }

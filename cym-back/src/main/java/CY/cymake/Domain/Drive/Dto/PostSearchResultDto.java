@@ -20,8 +20,12 @@ public class PostSearchResultDto {
     String company_code;
 
     @NotBlank
-    @Schema(description = "file_name")
-    String file_name;
+    @Schema(description = "s3_fn")
+    String s3_fn;
+
+    @NotBlank
+    @Schema(description = "original_fn")
+    String original_fn;
 
     @NotBlank
     @Schema(description = "post_title")

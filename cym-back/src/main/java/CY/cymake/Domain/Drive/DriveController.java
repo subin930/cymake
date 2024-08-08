@@ -36,38 +36,32 @@ public class DriveController {
     ) throws IOException, Exception {
         return globalResponseHandler.SendSuccessAndContent(driveService.uploadFile(customUserDetails.getUser(), multipartFile, postTitle));
     }
-    /*
-     * 파일 다운로드
-     */
-    /*
-    @GetMapping(value = "/download")
-    @Operation(description = "파일 다운로드")
-    public ResponseEntity<byte[]> download(@RequestParam(value = "filename") String filename, @AuthenticationPrincipal CustomUserDetails user) throws IOException{
-        return driveService.download(user.getUser(), filename);
-    }
 
-     */
     /*
      * 파일 삭제
      */
     @DeleteMapping(value = "/delete")
     @Operation(description = "파일 삭제")
     public CommonBaseResult delete(
-            @Parameter(required = true, description = "파일 삭제 요청 정보") @Valid @RequestParam(value = "filename") String filename, @AuthenticationPrincipal CustomUserDetails user
+            @Parameter(required = true, description = "파일 삭제 요청 정보") @Valid @RequestParam(value = "fileId") Long fileId, @AuthenticationPrincipal CustomUserDetails user
     ) throws IOException {
-        driveService.deleteFile(user.getUser(), filename);
+        driveService.deleteFile(user.getUser(), fileId);
         return globalResponseHandler.SendSuccess();
     }
 
-    /*
-     * 파일 수정
-     */
-    @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(description = "파일 수정")
-    public CommonBaseResult edit(@Valid @RequestPart(value = "postTitle") String postTitle, @Valid @RequestPart(value = "originalFilename") String originalFilename, @RequestPart(value = "file", required = false) MultipartFile newFile, @AuthenticationPrincipal CustomUserDetails user) throws IOException {
-        driveService.updateFile(user.getUser(), newFile, originalFilename, postTitle);
-        return globalResponseHandler.SendSuccess();
-    }
+        /*
+         * 파일 수정
+         */
+        @PutMapping(value = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        @Operation(description = "파일 수정")
+        public CommonBaseResult edit(
+                @Valid @RequestPart(value = "postTitle") String postTitle,
+                @Valid @RequestPart(value = "fileId") Long fileId,
+                @RequestPart(value = "file", required = false) MultipartFile newFile,
+                @AuthenticationPrincipal CustomUserDetails user) throws IOException {
+            driveService.updateFile(user.getUser(), newFile, postTitle, fileId);
+            return globalResponseHandler.SendSuccess();
+        }
 
     /*
      * post 리스트 전송

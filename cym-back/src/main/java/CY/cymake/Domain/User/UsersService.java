@@ -2,6 +2,7 @@ package CY.cymake.Domain.User;
 
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
+import CY.cymake.Domain.Drive.DriveService;
 import CY.cymake.Domain.User.Dto.UpdateReqDto;
 import CY.cymake.Domain.User.Dto.UserInfoResDto;
 import CY.cymake.Entity.CompanyEntity;
@@ -31,6 +32,7 @@ public class UsersService {
     private final PasswordEncoder encoder;
     private final S3Service s3Service;
     private final FileRepository fileRepository;
+    private final DriveService driveService;
 
     /*
      * 회원가입 처리 로직
@@ -79,10 +81,7 @@ public class UsersService {
         }
         List<FileEntity> fileList = fileRepository.findAllByUploader(siteUser.get());
         for(FileEntity file: fileList) {
-            //s3 버킷에서 파일 삭제
-            s3Service.deleteFile(directory + file.getFile());
-            //db에서 파일 삭제
-            fileRepository.delete(file);
+            driveService.deleteFile(user, file.getId());
         }
 
         usersRepository.delete(siteUser.get());
