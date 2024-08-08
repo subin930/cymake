@@ -179,7 +179,7 @@ const setUsagePercentage = () => {
                     <tr v-for="(item, index) in content" :key="item.id">
                         <td>{{ index+1 }}</td>
                         <td>{{ item.postTitle }}</td>
-                        <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                        <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
                         <td>{{ item.size }}MB</td>
                         <td>{{  item.uploader  }}</td>
                         <td>{{ item.username }}</td>
@@ -217,9 +217,11 @@ const setUsagePercentage = () => {
 .download-link {
   color: inherit; /* 기본 텍스트 색상 사용 */
   text-decoration: none; /* 밑줄 제거 */
+  
 }
 .download-link:hover {
   color: #7248BD;
+  cursor: pointer;
 }
 .form-control::placeholder {
   opacity: .5;
