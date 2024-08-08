@@ -1,6 +1,6 @@
 
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
 const emit = defineEmits(['fileUploaded']);
@@ -27,22 +27,28 @@ const fileUpload = async (close) => {
   const formData = new FormData();
   formData.append('file', file.value);
   formData.append('title', title.value);
-  try {
-    loading.value = true;
-    const response = await axios.post(`/v1/drive/upload`, formData, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    console.log(response.data.message);
-    await nextTick();
-    resetForm(); //초기화
-    emit('fileUploaded');
-    close(); // 파일 업로드 성공 시 Popper 닫기
-  } catch (error) {
-    console.error('파일 업로드 오류:', error);
-  } finally {
-    loading.value = false;
+  if(file.value){
+    console.log(file.value);
+    try {
+      loading.value = true;
+      const response = await axios.post(`/v1/drive/upload`, formData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response.data.message);
+      await nextTick();
+      resetForm(); //초기화
+      emit('fileUploaded');
+      close(); // 파일 업로드 성공 시 Popper 닫기
+    } catch (error) {
+      console.error('파일 업로드 오류:', error);
+    } finally {
+      loading.value = false;
+    }
+  } else {
+    console.log('nofile');
   }
 };
 const cancelFile = () => {
@@ -66,6 +72,19 @@ const resetForm = () => {
   formElement.value.reset(); // 폼의 모든 입력 필드를 초기화
   console.log('resetForm');
 };
+
+onMounted(() => {
+
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+  var fileInput = document.getElementById('input-file');
+  if (fileInput.files.length === 0) {
+    if(!file.value){
+      alert('파일을 선택해 주세요.');
+      event.preventDefault(); // 폼 제출 방지
+    }
+  }
+})
+});
 </script>
 
 <template>
@@ -83,7 +102,7 @@ const resetForm = () => {
         <div class="row text-center justify-content-center me-2">
           <p style="font-size: 1.1rem; font-weight:bold;">파일등록</p>
         </div>
-        <form @submit.prevent="submitForm(close)" ref="formElement">
+        <form @submit.prevent="submitForm(close)" ref="formElement" id="uploadForm">
           <div class="form-group d-flex mb-3">
             <label for="title" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">제목</label>
             <input type="text" class="w-75" style="font-size: 0.9rem" id="title" v-model="title" required />
@@ -91,11 +110,11 @@ const resetForm = () => {
           <div class="form-group row d-flex mb-3">
             <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
             <label v-if="file===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.8rem"><i class="bi bi-paperclip"></i>파일첨부</label>
-            <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleFileUpload" required />
+            <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleFileUpload" />
             <div class="col align-items-center" v-if="file!==null">
               <p class="col mb-1" style="font-size:.8rem;">
                 {{ filename }}
-                <button class="cancel-button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
+                <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
               </p>
             </div>
             <div class="row d-flex">
