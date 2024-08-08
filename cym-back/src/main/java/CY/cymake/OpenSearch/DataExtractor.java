@@ -39,7 +39,8 @@ public class DataExtractor {
                 .map(file -> {
                     Map<String, Object> map = new HashMap<>();
                     map.put("file_id", file.getId());
-                    map.put("file_name", file.getFile());
+                    map.put("s3_fn", file.getS3Fn());
+                    map.put("original_fn", file.getOriginalFn());
                     map.put("file_url", file.getFileUrl());
                     map.put("last_edit_date", file.getLastEditDate().toInstant().toString());
                     map.put("post_title", file.getPostTitle());

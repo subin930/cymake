@@ -36,97 +36,128 @@ public class DriveService {
     private final DataExtractor dataExtractor;
     private final CrwlTotalRepository crwlTotalRepository;
 
+
+    /*
+     * 파일 업로드
+     * 1. 파일 작성자가 실제 유저인지 확인
+     * 2. 파일 이름 변경 -> 랜덤으로
+     * 3. s3에 업로드
+     * 4. db에 저장
+     * 5. opensearch 인덱스에 저장
+     */
     @Transactional
-    public String uploadFile(CustomUserInfoDto user, MultipartFile multipartFile, String postTitle) throws IOException, Exception {
+    public String uploadFile(CustomUserInfoDto user, MultipartFile file, String postTitle) throws IOException, Exception {
+        //1. 파일 작성자가 실제 유저인지 확인
         Optional<UsersEntity> siteUser= usersRepository.findById(user.getId());
 
         if(siteUser.isEmpty()) {
+            //유저가 존재하지 않는다면
             throw new UserNotFoundException("파일 업로드에 실패했습니다.");
         }
-        CompanyEntity companyCode = user.getCompanyCode();
-        String path = "files/" + companyCode.getCode() + "/" + multipartFile.getOriginalFilename();
-        String fileUrl = s3Service.uploadFile(multipartFile, path);
+        //2. 파일 이름 변경 -> 랜덤으로
+        String s3Fn = createRandomFilename(Objects.requireNonNull(file.getOriginalFilename()));
 
-        FileEntity file = FileEntity.builder()
+        //3. s3에 업로드
+        CompanyEntity companyCode = user.getCompanyCode(); //db에 저장할 해당 유저의 회사 코드
+        String path = "files/" + companyCode.getCode() + "/" + s3Fn; //s3 버킷 파일 저장 경로
+        String fileUrl = s3Service.uploadFile(file, path);
+
+        //4.db에 저장
+        FileEntity fileEntity = FileEntity.builder()
                 .companyCode(companyCode)
                 .postTitle(postTitle)
-                .file(multipartFile.getOriginalFilename())
+                .s3Fn(s3Fn)
+                .originalFn(file.getOriginalFilename())
                 .fileUrl(fileUrl)
                 .uploader(siteUser.get())
                 .uploadDate(Timestamp.valueOf(LocalDateTime.now()))
                 .lastEditDate(Timestamp.valueOf(LocalDateTime.now()))
-                .type(getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename())))
+                .type(getExtension(Objects.requireNonNull(file.getOriginalFilename())))
                 .size(s3Service.getFileSize(path))
                 .build();
-        FileEntity savedFile = fileRepository.save(file);
-        openSearchService.addAndUpdateFileData(convertFileData(savedFile.getId(), savedFile.getFile(), savedFile.getFileUrl(), savedFile.getPostTitle(), savedFile.getType(), savedFile.getUploadDate(), savedFile.getCompanyCode().getCode(), savedFile.getUploader().getId(), savedFile.getSize()), "file_id");
+        FileEntity savedFile = fileRepository.save(fileEntity);
+
+        //5. opensearch에 업로드
+        openSearchService.addAndUpdateFileData(convertFileData(savedFile.getId(), savedFile.getS3Fn(), savedFile.getOriginalFn(), savedFile.getFileUrl(), savedFile.getPostTitle(), savedFile.getType(), savedFile.getUploadDate(), savedFile.getCompanyCode().getCode(), savedFile.getUploader().getId(), savedFile.getSize()), "file_id");
+
         return fileUrl;
     }
-    /*
-     * 파일 다운로드
-     */
-    /*
-    public ResponseEntity<byte[]> download(CustomUserInfoDto user, String filename) throws IOException {
-        String directory = "files/" + user.getCompanyCode().getCode() + "/";
-        return s3Service.download(directory, filename);
-    }
 
-     */
     /*
      * 파일 삭제
+     * 1. 파일 아이디로 해당 파일 찾음
+     * 2. 글 작성자와 해당 유저가 일치하는지 확인
+     * 3. opensearch 인덱스에서 삭제
+     * 4. s3에서 삭제
+     * 5. db에서 삭제
      */
     @Transactional
-    public void deleteFile(CustomUserInfoDto user, String filename) throws IOException {
+    public void deleteFile(CustomUserInfoDto user, Long fileId) throws IOException {
         //input 1) CustomUserInfoDto user:로그인 되어 있는 유저 정보 2) String filename: 삭제할 파일 이름 ex. example_text.txt
-        FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), filename).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
-        //1. 버킷의 특정 디렉터리로 매핑
-        String path = "files/" + user.getCompanyCode().getCode() + "/" + filename;
+        //1. 파일 아이디로 해당 파일 찾음
+        FileEntity fileEntity = fileRepository.findByCompanyCodeAndId(user.getCompanyCode(), fileId).orElseThrow(() -> new FileDeleteFailedException("파일이 존재하지 않습니다."));
+
 
         //2. 작성자와 일치하는지 확인
-        if(!user.getId().equals(file.getUploader().getId())){
+        if(!user.getId().equals(fileEntity.getUploader().getId())){
             //일치하지 않을 경우
             throw new FileDeleteFailedException("파일 삭제에 실패하였습니다.");
         }
-        //opensearch 인덱스에서 삭제
-        openSearchService.deleteFileData(file.getId());
+        //3. opensearch 인덱스에서 삭제
+        openSearchService.deleteFileData(fileEntity.getId());
 
         //3. s3에서 삭제 로직 수행
+        String path = "files/" + user.getCompanyCode().getCode() + "/" + fileEntity.getS3Fn();
         s3Service.deleteFile(path);
 
         //4. db에서 삭제 로직 수행
-        fileRepository.delete(file);
+        fileRepository.delete(fileEntity);
     }
+
     /*
      * 파일 수정
+     * 1. 작성자 일치 여부 확인
+     * 2. postTitle만 수정한 경우 처리
+     * 3. 다른 파일을 올렸을 경우 처리
+     * 3-1. s3에서 파일 수정(기존 파일 삭제, 새로운 파일 업로드)
+     * 3-2. db에서 데이터 수정
+     * 3-3. opensearch에서 데이터 수정
      */
     @Transactional
-    public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String originalFilename, String postTitle) throws IOException {
-        FileEntity file = fileRepository.findByCompanyCodeAndFile(user.getCompanyCode(), originalFilename).orElseThrow(() -> new FileUpdateFailedException("파일이 존재하지 않습니다."));
+    public void updateFile(CustomUserInfoDto user, MultipartFile newFile, String postTitle, Long fileId) throws IOException {
+        FileEntity fileEntity = fileRepository.findByCompanyCodeAndId(user.getCompanyCode(), fileId).orElseThrow(() -> new FileUpdateFailedException("파일이 존재하지 않습니다."));
 
         //1. 작성자 일치 여부 확인
-        if(!user.getId().equals(file.getUploader().getId())) {
+        if(!user.getId().equals(fileEntity.getUploader().getId())) {
             throw new FileUpdateFailedException("기존 post가 존재하지 않습니다.");
         }
-        //2. 파일 수정 여부 확인
+        //2. postTitle만 수정한 경우 처리
         if(newFile == null) {
-            file.updatePostTitle(postTitle);
-            fileRepository.save(file);
-            Map<String, Object> data = convertFileData(file.getId(), file.getFile(), file.getFileUrl(), postTitle,
-                    file.getType(), file.getUploadDate(), file.getCompanyCode().getCode(),
-                    file.getUploader().getId(), file.getSize());
+            fileEntity.updatePostTitle(postTitle);
+            fileRepository.save(fileEntity);
+            Map<String, Object> data = convertFileData(fileEntity.getId(), fileEntity.getS3Fn(), fileEntity.getOriginalFn(),
+                    fileEntity.getFileUrl(), postTitle,
+                    fileEntity.getType(), fileEntity.getUploadDate(), fileEntity.getCompanyCode().getCode(),
+                    fileEntity.getUploader().getId(), fileEntity.getSize());
             openSearchService.addAndUpdateFileData(data, "file_id");
             return;
         }
-        //2. s3에서 파일 수정(기존거 삭제, 새로운거 올림)
-        String path = "files/" +  user.getCompanyCode().getCode() + "/" + originalFilename;
-        String newPath = "files/" + user.getCompanyCode().getCode() + "/" + newFile.getOriginalFilename();
-        String fileUrl = s3Service.updateFile(newFile, path, newPath);
-        //3. db수정
-        file.updatePost(postTitle, newFile.getOriginalFilename(), fileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(newPath));
-        fileRepository.save(file);
-        Map<String, Object> data = convertFileData(file.getId(), newFile.getOriginalFilename(), fileUrl, postTitle,
-                getExtension(newFile.getOriginalFilename()), file.getUploadDate(), file.getCompanyCode().getCode(),
-                file.getUploader().getId(), file.getSize());
+        // 3. 다른 파일을 올렸을 경우 처리
+
+        //3-1. s3에서 파일 수정(기존 파일 삭제, 새로운 파일 업로드)
+        String path = "files/" + user.getCompanyCode().getCode() + "/" + fileEntity.getS3Fn();
+        String newS3Fn = createRandomFilename(Objects.requireNonNull(newFile.getOriginalFilename()));
+        String newPath = "files/" + user.getCompanyCode().getCode() + "/" + newS3Fn;
+        String newFileUrl = s3Service.updateFile(newFile, path, newPath);
+
+        //3-2. db에서 데이터 수정
+        fileEntity.updatePost(postTitle, fileEntity.getOriginalFn(), fileEntity.getS3Fn(), newFileUrl, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())), s3Service.getFileSize(newPath));
+        fileRepository.save(fileEntity);
+        //3-3. opensearch에서 데이터 수정
+        Map<String, Object> data = convertFileData(fileEntity.getId(), fileEntity.getS3Fn(), fileEntity.getOriginalFn()
+                , newFileUrl, postTitle, getExtension(Objects.requireNonNull(newFile.getOriginalFilename())),
+                fileEntity.getUploadDate(), fileEntity.getCompanyCode().getCode(),
+                fileEntity.getUploader().getId(), fileEntity.getSize());
         openSearchService.addAndUpdateFileData(data, "file_id");
     }
 
@@ -161,7 +192,7 @@ public class DriveService {
         List<PostListResDto> posts = new ArrayList<>();
         for(FileEntity file: files) {
             PostListResDto post = PostListResDto.builder()
-                    .fileName(file.getFile())
+                    .fileName(file.getOriginalFn())
                     .postTitle(file.getPostTitle())
                     .id(file.getUploader().getId())
                     .username(file.getUploader().getUsername())
@@ -190,7 +221,7 @@ public class DriveService {
         List<PostListResDto> result = new ArrayList<>();
         for(PostSearchResultDto post: list) {
             String username = usersRepository.findById(post.getUploader()).orElseThrow(() -> new UserNotFoundException("파일 업로더가 존재하지 않습니다.")).getUsername();
-            PostListResDto postListResDto = new PostListResDto(post.getFile_name(), post.getPost_title(), post.getFile_url(), post.getUploader(), username, post.getUpload_date(), post.getSize());
+            PostListResDto postListResDto = new PostListResDto(post.getOriginal_fn(), post.getPost_title(), post.getFile_url(), post.getUploader(), username, post.getUpload_date(), post.getSize());
             result.add(postListResDto);
         }
         return result;
@@ -200,10 +231,11 @@ public class DriveService {
      * opensearch에 파일 업로드 또는 수정할 때 필요한 코드
      */
     @Transactional
-    public Map<String, Object> convertFileData(long fileId, String filename, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader, Double size) {
+    public Map<String, Object> convertFileData(long fileId, String s3Fn, String originalFn, String fileUrl, String postTitle, String type, Timestamp uploadDate, String companyCode, String uploader, Double size) {
         Map<String, Object> row = new HashMap<>();
         row.put("file_id", fileId);
-        row.put("file_name", filename);
+        row.put("s3_fn", s3Fn);
+        row.put("original_fn", originalFn);
         row.put("file_url", fileUrl);
         row.put("last_edit_date",  Timestamp.valueOf(LocalDateTime.now()));
         row.put("post_title", postTitle);

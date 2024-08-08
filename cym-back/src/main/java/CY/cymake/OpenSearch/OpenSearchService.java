@@ -36,8 +36,8 @@ public class OpenSearchService {
                 .settings(new IndexSettings.Builder().numberOfShards("4").numberOfReplicas("3").build())
                 .mappings(new TypeMapping.Builder()
                         .properties("file_id", new Property.Builder().long_(new LongNumberProperty.Builder().build()).build())
-                        .properties("s3filename", new Property.Builder().text(new TextProperty.Builder().build()).build())
-                        .properties("original_filename", new Property.Builder().text(new TextProperty.Builder().build()).build())
+                        .properties("s3_fn", new Property.Builder().text(new TextProperty.Builder().build()).build())
+                        .properties("original_fn", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("file_url", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("last_edit_date", new Property.Builder().date(new DateProperty.Builder().format("strict_date_optional_time||epoch_millis").build()).build())
                         .properties("post_title", new Property.Builder().text(new TextProperty.Builder().build()).build())
@@ -123,70 +123,6 @@ public class OpenSearchService {
             System.out.println("Bulk upload and update news succeeded.");
         }
     }
-    /*
-     * 데이터 추가(tb_file)
-     */
-    public void addFileData(long fileId, String fileName, String fileUrl, Timestamp lastEditDate,
-                            String postTitle, String type, Timestamp uploadDate,
-                            String companyCode, String uploader) throws IOException {
-        IndexRequest<Map<String, Object>> request = new IndexRequest.Builder<Map<String, Object>>()
-                .index("tb_file")
-                .id(String.valueOf(fileId))
-                .document(new HashMap<>() {{
-                    put("file_id", fileId);
-                    put("file_name", fileName);
-                    put("file_url", fileUrl);
-                    put("last_edit_date", lastEditDate);
-                    put("post_title", postTitle);
-                    put("type", type);
-                    put("upload_date", uploadDate);
-                    put("company_code", companyCode);
-                    put("uploader", uploader);
-                }})
-                .build();
-        client.index(request);
-    }
-
-    /*
-     * 데이터 추가(tb_crwl_news)
-     */
-    public void addNewsData(long newsId, String subject,
-                            String title) throws IOException {
-        IndexRequest<Map<String, Object>> request = new IndexRequest.Builder<Map<String, Object>>()
-                .index("tb_crwl_news")
-                .id(String.valueOf(newsId))
-                .document(new HashMap<>() {{
-                    put("news_id", newsId);
-                    put("subject", subject);
-                    put("title", title);
-                }})
-                .build();
-
-        client.index(request);
-    }
-
-    /*
-     * 데이터 조회
-     */
-    public String getFileData(long fileId) throws IOException {
-        GetRequest getRequest = new GetRequest.Builder()
-                .index("tb_file")
-                .id(String.valueOf(fileId))
-                .build();
-
-        GetResponse<Map> response = client.get(getRequest, Map.class);
-        return response.source().toString();
-    }
-    public String getNewsData(long newsId) throws IOException {
-        GetRequest getRequest = new GetRequest.Builder()
-                .index("tb_crwl_news")
-                .id(String.valueOf(newsId))
-                .build();
-
-        GetResponse<Map> response = client.get(getRequest, Map.class);
-        return response.source().toString();
-    }
-
     /*
      * 데이터 삭제
      */
@@ -276,7 +212,7 @@ public class OpenSearchService {
                         .bool(b -> b
                                 .must(m -> m
                                         .wildcard(w -> w
-                                                .field("file_name")
+                                                .field("original_fn")
                                                 .value("*" + searchBody + "*")
                                         )
                                 )
@@ -379,70 +315,6 @@ public class OpenSearchService {
 
         return new ArrayList<>(resultsSet);
     }
-    /*
-    public List<PostSearchResultDto> searchFileTb(CustomUserInfoDto user, String index, String searchBody) throws IOException {
-    Set<PostSearchResultDto> resultsSet = new HashSet<>();
-    String company_code = user.getCompanyCode().getCode();
-    System.out.println(company_code);
-    int size = 1000; // 한 번에 가져올 최대 결과 수
-    int from = 0; // 시작점
-
-    while (true) {
-        int finalFrom = from;
-        SearchRequest searchRequest = SearchRequest.of(s -> s
-                .index(index)
-                .from(finalFrom)
-                .size(size)
-                .sort(so -> so
-                        .field(f -> f
-                                .field("upload_date") // 정렬할 필드
-                                .order(SortOrder.Desc) // 최신순 정렬
-                        )
-                )
-                .query(q -> q
-                        .bool(b -> b
-                                .should(sh -> sh
-                                        .wildcard(w -> w
-                                                .field("file_name")
-                                                .value("*" + searchBody + "*")
-                                        )
-                                )
-                                .should(sh -> sh
-                                        .wildcard(w -> w
-                                                .field("post_title")
-                                                .value("*" + searchBody + "*")
-                                        )
-                                )
-                        )
-                )
-        );
-
-        // 검색 요청 실행
-        SearchResponse<PostSearchResultDto> searchResponse = client.search(searchRequest, PostSearchResultDto.class);
-        List<Hit<PostSearchResultDto>> hits = searchResponse.hits().hits();
-
-        // 검색 결과 리스트에 넣기
-        for (Hit<PostSearchResultDto> hit : hits) {
-            if (Objects.requireNonNull(hit.source()).getCompany_code().equals(company_code)) {
-                PostSearchResultDto data = hit.source();
-                resultsSet.add(data);
-            }
-        }
-
-        // 더 이상 결과가 없으면 종료
-        if (hits.size() < size) {
-            break;
-        }
-
-        // 다음 페이지로 이동
-        from += size;
-    }
-
-    return new ArrayList<>(resultsSet);
-}
-
-     */
-
 
     /*
      * 데이터 검색(tb_file)

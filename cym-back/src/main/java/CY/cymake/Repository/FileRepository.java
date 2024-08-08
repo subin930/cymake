@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
-    Optional<FileEntity> findByFile(String filename);
     List<FileEntity> findAllByCompanyCode(CompanyEntity companyCode);
-    Optional<FileEntity> findByCompanyCodeAndFile(CompanyEntity companyCode, String file);
+    Optional<FileEntity> findByCompanyCodeAndId(CompanyEntity companyCode, Long id);
     List<FileEntity> findAllByUploader(UsersEntity uploader);
 }
