@@ -21,6 +21,10 @@ const ChangePassword = async() => {
         })
     .then((res) => {
         console.log(res.data.message);
+        // 비밀번호 변경 성공 후 모달 창 닫기
+        const modal = document.getElementById('passwordChangeModal');
+        const bootstrapModal = bootstrap.Modal.getInstance(modal); // Bootstrap 모달 인스턴스 가져오기
+        bootstrapModal.hide(); // 모달 창 닫기
     })
     .catch(function (error) {
         // TODO: 비밀번호 변경 오류 부분 알림
@@ -40,15 +44,15 @@ const ChangePassword = async() => {
             <div class="modal-body">
                 <div class="mb-2 row">
                     <label for="inputOriginalPassword" class="justify-content-start" style="font-size: .8rem;">기존 비밀번호</label>
-                    <input type="text" class="form-control" style="font-size: .8rem;" placeholder="기존 비밀번호를 입력하세요" id="inputOriginalPassword" :value="originalPassword" @input="originalPassword = $event.target.value">
+                    <input type="password" class="form-control" style="font-size: .8rem;" placeholder="기존 비밀번호를 입력하세요" id="inputOriginalPassword" :value="originalPassword" @input="originalPassword = $event.target.value">
                 </div>
                 <div class="mb-2 row">
                     <label for="inputNewPassword" class=" justify-content-start" style="font-size: .8rem;">신규 비밀번호</label>
-                    <input type="text" class="form-control" style="font-size: .8rem;" placeholder="새로운 비밀번호를 입력하세요" id="inputNewPassword" :value="newPassword" @input="newPassword = $event.target.value">
+                    <input type="password" class="form-control" style="font-size: .8rem;" placeholder="새로운 비밀번호를 입력하세요" id="inputNewPassword" :value="newPassword" @input="newPassword = $event.target.value">
                 </div>
                 <div class="mb-2 row">
                     <label for="inputNewPasswordCheck" class="justify-content-start" style="font-size: .8rem;">신규 비밀번호 확인</label>
-                    <input type="text" class="form-control" style="font-size: .8rem;" placeholder="새로운 비밀번호를 재입력하세요" id="inputNewPasswordCheck" :value="newPasswordCheck" @input="newPasswordCheck = $event.target.value">
+                    <input type="password" class="form-control" style="font-size: .8rem;" placeholder="새로운 비밀번호를 재입력하세요" id="inputNewPasswordCheck" :value="newPasswordCheck" @input="newPasswordCheck = $event.target.value">
                 </div>
             </div>
             <div class="modal-footer">
