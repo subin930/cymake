@@ -39,10 +39,10 @@ public class DataService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");  //원하는 형식 지정
         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime now = LocalDateTime.now();  //오늘 날짜와 시간 가져옴
-        String date = "20240805";
-        String date2 = "2024-08-05";
-        //String date = now.format(formatter); //변형
-        //String date2 = now.format(formatter2);
+        //String date = "20240805";
+        //String date2 = "2024-08-05";
+        String date = now.format(formatter); //변형
+        String date2 = now.format(formatter2);
         System.out.println(date);
         //주제 목록 설정
         List <String> subjectNames = List.of("car", "beauty");

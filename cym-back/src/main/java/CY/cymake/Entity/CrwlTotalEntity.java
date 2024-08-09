@@ -20,7 +20,7 @@ public class CrwlTotalEntity {
     @Column(name = "crawling_id")
     private Long id;
 
-    @Column(name = "subject", unique = true, nullable = false, length = 500)
+    @Column(name = "subject", nullable = false, length = 500)
     private String subject;
 
     @Column(name = "date", nullable = false)
