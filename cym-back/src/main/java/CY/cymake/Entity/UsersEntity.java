@@ -43,7 +43,10 @@ public class UsersEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public void updateProfile(String password) {
+    public void updatePWProfile(String password) {
         this.password = password;
+    }
+    public void updateProfile(String email) {
+        this.email = email;
     }
 }

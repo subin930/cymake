@@ -28,7 +28,7 @@ const { value: newPasswordCheck, errorMessage: newPasswordCheckError, resetField
 
 // 비밀번호 변경 함수
 const ChangePassword = handleSubmit(async() => {
-    await axios.put(`/v1/users/update`, {
+    await axios.put(`/v1/users/updatePW`, {
         originalPassword: originalPassword.value,
         newPassword: newPassword.value,
         newPasswordCheck: newPasswordCheck.value,
@@ -109,7 +109,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class="modal-footer  flex-column align-items-center" style="margin:3px; padding-bottom:5px;">
-                <button type="button" class="btn btn-secondary" @click="ChangePassword()" style="background-color:#7248BD; border:none; margin: 3px;">비밀번호 변경</button>
+                <button type="button" class="btn btn-secondary" @click="ChangePassword()" style="background-color:#7248BD; border:none; border-radius: 20px; margin: 3px; width: 320px; height: 40px;">비밀번호 변경</button>
                 <div style="height:30px;">
                     <p v-if="errorMessage" class="text-danger text-center mt-2" style="font-size: 0.8rem; margin-bottom: 10px;">{{ errorMessage }}</p>
                 </div>

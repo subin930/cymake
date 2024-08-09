@@ -1,7 +1,7 @@
 package CY.cymake.Domain.User;
 
 import CY.cymake.Domain.User.Dto.RegisterReqDto;
-import CY.cymake.Domain.User.Dto.UpdateReqDto;
+import CY.cymake.Domain.User.Dto.UpdatePWReqDto;
 import CY.cymake.Domain.User.Dto.UserInfoResDto;
 import CY.cymake.Response.CommonBaseResult;
 import CY.cymake.Response.CommonResult;
@@ -56,12 +56,21 @@ public class UsersController {
     }
 
     /*
-     * 유저 정보 수정
+     * 유저 정보 수정(pw)
+     */
+    @Operation(description = "회원 정보 수정")
+    @PutMapping(value = "/updatePW")
+    public CommonBaseResult updatePWProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestBody @Valid UpdatePWReqDto updatePWReqDto, @AuthenticationPrincipal CustomUserDetails user){
+        usersService.updatePWProfile(user.getUser(), updatePWReqDto);
+        return globalResponseHandler.SendSuccess();
+    }
+    /*
+     * 유저 정보 수정(pw)
      */
     @Operation(description = "회원 정보 수정")
     @PutMapping(value = "/update")
-    public CommonBaseResult updateProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestBody @Valid UpdateReqDto updateReqDto, @AuthenticationPrincipal CustomUserDetails user){
-        usersService.updateProfile(user.getUser(), updateReqDto);
+    public CommonBaseResult updateProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestParam(value = "email") String email, @AuthenticationPrincipal CustomUserDetails user){
+        usersService.updateProfile(user.getUser(), email);
         return globalResponseHandler.SendSuccess();
     }
 }

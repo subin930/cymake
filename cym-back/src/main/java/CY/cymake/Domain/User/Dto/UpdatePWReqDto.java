@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Schema(description = "회원 정보 수정 Dto")
-public class UpdateReqDto {
+public class UpdatePWReqDto {
     @NotBlank(message = "기존 비밀번호 입력은 필수입니다.")
     @Schema(description = "기존 비밀번호", example = "password123!")
     String originalPassword;

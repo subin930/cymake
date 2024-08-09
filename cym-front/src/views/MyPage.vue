@@ -14,6 +14,8 @@ const token = localStorage.getItem("token");
 const username = ref(localStorage.getItem("username"));
 const email = ref(localStorage.getItem("userEmail"));
 const id = ref(localStorage.getItem("userId"));
+const errorMessage = ref("");
+const loading = ref(false);
 
 const route = useRoute();
 const router = useRouter();
@@ -28,6 +30,35 @@ const OpenUnregisterModal = () => {
     const modalElement = document.getElementById('confirmUnregisterModal');
     const modalInstance = new bootstrap.Modal(modalElement);
     modalInstance.show();
+};
+
+// 회원정보 수정 함수
+const ChangeInfo = async() => {
+    loading.value = true;
+    try {
+        await axios.put(`/v1/users/update`, {
+        }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                params: {
+                    email: email.value
+                }
+            })
+        .then((res) => {
+            console.log(res.data.message);
+            alert("회원 정보 수정에 성공하였습니다.");
+            localStorage.setItem("userEmail", email.value);
+            router.push(`/archive`);
+        })
+    } catch(error) {
+        // 비밀번호 변경 오류 메시지
+        errorMessage.value = error.response.data.message;
+        alert(errorMessage.value);
+        console.log(error);
+    } finally {
+        loading.value = false;
+    };
 };
 
 const unregister = async() => {
@@ -86,14 +117,14 @@ const unregister = async() => {
                 <div class="mb-3 row justify-content-center">
                     <label for="inputEmail" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">이메일</label>
                     <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" :placeholder="email" id="inputEmail" disabled>
+                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" :placeholder="email" id="inputEmail" v-model="email">
                     </div>
                 </div>
             </div>
             <div class="mb-5 row justify-content-center">
                 <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호 변경</label>
                 <div class="col-sm-8 d-inline-flex justify-contetnt-center">
-                    <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#7248BD; border-color:#7248BD; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
+                    <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#7248BD; border-color:#7248BD; border-radius: 20px; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
                 </div>
                 
             </div>
@@ -105,6 +136,11 @@ const unregister = async() => {
     </div>
     <PasswordChangeModal></PasswordChangeModal>
     <ConfirmUnregisterModal @confirm="unregister"></ConfirmUnregisterModal>
+    <div v-if="loading" class="loading-overlay">
+            <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+    </div>
 </template>
 
 <style scoped>
@@ -124,10 +160,35 @@ const unregister = async() => {
     color: white !important;
     border-color: white !important;
 }
+.change-btn{
+    border-radius: 20px;
+    width: 100px;
+}
+.unregist-btn{
+    border-radius: 20px;
+    width: 100px;
+}
 .change-btn:hover {
     background-color: #8E6DCA !important;
+    transform: translateY(-1px);
 }
 .unregist-btn:hover {
     background-color: #8E6DCA !important;
+    border-radius: 20px;
+    transform: translateY(-1px);
 }
+/* 로딩 창 스타일 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
 </style>

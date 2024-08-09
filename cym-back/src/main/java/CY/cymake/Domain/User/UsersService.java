@@ -3,7 +3,7 @@ package CY.cymake.Domain.User;
 import CY.cymake.AWS.S3Service;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
 import CY.cymake.Domain.Drive.DriveService;
-import CY.cymake.Domain.User.Dto.UpdateReqDto;
+import CY.cymake.Domain.User.Dto.UpdatePWReqDto;
 import CY.cymake.Domain.User.Dto.UserInfoResDto;
 import CY.cymake.Entity.CompanyEntity;
 import CY.cymake.Entity.FileEntity;
@@ -104,34 +104,50 @@ public class UsersService {
     }
 
     /*
-     * 회원 정보 수정 로직
+     * 회원 정보 수정 로직(pw)
      */
-    public void updateProfile(CustomUserInfoDto customUserInfoDto, UpdateReqDto updateReqDto) {
+    @Transactional
+    public void updatePWProfile(CustomUserInfoDto customUserInfoDto, UpdatePWReqDto updatePWReqDto) {
         Optional<UsersEntity> siteUser = usersRepository.findById(customUserInfoDto.getId());
         if(siteUser.isEmpty()) {
             throw new UpdateProfileFailedException("회원 정보 수정에 실패하였습니다: 해당 회원을 찾을 수 없음.");
         }
         UsersEntity user = siteUser.get();
         //기존 비밀번호 확인
-        if(!encoder.matches(updateReqDto.getOriginalPassword(), user.getPassword())) {
+        if(!encoder.matches(updatePWReqDto.getOriginalPassword(), user.getPassword())) {
             //비밀번호 일치 X
             throw new UpdateProfileFailedException("기존 비밀번호가 일치하지 않습니다.");
         }
 
         //비밀번호 확인
         //2. 기존 비밀번호와 새로운 비밀번호가 같으면 실패
-        if(updateReqDto.getOriginalPassword().equals(updateReqDto.getNewPassword())) {
+        if(updatePWReqDto.getOriginalPassword().equals(updatePWReqDto.getNewPassword())) {
             throw new UpdateProfileFailedException("기존 비밀번호와 새로운 비밀번호가 같습니다.");
         }
         //3. 새로운 비밀번호와 비밀번호 확인이 다르면 실패
-        if(!updateReqDto.getNewPassword().equals(updateReqDto.getNewPasswordCheck())) {
+        if(!updatePWReqDto.getNewPassword().equals(updatePWReqDto.getNewPasswordCheck())) {
             throw new UpdateProfileFailedException("비밀번호가 일치하지 않습니다.");
         }
         //4. 비밀번호 암호화
-        updateReqDto.setNewPassword(encoder.encode(updateReqDto.getNewPassword()));
+        updatePWReqDto.setNewPassword(encoder.encode(updatePWReqDto.getNewPassword()));
 
         //5. db에 수정 반영
-        user.updateProfile(updateReqDto.getNewPassword());
+        user.updatePWProfile(updatePWReqDto.getNewPassword());
+        usersRepository.save(user);
+    }
+
+    /*
+     * 회원 정보 수정 로직
+     */
+    @Transactional
+    public void updateProfile(CustomUserInfoDto customUserInfoDto, String email) {
+        Optional<UsersEntity> siteUser = usersRepository.findById(customUserInfoDto.getId());
+        if(siteUser.isEmpty()) {
+            throw new UpdateProfileFailedException("회원 정보 수정에 실패하였습니다: 해당 회원을 찾을 수 없음.");
+        }
+        UsersEntity user = siteUser.get();
+        //db에 수정 반영
+        user.updateProfile(email);
         usersRepository.save(user);
     }
 }
