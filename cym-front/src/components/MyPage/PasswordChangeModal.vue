@@ -8,6 +8,7 @@ import * as yup from 'yup';
 
 const token = localStorage.getItem("token");
 const errorMessage = ref("");
+const loading = ref(false);
 
 // 유효성 검사 스키마 정의
 const schema = yup.object({
@@ -28,28 +29,32 @@ const { value: newPasswordCheck, errorMessage: newPasswordCheckError, resetField
 
 // 비밀번호 변경 함수
 const ChangePassword = handleSubmit(async() => {
-    await axios.put(`/v1/users/updatePW`, {
-        originalPassword: originalPassword.value,
-        newPassword: newPassword.value,
-        newPasswordCheck: newPasswordCheck.value,
-    }, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+    loading.value = true;
+    try{
+        await axios.put(`/v1/users/updatePW`, {
+            originalPassword: originalPassword.value,
+            newPassword: newPassword.value,
+            newPasswordCheck: newPasswordCheck.value,
+        }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+        .then((res) => {
+            console.log(res.data.message);
+            alert("비밀번호 변경에 성공하였습니다.");
+            // 비밀번호 변경 성공 후 모달 창 닫기
+            const modal = document.getElementById('passwordChangeModal');
+            const bootstrapModal = bootstrap.Modal.getInstance(modal); // Bootstrap 모달 인스턴스 가져오기
+            bootstrapModal.hide(); // 모달 창 닫기
         })
-    .then((res) => {
-        console.log(res.data.message);
-        alert("비밀번호 변경에 성공하였습니다.");
-        // 비밀번호 변경 성공 후 모달 창 닫기
-        const modal = document.getElementById('passwordChangeModal');
-        const bootstrapModal = bootstrap.Modal.getInstance(modal); // Bootstrap 모달 인스턴스 가져오기
-        bootstrapModal.hide(); // 모달 창 닫기
-    })
-    .catch(function (error) {
+    } catch(error) {
         // 비밀번호 변경 오류 메시지
         errorMessage.value = error.response.data.message;
         console.log(error);
-    });
+    } finally {
+        loading.value = false;
+    };
 });
 
 // 폼 초기화 함수
@@ -81,41 +86,48 @@ onMounted(() => {
     <div class="modal fade" id="passwordChangeModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog fixed-size">
             <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5 text-center container d-flex flex-column align-items-center" id="modalLabel">비밀번호 변경</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="d-flex flex-column align-items-center" style="margin-top: 20px; margin-bottom: 3px;">
-                <div class="mb-3">
-                    <label for="inputOriginalPassword" class="form-label">기존 비밀번호 <span class="text-danger">*</span></label>
-                    <input type="password" v-model="originalPassword" class="form-control" placeholder="기존 비밀번호를 입력하세요" id="inputOriginalPassword">
-                    <div style="height: 15px;">
-                        <span v-if="originalPasswordError" class="text-danger" style="font-size: 0.7rem;">{{ originalPasswordError }}</span>
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-center container d-flex flex-column align-items-center" id="modalLabel">비밀번호 변경</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form @submit.prevent="ChangePassword">
+                    <div class="d-flex flex-column align-items-center" style="margin-top: 20px; margin-bottom: 3px;">
+                        <div class="mb-3">
+                            <label for="inputOriginalPassword" class="form-label">기존 비밀번호 <span class="text-danger">*</span></label>
+                            <input type="password" v-model="originalPassword" class="form-control" placeholder="기존 비밀번호를 입력하세요" id="inputOriginalPassword">
+                            <div style="height: 15px;">
+                                <span v-if="originalPasswordError" class="text-danger" style="font-size: 0.7rem;">{{ originalPasswordError }}</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputNewPassword" class="form-label">신규 비밀번호 <span class="text-danger">*</span></label>
+                            <input type="password" v-model="newPassword" class="form-control" placeholder="새로운 비밀번호를 입력하세요" id="inputNewPassword">
+                            <div style="height: 15px;">
+                                <span v-if="newPasswordError" class="text-danger" style="font-size: 0.7rem;">{{ newPasswordError }}</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputNewPasswordCheck" class="form-label">신규 비밀번호 확인<span class="text-danger">*</span></label>
+                            <input type="password" v-model="newPasswordCheck" class="form-control" placeholder="새로운 비밀번호를 재입력하세요" id="inputNewPasswordCheck">
+                            <div style="height: 15px;">
+                                <span v-if="newPasswordCheckError" class="text-danger" style="font-size: 0.7rem;">{{ newPasswordCheckError }}</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="inputNewPassword" class="form-label">신규 비밀번호 <span class="text-danger">*</span></label>
-                    <input type="password" v-model="newPassword" class="form-control" placeholder="새로운 비밀번호를 입력하세요" id="inputNewPassword">
-                    <div style="height: 15px;">
-                        <span v-if="newPasswordError" class="text-danger" style="font-size: 0.7rem;">{{ newPasswordError }}</span>
+                    <div class="modal-footer  flex-column align-items-center" style="margin:3px; padding-bottom:5px;">
+                        <button type="submit" class="btn btn-secondary" style="background-color:#7248BD; border:none; border-radius: 20px; margin: 3px; width: 320px; height: 40px;">비밀번호 변경</button>
+                        <div style="height:30px;">
+                            <p v-if="errorMessage" class="text-danger text-center mt-2" style="font-size: 0.8rem; margin-bottom: 10px;">{{ errorMessage }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="inputNewPasswordCheck" class="form-label">신규 비밀번호 확인<span class="text-danger">*</span></label>
-                    <input type="password" v-model="newPasswordCheck" class="form-control" placeholder="새로운 비밀번호를 재입력하세요" id="inputNewPasswordCheck">
-                    <div style="height: 15px;">
-                        <span v-if="newPasswordCheckError" class="text-danger" style="font-size: 0.7rem;">{{ newPasswordCheckError }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer  flex-column align-items-center" style="margin:3px; padding-bottom:5px;">
-                <button type="button" class="btn btn-secondary" @click="ChangePassword()" style="background-color:#7248BD; border:none; border-radius: 20px; margin: 3px; width: 320px; height: 40px;">비밀번호 변경</button>
-                <div style="height:30px;">
-                    <p v-if="errorMessage" class="text-danger text-center mt-2" style="font-size: 0.8rem; margin-bottom: 10px;">{{ errorMessage }}</p>
-                </div>
-            </div>
+                </form>
             </div>
         </div>
+    </div>
+    <div v-if="loading" class="loading-overlay">
+            <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
     </div>
 </template>
 
@@ -146,4 +158,18 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
 }
+/* 로딩 창 스타일 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
 </style>

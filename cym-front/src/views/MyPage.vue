@@ -97,41 +97,43 @@ const unregister = async() => {
         </div>
 
         <div class="box justify-content-center" style="background-color: #FFFFFF;">
-            <div class="mb-3">
-                <div class="mb-3 row  justify-content-center">
-                    <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
-                    <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50 disabled" style="font-size: 0.9rem;" :placeholder="id" id="inputid" disabled>
+            <form @submit.prevent="ChangeInfo">
+                <div class="mb-3">
+                    <div class="mb-3 row  justify-content-center">
+                        <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
+                        <div class="col-sm-8">
+                        <input type="text" class="form-control form-control-sm w-50 disabled" style="font-size: 0.9rem;" :placeholder="id" id="inputid" disabled>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mb-3">
-                <div class="mb-3 row justify-content-center">
-                    <label for="inputUsername" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">이름</label>
-                    <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" :placeholder="username" id="inputUsername" disabled>
+                <div class="mb-3">
+                    <div class="mb-3 row justify-content-center">
+                        <label for="inputUsername" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">이름</label>
+                        <div class="col-sm-8">
+                        <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" :placeholder="username" id="inputUsername" disabled>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mb-3">
-                <div class="mb-3 row justify-content-center">
-                    <label for="inputEmail" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">이메일</label>
-                    <div class="col-sm-8">
-                    <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" :placeholder="email" id="inputEmail" v-model="email">
+                <div class="mb-3">
+                    <div class="mb-3 row justify-content-center">
+                        <label for="inputEmail" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">이메일</label>
+                        <div class="col-sm-8">
+                        <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" :placeholder="email" id="inputEmail" v-model="email">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mb-5 row justify-content-center">
-                <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호 변경</label>
-                <div class="col-sm-8 d-inline-flex justify-contetnt-center">
-                    <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#7248BD; border-color:#7248BD; border-radius: 20px; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
+                <div class="mb-5 row justify-content-center">
+                    <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호 변경</label>
+                    <div class="col-sm-8 d-inline-flex justify-contetnt-center">
+                        <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#7248BD; border-color:#7248BD; border-radius: 20px; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
+                    </div>
+                    
                 </div>
-                
-            </div>
-            <div class="d-flex m-5 mt-1 justify-content-center">
-                <button type="button" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;" @click="ChangeInfo()">정보수정</button>
-                <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;" @click="OpenUnregisterModal()">회원탈퇴</button>
-            </div>
+                <div class="d-flex m-5 mt-1 justify-content-center">
+                    <button type="submit" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;">정보수정</button>
+                    <button type="button" class="btn unregist-btn w-20 ms-3 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;" @click="OpenUnregisterModal()">회원탈퇴</button>
+                </div>
+            </form>    
         </div>
     </div>
     <PasswordChangeModal></PasswordChangeModal>
