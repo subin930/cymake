@@ -16,25 +16,27 @@ const Login = async () => {
     errorMessage.value = "";
     // Null 또는 빈 값 확인
     if (!companyCode.value) {
-    errorMessage.value = "회사코드를 입력하세요.";
+        errorMessage.value = "회사코드를 입력하세요.";
+        return;
     }
     if (!id.value) {
         errorMessage.value = "아이디를 입력하세요.";
+        return;
     }
     if (!password.value) {
         errorMessage.value = "비밀번호를 입력하세요.";
+        return;
     }
-
     // 에러 메시지가 존재하면 서버 요청을 보내지 않음
     if (errorMessage.value.length > 0) {
         return;
     }
-    await axios.post(`/v1/auth/login`, {
-        companyCode: companyCode.value,
-        id: id.value,
-        password: password.value,
-    })
-    .then((res) => {
+    try {
+        const res = await axios.post(`/v1/auth/login`, {
+            companyCode: companyCode.value,
+            id: id.value,
+            password: password.value,
+        });
         console.log(res.data.content.role)
         localStorage.setItem("token", res.data.content.accessToken);
         localStorage.setItem("refreshToken", res.data.content.refreshToken);
@@ -48,72 +50,90 @@ const Login = async () => {
         console.log(res.data.content.role);
         console.log(res.data.content.accessToken);
         router.push(`/archive`);
-    })
-    .catch(function (error) {
-        // TODO: 로그인 실패 창 보여주기
+    } catch (error) {
         errorMessage.value = error.response.data.message;
         console.log(error);
-});
+    }
 };
+
 const MoveToSignup = () => {
     router.push("/signup");
 };
 
 const updatecompanyCode = (event) => {
-    companyCode.value = event.target.value
-}
+    companyCode.value = event.target.value;
+};
 
 const updateid = (event) => {
-    id.value = event.target.value
-}
+    id.value = event.target.value;
+};
 
 const updatePassword = (event) => {
-    password.value = event.target.value
-}
+    password.value = event.target.value;
+};
 
 </script>
 
 <template>
     <InitialHeader></InitialHeader>
-    <div class="container-sm text-center">        
-        <div class="m-3 mt-4 title">
-            <p class="fw-bold fs-3">로그인</p>
+    <div class="container-sm d-flex flex-column align-items-center justify-content-start" style="min-height: 100vh; padding-top: 50px;">
+        <div class="text-center mb-3">
+            <h3 class="fw-bold">로그인</h3>
         </div>
-
-        <div class="m-5">
-            <form @submit.prevent = "Login">
-                <div class="mb-3">
-                    <div class="mb-3 row">
-                        <label for="inputcompanyCode" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">회사코드</label>
-                        <div class="col-sm-8">
-                        <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="회사코드를 입력하세요." id="inputcompanyCode" @input="updatecompanyCode" @keydown.enter = "Login" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <div class="mb-3 row">
-                        <label for="inputid" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">아이디</label>
-                        <div class="col-sm-8">
-                        <input type="text" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="아이디를 입력하세요." id="inputid" @input="updateid" @keydown.enter="Login" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호</label>
-                    <div class="col-sm-8">
-                    <input type="password" class="form-control form-control-sm w-50" style="font-size: 0.9rem;" placeholder="비밀번호를 입력하세요." id="inputPassword" @input="updatePassword" @keydown.enter="Login" required>
-                    </div>
-                </div>
-                <div class="d-flex flex-column align-items-center m-5 mt-1">
-                            <button type="button" class="btn text-white btn-outline-secondary w-50" style="font-size: 0.9rem; background-color: #6b42db;" @click="Login()" @submit.prevent = "Login()">로그인</button>
-                            <p v-if="errorMessage" class="text-danger" style="font-size: .7rem; margin-bottom: 0.5rem; margin-top: 0.1rem;">{{ errorMessage }}</p>
-                            <p class="m-1" style="font-size: 0.8rem; cursor: pointer;" @click="MoveToSignup()">회원가입</p>
-                </div>
-            </form>
-        </div>
+        <form @submit.prevent="Login" class="w-100" style="max-width: 320px;">
+            <div class="mb-3" style = "margin-bottom: 10px !important; ">
+                <input type="text" class="form-control" style="height: 40px;" id="inputcompanyCode" placeholder="회사코드를 입력하세요." @input="updatecompanyCode" required>
+            </div>
+            <div class="mb-3" style = "margin-bottom: 10px !important;">
+                <input type="text" class="form-control" style="height: 40px;" id="inputid" placeholder="아이디를 입력하세요." @input="updateid" required>
+            </div>
+            <div class="mb-3" style = "margin-bottom: 15px !important;">
+                <input type="password" class="form-control" style="height: 40px;" id="inputPassword" placeholder="비밀번호를 입력하세요." @input="updatePassword" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn text-white login-button">로그인</button> 
+            </div>
+            <p v-if="errorMessage" class="text-danger text-center mt-2" style="font-size: 0.875rem; margin-bottom: 10px;">{{ errorMessage }}</p>
+            <div class="text-center mt-3" style="margin-top: 5px !important;">
+                <p class="m-0 text-muted option-links">
+                    <span @click="MoveToSignup">회원가입</span>
+                </p>
+            </div>
+        </form>
     </div>
-    
 </template>
 
 <style scoped>
+.login-card {
+    max-width: 320px;
+    width: 100%;
+    border-radius: 0; /* 둥근 모서리 제거 */
+    background-color: #f8f9fa;
+}
+
+.login-button {
+    background-color: #6b42db;
+    padding: 0.65rem;
+    font-size: 0.95rem;
+    border-radius: 30px; /* 둥근 모서리 제거 */
+    height: 38px; /* // TODO: 로그인 버튼 height 줄임 */
+    float:right;
+    display:flex;
+    text-align: center;
+    align-items:center;
+    justify-content:center;
+}
+
+.form-control {
+    padding: 0.65rem;
+    font-size: 0.85rem;
+    border-radius: 0; /* 둥근 모서리 제거 */
+    border: 1px solid #DDDFE5;
+}
+
+.option-links span {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #6b42db;
+}
 </style>

@@ -55,12 +55,12 @@ const handleSearch = async () => {
         fetchData();
     } 
 };
-const updateFile = async({ fileId, newFileData }) => {
+const updateFile = async({ originalFileName, newFileData }) => {
   console.log('updatefile');
-  console.log(fileId.value);
+  console.log(originalFileName.value);
   console.log(newFileData);
-  const index = content.value.findIndex(item => item.fileId === fileId.value);
-  console.log(fileId.value);
+  const index = content.value.findIndex(item => item.fileName === originalFileName.value);
+  console.log(originalFileName.value);
   if (index !== -1) {
     // Create a new object to trigger reactivity
     content.value[index] = {
@@ -75,8 +75,8 @@ const updateFile = async({ fileId, newFileData }) => {
   }
 };
 
-const removeFile = async(fileId) => {
-  content.value = content.value.filter(item => item.fileId !== fileId.value);
+const removeFile = async(originalFileName) => {
+  content.value = content.value.filter(item => item.fileName !== originalFileName.value);
 };
 
 const fetchData = async () => {
@@ -124,30 +124,6 @@ const setUsagePercentage = () => {
   usagePercentage.value = ((size / 3072) * 100).toFixed(2); 
   console.log(usagePercentage.value);
 };
-const downloadFile = async (fileId, fileName) => {
-    try {
-        const response = await axios({
-            url: `/v1/drive/download?fileId=${encodeURIComponent(fileId)}`, //todo: URL을 /v1/drive/download로 수정
-            method: 'GET',
-            responseType: 'blob',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        const blob = new Blob([response.data]);
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } catch (error) {
-        console.error('Error downloading file:', error);
-    }
-};
-
-
 </script>
 
 <template>
@@ -185,27 +161,27 @@ const downloadFile = async (fileId, fileName) => {
             </div>
         </div>
         <div v-else class="container table-wrapper m-3 mt-4 d-flex">
-            <table class="table table-hover table-bordered"  style="table-layout: fixed">
+            <table class="table table-hover table-bordered">
                 <thead class="table-head">
                     <tr class="table-light">
-                    <th width="5%" scope="col"> </th>
-                    <th width="10%"scope="col">제목</th>
-                    <th width="35%" scope="col" >파일명</th>
-                    <th width="10%" scope="col">파일 크기</th>
-                    <th width="10%" scope="col">업로더 아이디</th>
-                    <th width="10%" scope="col">등록자</th>
-                    <th width="12%" scope="col">등록일시</th>
-                    <th width="4%" scope="col">수정</th>
-                    <th width="4%" scope="col">삭제</th>
+                    <th scope="col"> </th>
+                    <th scope="col">제목</th>
+                    <th scope="col">파일명</th>
+                    <th scope="col">파일 크기</th>
+                    <th scope="col">업로더 아이디</th>
+                    <th scope="col">등록자</th>
+                    <th scope="col">등록일시</th>
+                    <th scope="col">수정</th>
+                    <th scope="col">삭제</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(item, index) in content" :key="item.id">
                         <td>{{ index+1 }}</td>
                         <td>{{ item.postTitle }}</td>
-                        <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                        <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
                         <td>{{ item.size }}MB</td>
-                        <td>{{  item.uploader  }}</td>
+                        <td>{{  item.id  }}</td>
                         <td>{{ item.username }}</td>
                         <td>{{ formatDate(item.uploadDate) }}</td>
                         <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
@@ -241,11 +217,9 @@ const downloadFile = async (fileId, fileName) => {
 .download-link {
   color: inherit; /* 기본 텍스트 색상 사용 */
   text-decoration: none; /* 밑줄 제거 */
-  
 }
 .download-link:hover {
   color: #7248BD;
-  cursor: pointer;
 }
 .form-control::placeholder {
   opacity: .5;
