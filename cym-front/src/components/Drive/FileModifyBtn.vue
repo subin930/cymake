@@ -71,6 +71,7 @@ const fileModify = async (close) => {
       for (let [key, value] of formData.entries()) {
         console.log(key, value);
       }  
+      alert(error.response.data.message);
       console.error('파일 수정 오류:', error);
     } finally {
       loading.value = false;
@@ -141,7 +142,7 @@ watchEffect(() => {
         <button type="button" class="btn btn-outline-secondary btn-sm" style="font-size:.7rem;">
             <i class="bi bi-pencil-square"></i>
         </button>
-        <template #content="{ close }">
+        <template #content="{ close }" style="max-height:300px; min-height:300px;">
             <div class="popper-content align-items-center justify-content-center">
                 <div class="row w-100 text-center mb-3">
                     <p style="font-size: 1.1rem; font-weight:bold">파일수정</p>
@@ -151,10 +152,12 @@ watchEffect(() => {
                         <label for="title" class="px-2 text-center col-3 me-2" style="font-size: 0.9rem">제목</label>
                         <input type="text" class="col" style="font-size: 0.9rem" id="title" v-model="title" required />
                     </div>
-                    <div class="form-group d-flex mb-3">
+                    <div class="form-group d-flex mb-3"  style="max-height:80px; min-height:80px;">
                       <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
-                      <label v-if="currentfile===null" for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.9rem"><i class="bi bi-paperclip"></i>파일첨부</label>
-                        <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" />
+                        <div v-if="currentfile===null">
+                          <label for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.75rem; height: 30px; width: 80px;"><i class="bi bi-paperclip"></i>파일첨부</label>
+                          <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" />
+                        </div>
                       <div class="col align-items-center" v-if="currentfile!==null">
                         <p class="col mb-1" style="font-size:.8rem;">
                           {{ fileName }}

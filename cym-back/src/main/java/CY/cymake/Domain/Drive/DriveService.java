@@ -129,7 +129,7 @@ public class DriveService {
 
         //1. 작성자 일치 여부 확인
         if(!user.getId().equals(fileEntity.getUploader().getId())) {
-            throw new FileUpdateFailedException("기존 post가 존재하지 않습니다.");
+            throw new FileUpdateFailedException("작성자가 일치하지 않습니다.");
         }
         //2. postTitle만 수정한 경우 처리
         if(newFile == null) {

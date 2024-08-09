@@ -28,8 +28,6 @@ const usagePercentage = ref(0);
 const loading = ref(false); // 로딩 상태 관리
 
 const handleSearch = async () => {
-  
-    
     if (searchBody.value && searchBody.value.trim() !== '') { // 최소 1글자 이상일 때 검색
       loading.value = true;  
       console.log(searchBody.value);
@@ -45,7 +43,8 @@ const handleSearch = async () => {
             searchResults.value = response.data.content;
             content.value = searchResults.value;
         } catch (error) {
-            console.error('Error fetching search results:', error);
+          alert(error.response.message);
+          console.error('Error fetching search results:', error);
         } finally {
         loading.value = false; // 검색 완료 후 로딩 상태 false
         }
@@ -90,6 +89,7 @@ const fetchData = async () => {
     setTotalSize();
     setUsagePercentage();
   } catch (error) {
+    alert(error.response.message);
     console.error('Error fetching data:', error);
   } finally {
     loading.value = false; // 데이터 가져오기 완료 후 로딩 상태 false
@@ -124,6 +124,34 @@ const setUsagePercentage = () => {
   usagePercentage.value = ((size / 3072) * 100).toFixed(2); 
   console.log(usagePercentage.value);
 };
+
+const downloadFile = async (fileId, fileName) => {
+    try {
+        const response = await axios({
+            url: `/v1/drive/download?fileId=${encodeURIComponent(fileId)}`, //todo: URL을 /v1/drive/download로 수정
+            method: 'GET',
+            responseType: 'blob',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const blob = new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (error) {
+      if(error.response.data.message !== null) {
+        alert(error.response.data.message)
+      }
+      alert("글 수정에 실패하였습니다.");
+      console.error('Error downloading file:', error);
+    }
+};
+
 </script>
 
 <template>
@@ -176,17 +204,17 @@ const setUsagePercentage = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, index) in content" :key="item.id">
-                        <td>{{ index+1 }}</td>
-                        <td>{{ item.postTitle }}</td>
-                        <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
-                        <td>{{ item.size }}MB</td>
-                        <td>{{  item.id  }}</td>
-                        <td>{{ item.username }}</td>
-                        <td>{{ formatDate(item.uploadDate) }}</td>
-                        <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
-                        <td><FileDeleteBtn :file="item" @fileDeleted="removeFile"/></td>
-                    </tr>
+                  <tr v-for="(item, index) in content" :key="item.uploader">
+                    <td>{{ index+1 }}</td>
+                    <td>{{ item.postTitle }}</td>
+                    <td><a @click.prevent="downloadFile(item.fileId, item.fileName)" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
+                    <td>{{ item.size }}MB</td>
+                    <td>{{  item.uploader  }}</td>
+                    <td>{{ item.username }}</td>
+                    <td>{{ formatDate(item.uploadDate) }}</td>
+                    <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
+                    <td><FileDeleteBtn :file="item" @fileDeleted="removeFile"/></td>
+                  </tr>
                 </tbody>
             </table>
         </div>
@@ -217,6 +245,7 @@ const setUsagePercentage = () => {
 .download-link {
   color: inherit; /* 기본 텍스트 색상 사용 */
   text-decoration: none; /* 밑줄 제거 */
+  cursor: pointer;
 }
 .download-link:hover {
   color: #7248BD;
