@@ -215,9 +215,10 @@ watchEffect(() => {
   opacity: 0;
 }
 .file-button {
-  display: inline-block;
+  display: flex; /* Flexbox 사용 */
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
   padding: 4px;
-  padding-right: 5px;
   background-color: #7248BD;
   color: white;
   border: none;
@@ -226,6 +227,8 @@ watchEffect(() => {
   font-size: .8rem;
   text-align: center;
   text-decoration: none;
+  height: 30px;
+  width: 80px;
 }
 .cancel-button {
   padding: 0px 2px 0px 2px; /* 조절 가능한 패딩 */

@@ -46,8 +46,8 @@ public class DataExtractor {
                     map.put("post_title", file.getPostTitle());
                     map.put("type", file.getType());
                     map.put("upload_date", file.getUploadDate().toInstant().toString());
-                    map.put("company_code", file.getCompanyCode());
-                    map.put("uploader", file.getUploader());
+                    map.put("company_code", file.getCompanyCode().getCode());
+                    map.put("uploader", file.getUploader().getId());
                     return map;
                 })
                 .collect(Collectors.toList());

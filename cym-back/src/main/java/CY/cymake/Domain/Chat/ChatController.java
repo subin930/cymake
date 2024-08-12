@@ -17,7 +17,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("v1/chat")
-@Tag(name = "Chat API", description = "챗봇 채팅 관련 기능 컨트롤러")
+@Tag(name = "Chat", description = "챗봇 채팅 관련 기능 API")
 public class ChatController {
     private final GlobalResponseHandler globalResponseHandler;
     private final ChatService chatService;
