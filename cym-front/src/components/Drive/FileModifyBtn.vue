@@ -47,7 +47,7 @@ const fileModify = async (close) => {
     size: Newfile.value ? formatSize(Newfile.value.size) : fileSize.value,
   }
   var fileInput = document.getElementById('input-modify-file');
-  if (fileInput.files.length === 0 && !currentfile.value) {
+  if (!currentfile.value) {
     console.log("no file and no current file loaded");
     console.log(currentfile.value);
   }

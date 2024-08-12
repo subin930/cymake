@@ -54,12 +54,12 @@ const handleSearch = async () => {
         fetchData();
     } 
 };
-const updateFile = async({ originalFileName, newFileData }) => {
+const updateFile = async({fileId, newFileData }) => {
   console.log('updatefile');
-  console.log(originalFileName.value);
+  console.log(fileId.value);
   console.log(newFileData);
-  const index = content.value.findIndex(item => item.fileName === originalFileName.value);
-  console.log(originalFileName.value);
+  const index = content.value.findIndex(item => item.fileId === fileId.value);
+  console.log(fileId.value);
   if (index !== -1) {
     // Create a new object to trigger reactivity
     content.value[index] = {
