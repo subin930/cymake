@@ -20,8 +20,8 @@ const beautyLoading = ref(false);
 const crwlInfoCar = ref([]);
 const crwlInfoBeauty = ref([]);
 const crwlData = ref([]);
-const titleCar = ref('자동차 누적 크롤링 수');
-const titleBeauty = ref('화장품 누적 크롤링 수');
+const titleCar = ref('자동차 일일 크롤링 수');
+const titleBeauty = ref('화장품 일일 크롤링 수');
 
 const title = ref('no title');
 const imgUrl = ref(null);
