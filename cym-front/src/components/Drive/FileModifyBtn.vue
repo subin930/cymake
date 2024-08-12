@@ -142,20 +142,20 @@ watchEffect(() => {
         <button type="button" class="btn btn-outline-secondary btn-sm" style="font-size:.7rem;">
             <i class="bi bi-pencil-square"></i>
         </button>
-        <template #content="{ close }" style="max-height:300px; min-height:300px;">
+        <template #content="{ close }">
             <div class="popper-content align-items-center justify-content-center">
                 <div class="row w-100 text-center mb-3">
                     <p style="font-size: 1.1rem; font-weight:bold">파일수정</p>
                 </div>
                 <form @submit.prevent="submitForm(close)" id="modifyForm">
                     <div class="form-group d-flex mb-3">
-                        <label for="title" class="px-2 text-center col-3 me-2" style="font-size: 0.9rem">제목</label>
-                        <input type="text" class="col" style="font-size: 0.9rem" id="title" v-model="title" required />
+                        <label for="title" class="px-2 text-center col-3 me-2" style="white-space: nowrap;font-size: 0.9rem">제목</label>
+                        <input type="text" class="w-75" style="font-size: 0.9rem" id="title" v-model="title" required />
                     </div>
-                    <div class="form-group d-flex mb-3"  style="max-height:80px; min-height:80px;">
+                    <div class="form-group row d-flex mb-1"  style="max-height:80px; min-height:80px;">
                       <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
-                        <div v-if="currentfile===null">
-                          <label for="input-modify-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.75rem; height: 30px; width: 80px;"><i class="bi bi-paperclip"></i>파일첨부</label>
+                        <div v-if="currentfile===null" class="col">
+                          <label for="input-modify-file" class="file-button col-auto text-start" style="font-size: 0.8rem;"><i class="bi bi-paperclip"></i>파일첨부</label>
                           <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" />
                         </div>
                       <div class="col align-items-center" v-if="currentfile!==null">
@@ -163,6 +163,10 @@ watchEffect(() => {
                           {{ fileName }}
                           <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
                         </p>
+                      </div>
+                      <div class="row d-flex file-size-details">
+                        <p class="col-3"></p>
+                        <p class="col file-size d-flex text-start" style="font-size: .8rem">현재 {{ fileSize }}MB / (첨부파일 : 30MB로 제한)</p>
                       </div>
                     </div>
                     <div v-if="loading" class="text-center my-4">
@@ -214,11 +218,18 @@ watchEffect(() => {
 .file-form {
   opacity: 0;
 }
+.form-group {
+  display: flex;
+  align-items: center; /* 요소들을 수직 중심으로 정렬 */
+  justify-content: flex-start; /* 요소들을 왼쪽에서 시작하도록 정렬 */
+}
+.file-size-details {
+  margin-top: -18px; /* 상단 마진을 줄여 더 타이트하게 만듬 */
+}
 .file-button {
-  display: flex; /* Flexbox 사용 */
-  align-items: center; /* 수직 중앙 정렬 */
-  justify-content: center; /* 수평 중앙 정렬 */
+  display: inline-block;
   padding: 4px;
+  padding-right: 5px;
   background-color: #7248BD;
   color: white;
   border: none;
@@ -227,8 +238,6 @@ watchEffect(() => {
   font-size: .8rem;
   text-align: center;
   text-decoration: none;
-  height: 30px;
-  width: 80px;
 }
 .cancel-button {
   padding: 0px 2px 0px 2px; /* 조절 가능한 패딩 */
