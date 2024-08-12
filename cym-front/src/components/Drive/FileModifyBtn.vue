@@ -158,11 +158,11 @@ watchEffect(() => {
                           <label for="input-modify-file" class="file-button col-auto text-start" style="font-size: 0.8rem;"><i class="bi bi-paperclip"></i>파일첨부</label>
                           <input type="file" class="file-form" style="font-size: 0.9rem" id="input-modify-file" @change="handleNewFileUpload" />
                         </div>
-                      <div class="col align-items-center" v-if="currentfile!==null">
-                        <p class="col mb-1" style="font-size:.8rem;">
+                      <div class="col d-flex align-items-center" v-if="currentfile!==null">
+                        <p class="mb-1 file-name" style="font-size:.8rem;">
                           {{ fileName }}
-                          <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
                         </p>
+                        <button class="cancel-button mb-1" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
                       </div>
                       <div class="row d-flex file-size-details">
                         <p class="col-3"></p>
@@ -222,6 +222,13 @@ watchEffect(() => {
   display: flex;
   align-items: center; /* 요소들을 수직 중심으로 정렬 */
   justify-content: flex-start; /* 요소들을 왼쪽에서 시작하도록 정렬 */
+}
+.file-name {
+  display: inline-block;
+  overflow: hidden;        /* 내용이 넘칠 경우 숨깁니다 */
+  white-space: nowrap;
+  text-overflow: ellipsis; /* 넘친 텍스트를 ...로 표시합니다 */
+  max-width: 25rem;
 }
 .file-size-details {
   margin-top: -18px; /* 상단 마진을 줄여 더 타이트하게 만듬 */
