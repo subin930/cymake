@@ -69,6 +69,7 @@ const cancel = (close) => {
 const resetForm = () => {
   title.value = '';
   file.value = null;
+  fileSize.value = 0;
   formElement.value.reset(); // 폼의 모든 입력 필드를 초기화
   console.log('resetForm');
 };
