@@ -40,6 +40,7 @@ const sendMessage = async() => {
     formData.append('question', newMessage.value);
     if (uploadedFile.value) {
       formData.append('file', uploadedFile.value);
+      messages.value.push({ text: uploadedFile.value.name, sender: 'user' });
     }
     // Clear input field (메세지와 파일 초기화) + 자동 스크롤
     newMessage.value = '';
