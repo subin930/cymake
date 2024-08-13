@@ -17,7 +17,7 @@ const handleFileUpload = async (event) => {
   file.value = event.target.files[0];
   console.log(file.value);
   if (file.value) {
-    fileSize.value = (file.value.size / (1024 * 1024)).toFixed(2); // MB 단위로 변환
+    fileSize.value = (file.value.size / (1024 * 1024)).toFixed(3); // MB 단위로 변환
     filename.value = file.value.name;
   }
   
