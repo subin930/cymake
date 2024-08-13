@@ -74,8 +74,8 @@ const updateFile = async({fileId, newFileData }) => {
   }
 };
 
-const removeFile = async(originalFileName) => {
-  content.value = content.value.filter(item => item.fileName !== originalFileName.value);
+const removeFile = async(fileId) => {
+  content.value = content.value.filter(item => item.fileId !== fileId.value);
 };
 
 const fetchData = async () => {
