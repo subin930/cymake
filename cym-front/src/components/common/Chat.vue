@@ -33,7 +33,7 @@ const closeChat = () => {
 const sendMessage = async() => {
   if (newMessage.value.trim()) {
     //메세지 목록에 유저 메세지 추가
-    messages.value.push({ text: newMessage.value + uploadedFile.value, sender: 'user' });
+    messages.value.push({ text: newMessage.value, sender: 'user' });
     console.log(sessionId);
     let formData = new FormData();
     formData.append('sessionId', sessionId.value);
