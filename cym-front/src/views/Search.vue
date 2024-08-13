@@ -184,7 +184,7 @@ watch(() => route.params.searchBody, (newSearchBody) => {
                             <td>{{ item.postTitle }}</td>
                             <td><a :href="item.fileUrl" class="download-link"><i class="bi bi-download px-1"></i>{{ item.fileName }}</a></td>
                             <td>{{ item.size }}MB</td>
-                            <td>{{  item.id  }}</td>
+                            <td>{{  item.uploader  }}</td>
                             <td>{{ item.username }}</td>
                             <td>{{ formatDate(item.uploadDate) }}</td>
                         </tr>
