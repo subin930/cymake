@@ -45,7 +45,7 @@ public class OpenSearchService {
                         .properties("upload_date", new Property.Builder().date(new DateProperty.Builder().format("strict_date_optional_time||epoch_millis").build()).build())
                         .properties("company_code", new Property.Builder().text(new TextProperty.Builder().build()).build())
                         .properties("uploader", new Property.Builder().text(new TextProperty.Builder().build()).build())
-                        .properties("size", new Property.Builder().text(new TextProperty.Builder().build()).build())
+                        .properties("size", new Property.Builder().double_(new DoubleNumberProperty.Builder().build()).build())
                         .build()
                 )
                 .build();

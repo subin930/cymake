@@ -55,6 +55,7 @@ public class TotalService {
         List<PostListResDto> result = new ArrayList<>();
         for(PostSearchResultDto post: list) {
             String username = usersRepository.findById(post.getUploader()).orElseThrow(() -> new UserNotFoundException("파일 업로더가 존재하지 않습니다.")).getUsername();
+            System.out.println(post);
             PostListResDto postListResDto = new PostListResDto(post.getFile_id(), post.getOriginal_fn(), post.getPost_title(), post.getFile_url(), post.getUploader(), username, post.getUpload_date(), post.getSize());
             result.add(postListResDto);
         }

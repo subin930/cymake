@@ -48,6 +48,7 @@ public class DataExtractor {
                     map.put("upload_date", file.getUploadDate().toInstant().toString());
                     map.put("company_code", file.getCompanyCode().getCode());
                     map.put("uploader", file.getUploader().getId());
+                    map.put("size", file.getSize());
                     return map;
                 })
                 .collect(Collectors.toList());
