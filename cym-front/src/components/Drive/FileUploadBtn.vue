@@ -12,6 +12,7 @@ const title = ref('');
 const fileSize = ref(0);
 const file = ref(null);
 const filename = ref('');
+const dragOver = ref(false); // 드래그 중인지 상태 체크
 
 const handleFileUpload = async (event) => {
   file.value = event.target.files[0];
@@ -74,6 +75,28 @@ const resetForm = () => {
   console.log('resetForm');
 };
 
+//draganddrop
+// 드래그 상태 처리
+const handleDragOver = (event) => {
+  event.preventDefault();
+  dragOver.value = true;
+};
+
+// 드래그 나갔을 때 상태 초기화
+const handleDragLeave = () => {
+  dragOver.value = false;
+};
+// 드래그 & 드롭으로 파일 업로드 처리
+const handleDrop = (event) => {
+  event.preventDefault();
+  dragOver.value = false; // 드래그 상태 해제
+  const droppedFiles = event.dataTransfer.files;
+  if (droppedFiles.length) {
+    file.value = droppedFiles[0];
+    fileSize.value = (file.value.size / (1024 * 1024)).toFixed(3); // MB 단위로 변환
+    filename.value = file.value.name;
+  }
+};
 onMounted(() => {
 
 document.getElementById('uploadForm').addEventListener('submit', function(event) {
@@ -112,6 +135,20 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
             <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
             <label v-if="file===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.8rem"><i class="bi bi-paperclip"></i>파일첨부</label>
             <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleFileUpload" />
+            <div class="row d-flex mb-3">
+              <div class="col-3"></div>
+              <div 
+              v-if="file === null" 
+              class="drag-and-drop-area col-auto"
+              @dragover="handleDragOver"
+              @dragleave="handleDragLeave"
+              @drop="handleDrop"
+              :class="{ 'drag-over': dragOver }"
+              >
+                <p class="text-muted" style="font-size: .8rem;">첨부할 파일을 마우스로 끌어서 추가할 수 있습니다.</p>
+              </div>
+            </div>
+            
             <div class="col align-items-center" v-if="file!==null">
               <p class="col mb-1" style="font-size:.8rem;">
                 {{ filename }}
@@ -200,5 +237,19 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
 }
 .file-size {
   margin-left:15px;
+}
+.drag-and-drop-area {
+  background-color: #F5F6FA;
+  border: 1.5px dashed #cccccc;
+  max-width: 350px;
+  padding: 10px;
+  margin-top: 10px;
+  margin-left: 20px;
+  text-align: center;
+}
+/* 드래그 중일 때 스타일 변경 */
+.drag-over {
+  background-color: #ecebfe;
+  border-color: #9f8dc0;
 }
 </style>
