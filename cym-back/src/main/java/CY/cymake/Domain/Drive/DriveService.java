@@ -12,6 +12,7 @@ import CY.cymake.Exception.FileUpdateFailedException;
 import CY.cymake.Exception.UserNotFoundException;
 import CY.cymake.OpenSearch.DataExtractor;
 import CY.cymake.OpenSearch.OpenSearchService;
+import CY.cymake.Repository.CompanyRepository;
 import CY.cymake.Repository.CrwlTotalRepository;
 import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
@@ -35,7 +36,7 @@ public class DriveService {
     private final OpenSearchService openSearchService;
     private final DataExtractor dataExtractor;
     private final CrwlTotalRepository crwlTotalRepository;
-
+    private final CompanyRepository companyRepository;
 
     /*
      * 파일 업로드
@@ -63,6 +64,7 @@ public class DriveService {
         String fileUrl = s3Service.uploadFile(file, path);
 
         //4.db에 저장
+        //1) 파일 db에 업로드
         FileEntity fileEntity = FileEntity.builder()
                 .companyCode(companyCode)
                 .postTitle(postTitle)
@@ -76,6 +78,11 @@ public class DriveService {
                 .size(s3Service.getFileSize(path))
                 .build();
         FileEntity savedFile = fileRepository.save(fileEntity);
+
+        //2) 해당 회사의 용량에 파일 용량 추가
+        CompanyEntity companyEntity = user.getCompanyCode();
+        companyEntity.updateUsage(fileEntity.getSize());
+        companyRepository.save(companyEntity);
 
         //5. opensearch에 업로드
         openSearchService.addAndUpdateFileData(convertFileData(savedFile.getId(), savedFile.getS3Fn(), savedFile.getOriginalFn(), savedFile.getFileUrl(), savedFile.getPostTitle(), savedFile.getType(), savedFile.getUploadDate(), savedFile.getCompanyCode().getCode(), savedFile.getUploader().getId(), savedFile.getSize()), "file_id");

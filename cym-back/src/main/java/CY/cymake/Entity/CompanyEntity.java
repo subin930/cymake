@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "tb_company")
@@ -21,4 +22,16 @@ public class CompanyEntity {
 
     @Column(name = "name", unique = true, nullable = false, length = 500)
     private String name;
+
+    @Column(name = "plan", nullable = false)
+    @ColumnDefault("'basic'")
+    private String plan;
+
+    @Column(name = "current_usage", nullable = false)
+    @ColumnDefault("0.0")
+    private Double current_usage;
+
+    public void updateUsage(double current_usage){
+        this.current_usage += current_usage;
+    }
 }
