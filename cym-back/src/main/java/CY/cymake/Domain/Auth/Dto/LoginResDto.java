@@ -39,8 +39,12 @@ public class LoginResDto {
     @Schema(description = "유효기간")
     private String expireIn;
 
+    @NotBlank
+    @Schema(description = "용량")
+    private double usage;
+
     @Builder
-    public LoginResDto(String accessToken, String refreshToken, String id, String username, String email, String role, String expireIn) {
+    public LoginResDto(String accessToken, String refreshToken, String id, String username, String email, String role, String expireIn, double usage) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = id;
@@ -48,5 +52,6 @@ public class LoginResDto {
         this.email = email;
         this.role = role;
         this.expireIn = expireIn;
+        this.usage = usage;
     }
 }
