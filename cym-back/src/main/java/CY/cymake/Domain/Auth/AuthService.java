@@ -3,6 +3,7 @@ package CY.cymake.Domain.Auth;
 import CY.cymake.Domain.Auth.Dto.CustomUserInfoDto;
 import CY.cymake.Domain.Auth.Dto.LoginReqDto;
 import CY.cymake.Domain.Auth.Dto.LoginResDto;
+import CY.cymake.Entity.CompanyEntity;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.LoginFailedException;
 import CY.cymake.Repository.CompanyRepository;
@@ -29,6 +30,11 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final ModelMapper modelMapper;
     private final CustomUserDetailService customUserDetailService;
+    //private final double basic_usage = 3;
+    //private final double premium_usage = 6;
+    private final double basic_usage = 3072;
+    private final double premium_usage = 6144;
+
     //private final RedisUtil redisUtil;
     /*
      * 로그인 로직 처리
@@ -37,6 +43,7 @@ public class AuthService {
     public LoginResDto login(LoginReqDto loginReqDto) {
         String id = loginReqDto.getId();
         String password = loginReqDto.getPassword();
+        double usage;
 
         //1. 회사코드 확인: 회사코드가 존재하는지 & 유저의 회사코드와 입력한 회사코드가 일치하는지 확인
         //유저가 입력한 회사 코드가 존재하는지
@@ -51,6 +58,7 @@ public class AuthService {
             throw new LoginFailedException("아이디를 확인해주세요.");
         }
         UsersEntity siteUser = user.get();
+        CompanyEntity companyEntity = siteUser.getCompanyCode();
 
         //3. 비밀번호 확인: 암호화된 password를 디코딩한 값과 입력한 패스워드 값이 다르면 null 반환
         if(!encoder.matches(password, siteUser.getPassword())) {
@@ -59,7 +67,7 @@ public class AuthService {
 
 
         //db에 저장된 유저의 회사코드와 유저가 폼을 통해 입력한 회사코드가 일치하는지
-        if(!siteUser.getCompanyCode().getCode().equals(loginReqDto.getCompanyCode())) {
+        if(!companyEntity.getCode().equals(loginReqDto.getCompanyCode())) {
             throw new LoginFailedException("회사코드가 일치하지 않습니다.");
         }
 
@@ -67,6 +75,13 @@ public class AuthService {
 
         String accessToken = jwtUtil.createAccessToken(info);
         String refreshToken = jwtUtil.createRefreshToken(info);
+
+        //용량 화인
+        if(companyEntity.getPlan().equals("basic")){
+            usage = basic_usage;
+        } else {
+            usage = premium_usage;
+        }
 
         return LoginResDto.builder()
                 .accessToken(accessToken)
@@ -76,6 +91,7 @@ public class AuthService {
                 .email(info.getEmail())
                 .role(info.getRole().name())
                 .expireIn(jwtUtil.getExpireIn()) //access token의 만료 기간
+                .usage(usage)
                 .build();
     }
 /*

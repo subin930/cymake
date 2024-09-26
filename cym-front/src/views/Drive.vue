@@ -11,6 +11,7 @@ import axios from 'axios'
 const token = localStorage.getItem("token");
 const route = useRoute();
 const router = useRouter();
+
 /*const content = ref([
   {
     "fileName": "example.txt",
@@ -26,7 +27,7 @@ const searchResults = ref([]);
 const totalSize = ref(0);
 const usagePercentage = ref(0);
 const loading = ref(false); // 로딩 상태 관리
-
+const maxUsage = ref(parseFloat(localStorage.getItem("usage")) || 0);
 const handleSearch = async () => {
     if (searchBody.value && searchBody.value.trim() !== '') { // 최소 1글자 이상일 때 검색
       loading.value = true;  
@@ -121,7 +122,7 @@ const setTotalSize = () => {
 
 const setUsagePercentage = () => {
   const size = parseFloat(totalSize.value);
-  usagePercentage.value = ((size / 3072) * 100).toFixed(2); 
+  usagePercentage.value = ((size / maxUsage) * 100).toFixed(2);
   console.log(usagePercentage.value);
 };
 
@@ -181,7 +182,7 @@ const downloadFile = async (fileId, fileName) => {
             <div class="progress-bar" :style=" { width: usagePercentage + '%',  backgroundColor: '#7248BD'}"></div>
             <p class="px-1" style="font-size: .7rem; font-weight: bold; color:#FFFFFF">{{ usagePercentage }}%</p>
           </div>
-          <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / 3072 MB</p>
+          <p class="px-3" style="font-size: .8rem; margin-bottom: 0;">{{ totalSize }} MB / {{ maxUsage }} MB</p>
         </div>
         <div v-if="loading" class="text-center my-4">
             <div class="spinner-border text-secondary" role="status">
