@@ -12,6 +12,7 @@ const fileId = ref(props.file.fileId);
 const fileName = ref(props.file.fileName);
 const currentfile = ref(props.file);
 const Newfile = ref(null);
+const dragOver = ref(false); // 드래그 중인지 상태 체크
 
 const emit = defineEmits(['fileModified']);
 
@@ -115,7 +116,29 @@ const resetForm =async() => {
     fileInput.value = null;
   }
 };
+// 드래그 상태 처리
+const handleDragOver = (event) => {
+  event.preventDefault();
+  dragOver.value = true;
+};
 
+// 드래그 나갔을 때 상태 초기화
+const handleDragLeave = () => {
+  dragOver.value = false;
+};
+
+// 드래그 & 드롭으로 파일 업로드 처리
+const handleDrop = (event) => {
+  event.preventDefault();
+  dragOver.value = false; // 드래그 상태 해제
+  const droppedFiles = event.dataTransfer.files;
+  if (droppedFiles.length) {
+    Newfile.value = droppedFiles[0];
+    currentfile.value = droppedFiles[0];
+    fileSize.value = (droppedFiles[0].size / (1024 * 1024)).toFixed(3); // MB 단위로 변환
+    fileName.value = droppedFiles[0].name;
+  }
+};
 onMounted(() => {
 
   document.getElementById('modifyForm').addEventListener('submit', function(event) {
@@ -164,6 +187,19 @@ watchEffect(() => {
                         </p>
                         <button class="cancel-button mb-1" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
                       </div>
+                      <div class="row d-flex mb-3">
+                        <div class="col-3"></div>
+                        <div 
+                            v-if="currentfile === null" 
+                            class="drag-and-drop-area col-auto"
+                            @dragover="handleDragOver"
+                            @dragleave="handleDragLeave"
+                            @drop="handleDrop"
+                            :class="{ 'drag-over': dragOver }"
+                        >
+                          <p class="text-muted" style="font-size: .8rem;">첨부할 파일을 마우스로 끌어서 추가할 수 있습니다.</p>
+                        </div>
+                      </div>
                       <div class="row d-flex file-size-details">
                         <p class="col-3"></p>
                         <p class="col file-size d-flex text-start" style="font-size: .8rem">현재 {{ fileSize }}MB / (첨부파일 : 30MB로 제한)</p>
@@ -201,17 +237,19 @@ watchEffect(() => {
 <style scoped>
 :root {
   --popper-theme-background-color: #ffffff;
-  --popper-theme-background-color-hover: #ececec;
+  --popper-theme-background-color-hover:  #ffffff;
   --popper-theme-text-color: #000000;
-  --popper-theme-border-radius: 18px;
+  --popper-theme-border-radius: 2px;
   --popper-theme-border-width: 1px;
   --popper-theme-border-style: solid;
-  --popper-theme-border-color: #c9c9c9;
-  --popper-theme-padding: 32px;
+  --popper-theme-border-color: #e3e3e3;
+  --popper-theme-padding: 30px;
 }
 .popper-content {
   min-width: 600px; /* Fixed width */
   max-width: 600px;
+  min-height: 300px;
+  max-height: 300px;
   padding: 0px;
   background-color: white;
 }
@@ -229,9 +267,6 @@ watchEffect(() => {
   white-space: nowrap;
   text-overflow: ellipsis; /* 넘친 텍스트를 ...로 표시합니다 */
   max-width: 25rem;
-}
-.file-size-details {
-  margin-top: -18px; /* 상단 마진을 줄여 더 타이트하게 만듬 */
 }
 .file-button {
   display: inline-block;
@@ -261,7 +296,24 @@ watchEffect(() => {
 .file-size {
   margin-left:15px;
 }
+.button-group {
+  margin-top: 80px;
+}
 .btn {
   border-color: #c9c9c9;
+}
+.drag-and-drop-area {
+  background-color: #F5F6FA;
+  border: 1.5px dashed #cccccc;
+  max-width: 350px;
+  padding: 10px;
+  margin-top: 10px;
+  margin-left: 20px;
+  text-align: center;
+}
+/* 드래그 중일 때 스타일 변경 */
+.drag-over {
+  background-color: #ecebfe;
+  border-color: #9f8dc0;
 }
 </style>
