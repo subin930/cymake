@@ -98,6 +98,7 @@ const fetchData = async () => {
 };
 
 const checkSearch = () => {
+  console.log(localStorage.getItem("usage"));
   if(searchBody.value && searchBody.value.trim() !== '') {
     console.log('has SearchBody: '+searchBody.value);
     handleSearch();
@@ -122,8 +123,18 @@ const setTotalSize = () => {
 
 const setUsagePercentage = () => {
   const size = parseFloat(totalSize.value);
-  usagePercentage.value = ((size / maxUsage) * 100).toFixed(2);
-  console.log(usagePercentage.value);
+  const max = parseFloat(maxUsage.value);
+
+  console.log("Parsed totalSize:", size);  // 여기서 size가 올바른 숫자인지 확인
+  console.log("Parsed maxUsage:", max);    // 여기서 max가 올바른 숫자인지 확인
+
+  if (!isNaN(size) && !isNaN(max) && max > 0) {
+    usagePercentage.value = ((size / max) * 100).toFixed(2);
+  } else {
+    usagePercentage.value = 100;  // 계산 불가능할 경우 0%로 설정
+  }
+
+  console.log("Usage Percentage:", usagePercentage.value);
 };
 
 const downloadFile = async (fileId, fileName) => {
