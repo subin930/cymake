@@ -6,12 +6,13 @@ const token = localStorage.getItem("token");
 const sessionId = ref(localStorage.getItem("sessionId"));
 const uploadedFile= ref(null);
 
-// Chat state (local에 저장할지 session에 저장할지)
+// Chat state (local에 저장할지 session에 저장할지) -> local로 구현한 상태
 const messages = ref(JSON.parse(localStorage.getItem('chatMessages')) || []);
 const newMessage = ref('');
 const botMessage = ref('');
 const chatMessages = ref(null);
 const botLoading = ref(false);
+const dragOver = ref(false); // 드래그 중인지 상태 체크
 
 // message 추가 시 바로 스토리지에 저장될 수 있도록
 watch(messages, (newMessages) => {
@@ -101,8 +102,45 @@ const scrollToBottom = () => {
     chatMessages.value.scrollTop = chatMessages.value.scrollHeight;
   });
 };
+// 드래그 앤 드롭 관련 함수
+const handleDragOver = (event) => {
+  event.preventDefault();
+  dragOver.value = true;
+};
 
-onMounted(scrollToBottom);
+const handleDragLeave = () => {
+  dragOver.value = false;
+};
+
+const handleDrop = (event) => {
+  event.preventDefault();
+  dragOver.value = false; // 드래그 상태 해제
+  const droppedFiles = event.dataTransfer.files;
+  if (droppedFiles.length) {
+    uploadedFile.value = droppedFiles[0];
+    console.log(`드롭된 파일: ${uploadedFile.value.name}`);
+  }
+};
+
+// 텍스트박스에 붙여넣기(Ctrl + V)로 파일 업로드
+const handlePaste = (event) => {
+  const items = event.clipboardData.items;
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item.kind === 'file') {
+      const file = item.getAsFile();
+      uploadedFile.value = file;
+      console.log(`붙여넣기된 파일: ${file.name}`);
+      break; // 파일 하나만 처리
+    }
+  }
+};
+onMounted(() => {
+  scrollToBottom();
+  
+  const textarea = document.querySelector('textarea');
+  textarea.addEventListener('paste', handlePaste); // 붙여넣기 이벤트 리스너 추가
+});
 </script>
 
 
@@ -126,7 +164,11 @@ onMounted(scrollToBottom);
                     <div v-if="botLoading===true" class="message bot" style="font-size: .9rem; color: #212121;">응답 생성 중입니다...</div>
                 </div>
                 <!-- Input for new message -->
-                <div class="container chat-input justify-content-between mb-2">
+                <div class="container chat-input justify-content-between mb-2"
+                  @dragover.prevent="handleDragOver"
+                  @dragleave="handleDragLeave"
+                  @drop="handleDrop"
+                  :class="{ 'drag-over': dragOver }">
                     <div class="d-flex chat-file mb-2">
                         <label v-if="uploadedFile===null" class="input-file-button mx-1" for="file"><i class="bi bi-paperclip"></i>파일첨부</label>
                           <input type="file" class="form-control input-file" id="file"
@@ -241,5 +283,9 @@ onMounted(scrollToBottom);
     background-color: #7248BD;
     border-color: #D9CEFF;
     color: white;
+}
+.chat-input.drag-over {
+  border: 0.5px dashed #b3a4cf;
+  background-color: #f0f0f0;
 }
 </style>

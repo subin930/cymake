@@ -135,6 +135,13 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
             <label for="file" class="px-2 col-3 text-center me-2" style="white-space: nowrap; font-size: 0.9rem">파일 첨부</label>
             <label v-if="file===null" for="input-file" class="file-button col-auto ms-2 text-start" style="font-size: 0.8rem"><i class="bi bi-paperclip"></i>파일첨부</label>
             <input type="file" class="file-form" style="font-size: 0.9rem" id="input-file" @change="handleFileUpload" />
+            
+            <div class="col align-items-center" v-if="file!==null">
+              <p class="col mb-1" style="font-size:.8rem;">
+                {{ filename }}
+                <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
+              </p>
+            </div>
             <div class="row d-flex mb-3">
               <div class="col-3"></div>
               <div 
@@ -147,13 +154,6 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
               >
                 <p class="text-muted" style="font-size: .8rem;">첨부할 파일을 마우스로 끌어서 추가할 수 있습니다.</p>
               </div>
-            </div>
-            
-            <div class="col align-items-center" v-if="file!==null">
-              <p class="col mb-1" style="font-size:.8rem;">
-                {{ filename }}
-                <button class="cancel-button" type="button" style="font-size: .8rem;" @click="cancelFile"><i class="bi bi-x-square"></i></button>
-              </p>
             </div>
             <div class="row d-flex">
               <p class="col-3"></p>
