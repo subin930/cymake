@@ -76,7 +76,7 @@ public class AuthService {
         String accessToken = jwtUtil.createAccessToken(info);
         String refreshToken = jwtUtil.createRefreshToken(info);
 
-        //용량 화인
+        //용량 확인
         if(companyEntity.getPlan().equals("basic")){
             usage = basic_usage;
         } else {
@@ -92,6 +92,7 @@ public class AuthService {
                 .role(info.getRole().name())
                 .expireIn(jwtUtil.getExpireIn()) //access token의 만료 기간
                 .usage(usage)
+                .plan(companyEntity.getPlan())
                 .build();
     }
 /*

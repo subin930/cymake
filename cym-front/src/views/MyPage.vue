@@ -16,6 +16,7 @@ const email = ref(localStorage.getItem("userEmail"));
 const id = ref(localStorage.getItem("userId"));
 const errorMessage = ref("");
 const loading = ref(false);
+const plan = ref(localStorage.getItem("plan"))
 
 const route = useRoute();
 const router = useRouter();
@@ -122,12 +123,22 @@ const unregister = async() => {
                         </div>
                     </div>
                 </div>
-                <div class="mb-5 row justify-content-center">
+                <div class="mb-3 row justify-content-center">
                     <label for="inputPassword" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">비밀번호 변경</label>
                     <div class="col-sm-8 d-inline-flex justify-contetnt-center">
                         <button type="button" class="btn pwchange-btn w-20" style="font-size: 0.9rem; color:#7248BD; border-color:#7248BD; border-radius: 20px; background-color: #FFFFFF;" @click="OpenChangeModal()">비밀번호 변경</button>
                     </div>
-                    
+                </div>
+                <div class="mb-5 row justify-content-center" style="align-items: center;">
+                    <label for="planSelect" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">요금제</label>
+                    <div class="col-sm-8 d-inline-flex" style="justify-content: flex-start;">
+                        <select class="form-select" id="planSelect" v-model="plan" style="font-size: 0.9rem; height: 38px; line-height: 1.5; width: 50%;">
+                            <option disabled value="">요금제를 선택하세요</option>
+                            <option value="basic">basic</option>
+                            <option value="premium">standard</option>
+                            <option value="enterprise">premium</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="d-flex m-5 mt-1 justify-content-center">
                     <button type="submit" class="btn change-btn  w-20 mb-3" style="font-size: 0.9rem; color:#FFFFFF; border-color:#FFFFFF; background-color: #7248BD;">정보수정</button>

@@ -43,8 +43,12 @@ public class LoginResDto {
     @Schema(description = "용량")
     private double usage;
 
+    @NotBlank
+    @Schema(description = "요금제")
+    private String plan;
+
     @Builder
-    public LoginResDto(String accessToken, String refreshToken, String id, String username, String email, String role, String expireIn, double usage) {
+    public LoginResDto(String accessToken, String refreshToken, String id, String username, String email, String role, String expireIn, double usage, String plan) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.id = id;
@@ -53,5 +57,6 @@ public class LoginResDto {
         this.role = role;
         this.expireIn = expireIn;
         this.usage = usage;
+        this.plan = plan;
     }
 }

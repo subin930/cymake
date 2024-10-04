@@ -45,6 +45,7 @@ const Login = async () => {
         localStorage.setItem("userEmail", res.data.content.email);
         localStorage.setItem("username", res.data.content.username);
         localStorage.setItem("usage", res.data.content.usage);
+        localStorage.setItem("plan", res.data.content.plan);
         localStorage.setItem("sessionId", '0');
         console.log(res.data.content.email);
         console.log(res.data.content.id);
