@@ -41,8 +41,9 @@ public class DriveService {
     private final CompanyRepository companyRepository;
     //private final double basic_usage = 3;
     //private final double premium_usage = 6;
-    private final double basic_usage = 3072;
-    private final double premium_usage = 6144;
+    private final double basic_usage = 1536;
+    private final double standard_usage = 3072;
+    private final double premium_usage = 4068;
     /*
      * 파일 업로드
      * 1. 파일 작성자가 실제 유저인지 확인
@@ -58,7 +59,9 @@ public class DriveService {
         double usage;
         if(companyCode.getPlan().equals("basic")){
             usage = basic_usage;
-        } else {
+        } else if (companyCode.getPlan().equals("standard")){
+            usage = standard_usage;
+        }else {
             usage = premium_usage;
         }
         //1. 파일 작성자가 실제 유저인지 확인
@@ -160,7 +163,9 @@ public class DriveService {
         double usage;
         if(companyEntity.getPlan().equals("basic")){
             usage = basic_usage;
-        } else {
+        } else if (companyEntity.getPlan().equals("standard")){
+            usage = standard_usage;
+        }else {
             usage = premium_usage;
         }
         FileEntity fileEntity = fileRepository.findByCompanyCodeAndId(user.getCompanyCode(), fileId).orElseThrow(() -> new FileUpdateFailedException("파일이 존재하지 않습니다."));

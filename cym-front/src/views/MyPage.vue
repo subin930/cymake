@@ -44,13 +44,15 @@ const ChangeInfo = async() => {
                     'Authorization': `Bearer ${token}`
                 },
                 params: {
-                    email: email.value
+                    email: email.value,
+                    plan: plan.value
                 }
             })
         .then((res) => {
             console.log(res.data.message);
             alert("회원 정보 수정에 성공하였습니다.");
             localStorage.setItem("userEmail", email.value);
+            localStorage.setItem("plan", plan.value);
             router.push(`/archive`);
         })
     } catch(error) {
@@ -141,8 +143,8 @@ const unregister = async() => {
                             style="font-size: 0.9rem; height: 38px; line-height: 1.5; width: 50%;">
                             <option disabled value="">요금제를 선택하세요</option>
                             <option value="basic">basic</option>
-                            <option value="premium">standard</option>
-                            <option value="enterprise">premium</option>
+                            <option value="standard">standard</option>
+                            <option value="premium">premium</option>
                         </select>
                     </div>
                 </div>

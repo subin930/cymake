@@ -7,6 +7,7 @@ import CY.cymake.Domain.User.Dto.UpdatePWReqDto;
 import CY.cymake.Domain.User.Dto.UserInfoResDto;
 import CY.cymake.Entity.CompanyEntity;
 import CY.cymake.Entity.FileEntity;
+import CY.cymake.Entity.Role;
 import CY.cymake.Entity.UsersEntity;
 import CY.cymake.Exception.*;
 import CY.cymake.Repository.CompanyRepository;
@@ -33,7 +34,9 @@ public class UsersService {
     private final S3Service s3Service;
     private final FileRepository fileRepository;
     private final DriveService driveService;
-
+    private final double basic_usage = 1536;
+    private final double standard_usage = 3072;
+    private final double premium_usage = 4068;
     /*
      * 회원가입 처리 로직
      */
@@ -140,7 +143,7 @@ public class UsersService {
      * 회원 정보 수정 로직
      */
     @Transactional
-    public void updateProfile(CustomUserInfoDto customUserInfoDto, String email) {
+    public void updateProfile(CustomUserInfoDto customUserInfoDto, String email, String plan) {
         Optional<UsersEntity> siteUser = usersRepository.findById(customUserInfoDto.getId());
         if(siteUser.isEmpty()) {
             throw new UpdateProfileFailedException("회원 정보 수정에 실패하였습니다: 해당 회원을 찾을 수 없음.");
@@ -149,5 +152,26 @@ public class UsersService {
         //db에 수정 반영
         user.updateProfile(email);
         usersRepository.save(user);
+
+        //관리자일 경우 plan 변경
+        if(user.getRole() == Role.ADMIN){
+            double usage;
+            CompanyEntity company = customUserInfoDto.getCompanyCode();
+
+            if(company.getPlan().equals("basic")){
+                usage = basic_usage;
+            } else if (company.getPlan().equals("standard")){
+                usage = standard_usage;
+            }else {
+                usage = premium_usage;
+            }
+
+            //저장공간 확인. 현 사용량 > 바꾸는 요금제의 저장공간 -> 변경 불가
+            if(company.getCurrent_usage() > usage){
+                throw new UpdateProfileFailedException("저장공간이 부족합니다.");
+            }
+            company.changePlan(plan);
+            companyRepository.save(company);
+        }
     }
 }

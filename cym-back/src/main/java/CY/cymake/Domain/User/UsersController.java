@@ -69,8 +69,10 @@ public class UsersController {
      */
     @Operation(description = "회원 정보 수정")
     @PutMapping(value = "/update")
-    public CommonBaseResult updateProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestParam(value = "email") String email, @AuthenticationPrincipal CustomUserDetails user){
-        usersService.updateProfile(user.getUser(), email);
+    public CommonBaseResult updateProfile(@Parameter(required = true, description = "회원 정보 수정")@RequestParam(value = "email") String email, @RequestParam(value = "plan") String plan, @AuthenticationPrincipal CustomUserDetails user){
+        usersService.updateProfile(user.getUser(), email, plan);
         return globalResponseHandler.SendSuccess();
     }
+
+
 }

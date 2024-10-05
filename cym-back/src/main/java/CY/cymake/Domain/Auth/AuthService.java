@@ -32,8 +32,9 @@ public class AuthService {
     private final CustomUserDetailService customUserDetailService;
     //private final double basic_usage = 3;
     //private final double premium_usage = 6;
-    private final double basic_usage = 3072;
-    private final double premium_usage = 6144;
+    private final double basic_usage = 1536;
+    private final double standard_usage = 3072;
+    private final double premium_usage = 4068;
 
     //private final RedisUtil redisUtil;
     /*
@@ -79,7 +80,9 @@ public class AuthService {
         //용량 확인
         if(companyEntity.getPlan().equals("basic")){
             usage = basic_usage;
-        } else {
+        } else if (companyEntity.getPlan().equals("standard")){
+            usage = standard_usage;
+        }else {
             usage = premium_usage;
         }
 

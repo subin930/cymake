@@ -41,4 +41,7 @@ public class CompanyEntity {
         this.current_usage -= usage;
         this.current_usage += update_usage;
     }
+    public void changePlan(String plan){
+        this.plan = plan;
+    }
 }
