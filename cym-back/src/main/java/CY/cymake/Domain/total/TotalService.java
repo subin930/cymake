@@ -38,6 +38,7 @@ public class TotalService {
 
     @Transactional(readOnly = true)
     public TotalSearchDto searchTotal(CustomUserInfoDto user, String searchBody) throws IOException, SearchException {
+        searchBody = searchBody.toLowerCase();
         SearchDriveDto searchDrive = openSearchService.totalSearchFileTb(user, "tb_file", searchBody);
         SearchArchiveDto searchArchiveCar = openSearchService.totalSearchNewsTb("tb_crwl_news", "car", searchBody);
         SearchArchiveDto searchArchiveBeauty = openSearchService.totalSearchNewsTb("tb_crwl_news", "beauty", searchBody);

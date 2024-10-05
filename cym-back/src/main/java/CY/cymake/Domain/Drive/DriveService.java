@@ -261,7 +261,7 @@ public class DriveService {
      */
     @Transactional
     public List<PostListResDto> searchPost(CustomUserInfoDto user, String searchBody) throws Exception {
-        return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody));
+        return changeToPostList(user, openSearchService.searchFileTb(user, "tb_file", searchBody.toLowerCase()));
 
     }
     /*

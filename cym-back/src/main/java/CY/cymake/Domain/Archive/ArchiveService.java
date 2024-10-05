@@ -78,8 +78,7 @@ public class ArchiveService {
      */
     @Transactional(readOnly = true)
     public List<NewsResDto> searchNews(String subject, String searchBody) throws Exception, IOException {
-
-        return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody));
+        return changeToNewsResDto(openSearchService.searchNewsTb("tb_crwl_news", subject, searchBody.toLowerCase()));
     }
     /*
      * NewsSearchResultDto -> NewsResDto
