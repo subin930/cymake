@@ -16,7 +16,8 @@ const email = ref(localStorage.getItem("userEmail"));
 const id = ref(localStorage.getItem("userId"));
 const errorMessage = ref("");
 const loading = ref(false);
-const plan = ref(localStorage.getItem("plan"))
+const plan = ref(localStorage.getItem("plan"));
+const userRole = ref(localStorage.getItem("userRole"));
 
 const route = useRoute();
 const router = useRouter();
@@ -132,7 +133,12 @@ const unregister = async() => {
                 <div class="mb-5 row justify-content-center" style="align-items: center;">
                     <label for="planSelect" class="col-sm-4 col-form-label col-form-label-sm d-flex justify-content-end" style="font-size: 0.9rem;">요금제</label>
                     <div class="col-sm-8 d-inline-flex" style="justify-content: flex-start;">
-                        <select class="form-select" id="planSelect" v-model="plan" style="font-size: 0.9rem; height: 38px; line-height: 1.5; width: 50%;">
+                        <select 
+                            class="form-select" 
+                            id="planSelect" 
+                            v-model="plan" 
+                            :disabled="userRole === 'USER'" 
+                            style="font-size: 0.9rem; height: 38px; line-height: 1.5; width: 50%;">
                             <option disabled value="">요금제를 선택하세요</option>
                             <option value="basic">basic</option>
                             <option value="premium">standard</option>
