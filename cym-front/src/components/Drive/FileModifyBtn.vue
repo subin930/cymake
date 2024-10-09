@@ -4,6 +4,8 @@ import Popper from "vue3-popper";
 import axios from 'axios';
 
 const props = defineProps({
+  maxUsage: Number,
+  totalSize: Number,
   file: Object,
 });
 const title = ref(props.file.postTitle);

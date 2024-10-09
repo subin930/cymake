@@ -76,7 +76,20 @@ const updateFile = async({fileId, newFileData }) => {
 };
 
 const removeFile = async(fileId) => {
-  content.value = content.value.filter(item => item.fileId !== fileId.value);
+  //content.value = content.value.filter(item => item.fileId !== fileId.value);
+  const removedFile = content.value.find(item => item.fileId === fileId.value);
+  //현재 사용량도 수정해야함
+  if (removedFile) {
+    console.log(`Removing file: ${removedFile.fileName}`);
+    // 현재 사용량 수정
+    totalSize.value = (parseFloat(totalSize.value) - parseFloat(removedFile.size)).toFixed(3);
+    setUsagePercentage();
+
+    // 바로 파일 목록에서 제거
+    content.value = content.value.filter(item => item.fileId !== fileId.value);
+  } else {
+    console.error('File not found');
+  }
 };
 
 const fetchData = async () => {
@@ -183,7 +196,7 @@ const downloadFile = async (fileId, fileName) => {
 
             <!-- FileUploadBtn element -->
             <div class="col-md-6 col-lg-4 d-flex mt-3 mb-3 mx-6 justify-content-end">
-                <FileUploadBtn @fileUploaded="fetchData"/>
+                <FileUploadBtn :maxUsage="maxUsage" :totalSize="totalSize" @fileUploaded="fetchData"/>
                 
             </div>
         </div>
@@ -224,7 +237,7 @@ const downloadFile = async (fileId, fileName) => {
                     <td>{{  item.uploader  }}</td>
                     <td>{{ item.username }}</td>
                     <td>{{ formatDate(item.uploadDate) }}</td>
-                    <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
+                    <td><FileModifyBtn :maxUsage="maxUsage" :totalSize="totalSize" :file="item" @fileModified="updateFile"/></td>
                     <td><FileDeleteBtn :file="item" @fileDeleted="removeFile"/></td>
                   </tr>
                 </tbody>
