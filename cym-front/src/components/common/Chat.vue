@@ -32,6 +32,12 @@ const closeChat = () => {
 
 //챗봇에게 메세지 전송
 const sendMessage = async() => {
+  if (uploadedFile.value) {
+    if (uploadedFile.value.size > 30 * 1024 * 1024) { // 파일 크기 30MB 초과 확인
+    alert('파일 크기는 30MB를 초과할 수 없습니다.');
+    return; // 파일이 너무 크면 업로드 중단 ... 자동으로 파일 취소해야 하나?
+  }
+  }
   if (newMessage.value.trim()) {
     //메세지 목록에 유저 메세지 추가
     messages.value.push({ text: newMessage.value, sender: 'user' });

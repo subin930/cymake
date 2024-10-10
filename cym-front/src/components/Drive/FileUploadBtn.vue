@@ -4,10 +4,6 @@ import { ref, nextTick, onMounted } from "vue";
 import Popper from "vue3-popper";
 import axios from 'axios';
 const emit = defineEmits(['fileUploaded']);
-const props = defineProps({
-  maxUsage: Number,
-  totalSize: Number
-});
 const token = localStorage.getItem("token");
 const loading = ref(false);
 
@@ -32,11 +28,6 @@ const fileUpload = async (close) => {
   if (file.value && file.value.size > 30 * 1024 * 1024) { // 파일 크기 30MB 초과 확인
     alert('파일 크기는 30MB를 초과할 수 없습니다.');
     return; // 파일이 너무 크면 업로드 중단 ... 자동으로 파일 취소해야 하나?
-  }
-  if (fileSize.value && fileSize.value + totalSize.value > maxUsage.value){
-    //업로드하려는 파일이 최대 용량을 초과
-    alert('업로드하려는 파일이 회사의 최대 사용량을 초과합니다.');
-    return;
   }
   const formData = new FormData();
   formData.append('file', file.value);

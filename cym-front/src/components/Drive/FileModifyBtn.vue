@@ -4,8 +4,6 @@ import Popper from "vue3-popper";
 import axios from 'axios';
 
 const props = defineProps({
-  maxUsage: Number,
-  totalSize: Number,
   file: Object,
 });
 const title = ref(props.file.postTitle);
@@ -39,6 +37,14 @@ const formatSize = (size) => {
 };
 
 const fileModify = async (close) => {
+  // 파일 크기 체크 (MB 단위로 이미 변환된 값)
+  if (Newfile.value) {
+    const fileSizeInMB = parseFloat(formatSize(Newfile.value.size));
+    if (fileSizeInMB > 30) {
+      alert('파일 크기는 30MB를 초과할 수 없습니다.');
+      return; // 함수 중단
+    }
+  }
   const formData = new FormData();
   formData.append('postTitle', title.value);
   formData.append('fileId', fileId.value);

@@ -196,7 +196,7 @@ const downloadFile = async (fileId, fileName) => {
 
             <!-- FileUploadBtn element -->
             <div class="col-md-6 col-lg-4 d-flex mt-3 mb-3 mx-6 justify-content-end">
-                <FileUploadBtn :maxUsage="maxUsage" :totalSize="totalSize" @fileUploaded="fetchData"/>
+                <FileUploadBtn @fileUploaded="fetchData"/>
                 
             </div>
         </div>
@@ -237,7 +237,7 @@ const downloadFile = async (fileId, fileName) => {
                     <td>{{  item.uploader  }}</td>
                     <td>{{ item.username }}</td>
                     <td>{{ formatDate(item.uploadDate) }}</td>
-                    <td><FileModifyBtn :maxUsage="maxUsage" :totalSize="totalSize" :file="item" @fileModified="updateFile"/></td>
+                    <td><FileModifyBtn :file="item" @fileModified="updateFile"/></td>
                     <td><FileDeleteBtn :file="item" @fileDeleted="removeFile"/></td>
                   </tr>
                 </tbody>
