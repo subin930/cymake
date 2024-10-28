@@ -12,12 +12,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 @Tag(name = "User", description = "회원 API")
 @RequestMapping(value = "/v1/users")
@@ -43,7 +45,8 @@ public class UsersController {
     * 이메일 인증 (전송)
      */
     @PostMapping("/mailSend")
-    public HashMap<String, Object> mailSend(@Parameter(description = "이메일 인증번호 요청") @RequestParam String mail) {
+    public HashMap<String, Object> mailSend(@Parameter(description = "이메일 인증번호 요청") @RequestBody Map<String, String> request) {
+        String mail = request.get("mail");
         HashMap<String, Object> map = new HashMap<>();
         try {
             number = usersService.sendMail(mail);
@@ -59,11 +62,15 @@ public class UsersController {
     }
 
     @GetMapping("/mailCheck")
-    public ResponseEntity<?> mailCheck(@Parameter(description = "이메일 인증 확인") @RequestParam String userNumber) {
+    public CommonBaseResult mailCheck(@Parameter(description = "이메일 인증 확인") @RequestParam String userNumber) {
 
         boolean isMatch = userNumber.equals(String.valueOf(number));
-
-        return ResponseEntity.ok(isMatch);
+        if (isMatch) {
+            return globalResponseHandler.SendSuccess();
+        }
+        else {
+            return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), "인증번호 인증에 실패하였습니다.");
+        }
     }
 
 
