@@ -2,7 +2,7 @@ import boto3
 import time
 from botocore.exceptions import ClientError
 
-def doChat(company_code, session_id, message, bedrock_agent):
+def doChat(company_code, session_id, message, bedrock_agent, data):
     bedrock_id = {'0': ['TVZPVRTBPT', '0', '0'], 
                   'CYGLOBAL': ['Z6ZUWC2H8P', '9WY4VZ4JMC', '45YIBE4UNU'], 
                   'SKKU': ['BWDALJ0XAV', 'SJFRU8CT35', 'UI3UFR9CB3']} # 크롤링 뉴스 / 업로드 한 파일 / 사용자가 질문과 함께 업로드 한 파일

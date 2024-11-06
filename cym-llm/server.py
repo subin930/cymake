@@ -47,10 +47,13 @@ async def to_spring(request: Request):
         session_id = dto_json.get("sessionId")
         question = dto_json.get("question")
         url = dto_json.get("url")
+        data = dto_json.get("data")
+        print()
+        print(data)
 
         print(company_code, session_id, question, url)
 
-        result = chat.doChat(company_code, session_id, question, bedrock_agent)
+        result = chat.doChat(company_code, session_id, question, bedrock_agent, data)
         return result
 
     except KeyError as e:
