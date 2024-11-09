@@ -5,7 +5,7 @@ import FileModifyBtn from '@/components/Drive/FileModifyBtn.vue'
 import FileDeleteBtn from '@/components/Drive/FileDeleteBtn.vue'
 import FileUploadBtn from '@/components/Drive/FileUploadBtn.vue'
 
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import axios from 'axios'
 
 const token = localStorage.getItem("token");
@@ -21,8 +21,11 @@ const router = useRouter();
     "uploadDate": "2024-07-23T04:35:18.513Z"
   }
 );*/
+
+
+
 const content = ref([]);
-const searchBody = ref(localStorage.getItem("searchBody"));
+const searchBody = ref(localStorage.getItem("searchBody") || route.query.searchBody || "");
 const searchResults = ref([]);
 const totalSize = ref(0);
 const usagePercentage = ref(0);
@@ -33,6 +36,7 @@ const handleSearch = async () => {
       loading.value = true;  
       console.log(searchBody.value);
       try {
+            await router.push(`/drive/${searchBody.value}`);
             const response = await axios.get('/v1/drive/search', {
                 params: {
                     searchBody: searchBody.value
@@ -51,8 +55,10 @@ const handleSearch = async () => {
         }
     } else {
       console.log('no searchBody!!');
-        searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
-        fetchData();
+      // 검색어 없으면 목록 초기화
+      await router.push('/drive');
+      searchResults.value = []; // 검색어가 1글자 미만일 경우 결과 초기화
+      fetchData();
     } 
 };
 const updateFile = async({fileId, newFileData }) => {
@@ -124,6 +130,14 @@ const checkSearch = () => {
 }
 onMounted(checkSearch);
 
+watch(() => route.params.searchBody, (newSearchBody) => {
+  searchBody.value = newSearchBody || ''; // 검색어 업데이트
+  if (searchBody.value) {
+    handleSearch();
+  } else {
+    fetchData();
+  }
+});
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(dateString).toLocaleDateString(undefined, options);

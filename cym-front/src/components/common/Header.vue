@@ -92,10 +92,16 @@ position: fixed;
 top: 0;
 left: 0;
 width: 100%;
+max-width: 100vw; /* 헤더는 뷰포트 너비 전체까지만 확장 */
 height: 65px;
 background-color: #fff; /* 배경색 */
 box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 z-index: 1000; /* 다른 콘텐츠보다 위에 위치하게 설정 */
+}
+.fixed-header input[type="search"],
+.fixed-header .dropdown-toggle {
+  min-width: 120px; /* 최소 크기 설정으로 너무 작아지지 않게 */
+  flex-shrink: 0; /* 필요 이상으로 축소되지 않도록 */
 }
 .form-control::placeholder {
 opacity: .5;
@@ -129,5 +135,8 @@ input:focus {
 outline: none;
 border-color: #7248BD;
 box-shadow: 0 0 0 0 rgba(114, 72, 189, 0.25);
+}
+input[type="search"], .btn {
+  max-width: 150px; /* 검색 창과 버튼 최대 너비 설정 */
 }
 </style>

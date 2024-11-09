@@ -74,12 +74,13 @@ const openModal = (titleVal, imgUrlVal, linkVal, summaryVal, keywordsVal) => {
 };
 
 const setTokenCar = () => {
-    localStorage.setItem("contentToken", 0);
+    localStorage.setItem("contentToken", 0); //car 토큰 설정
 }
 
 const setTokenBeauty = () => {
-    localStorage.setItem("contentToken", 1);
+    localStorage.setItem("contentToken", 1); //beauty 토큰 설정
 }
+
 
 const fetchCrawlInfo = async() => {
   try {
@@ -112,7 +113,7 @@ onMounted(fetchCrawlInfo);
         <div class="container-fluid m-3 justify-content-center">
             <div class="row row-cols-auto">
                     <p class="text-start px-1 fw-bold">자동차 산업 정보</p>
-                    <a class="nav-link active text-start mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
+                    <a class="nav-link active text-start mt-1 px-2" @click="setTokenCar" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total?carPage=1"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div v-if="carLoading" class="text-center my-4">
                       <div class="spinner-border text-secondary" role="status">
@@ -132,7 +133,7 @@ onMounted(fetchCrawlInfo);
                             :uploadDate="carNews.uploadDate"
                             :openModal="openModal"
                           />
-                    </div>
+                      </div>
                     </div>
                 </div>
             </div> 
@@ -140,7 +141,7 @@ onMounted(fetchCrawlInfo);
         <div class="container-fluid m-3">
             <div class="row row-cols-auto">
                     <p class="text-start px-1 fw-bold">화장품 산업 정보</p>
-                    <a class="nav-link active text-start mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
+                    <a class="nav-link active text-start mt-1 px-2" @click="setTokenBeauty" aria-current="page" style="font-size: 0.8rem; font-weight: 550;" href="/archive/total?beautyPage=1"><span class="material-symbols-outlined" style="font-size:0.8rem">description</span>더 많은 정보 보기 〉</a>
             </div>
             <div v-if="beautyLoading" class="text-center my-4">
                       <div class="spinner-border text-secondary" role="status">

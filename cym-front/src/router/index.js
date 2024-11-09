@@ -25,14 +25,20 @@ const router = createRouter({
       component: () => import('@/views/Archive.vue')
     },
     {
-      path: '/drive',
+      path: '/drive/:searchBody?',
       name: 'drive',
-      component: () => import('@/views/Drive.vue')
+      component: () => import('@/views/Drive.vue'),
+      props: true
     },
     {
       path: '/archive/total',
       name: 'ArchiveTotal',
-      component: () => import('@/views/ArchiveTotal.vue')
+      component: () => import('@/views/ArchiveTotal.vue'),
+      props: route => ({ // ! 쿼리 파라미터를 props로 전달하여 뒤로가기 시 상태를 유지
+        carPage: parseInt(route.query.carPage) || 1,
+        beautyPage: parseInt(route.query.beautyPage) || 1,
+        searchBody: route.query.searchBody || ''
+      })
     },
     {
       path: '/mypage',

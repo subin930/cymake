@@ -19,12 +19,15 @@ const subject = ref('');
 const currentCarNews = ref([]);
 const currentBeautyNews = ref([]);
 const itemsPerPage = 30; // 한 페이지에 표시할 아이템 수
-const currentCarPage = ref(1);
+//const currentCarPage = ref(1);
+const currentCarPage = ref(parseInt(route.query.carPage) || 1);
 const totalCarPages = ref(1);
-const currentBeautyPage = ref(1);
+//const currentBeautyPage = ref(1);
+const currentBeautyPage = ref(parseInt(route.query.beautyPage) || 1);
 const totalBeautyPages = ref(0);
 
-const searchBody = ref(localStorage.getItem("searchBody"));
+//const searchBody = ref(localStorage.getItem("searchBody"));
+const searchBody = ref(localStorage.getItem("searchBody") || route.query.searchBody || "");
 const searchResults = ref([]);
 
 const handleSearch = async () => {
@@ -32,6 +35,15 @@ const handleSearch = async () => {
     console.log(subject.value);
     if (searchBody.value && searchBody.value.trim() !== '') { // 빈 값이 아닐 때
         loading.value = true;
+        localStorage.setItem("searchBody", searchBody.value);
+
+        await router.push({ 
+        query: { 
+            searchBody: searchBody.value, 
+            carPage: currentCarPage.value,
+            beautyPage: currentBeautyPage.value 
+          } 
+        });
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
                 params: {
@@ -127,15 +139,23 @@ const changePage = (step) => {
   scrollToTop(); 
   if(subject.value === "car") {
     currentCarPage.value += step;
+    router.push({ query: { ...route.query, carPage: currentCarPage.value } }); // !
   }
   else {
     currentBeautyPage.value += step;
+    router.push({ query: { ...route.query, beautyPage: currentBeautyPage.value } }); // !
   }
   paginateNews();
 };
 
-watch(currentCarPage, paginateNews);
-watch(currentBeautyPage, paginateNews);
+//watch(currentCarPage, paginateNews);
+//watch(currentBeautyPage, paginateNews);
+watch(currentCarPage, () => { // !
+  router.push({ query: { ...route.query, carPage: currentCarPage.value } }); // !
+});
+watch(currentBeautyPage, () => { // !
+  router.push({ query: { ...route.query, beautyPage: currentBeautyPage.value } }); // !
+});
 
 const openModal = (titleVal, imgUrlVal, linkVal, summaryVal, keywordsVal) => {
     console.log(summaryVal, keywordsVal); 
@@ -199,6 +219,9 @@ const keywords = ref([]);
 
 onMounted(setSubject);
 onMounted(checkSearch);
+onMounted(() => { // !
+  paginateNews(); // !
+});
 </script>
 
 <template>
