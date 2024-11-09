@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,17 @@ public class ChatService {
             fileUrl = s3Service.uploadFile(file, "files/search/" + file.getOriginalFilename());
             System.out.println(fileUrl);
         }
-        ChatReqDto chatReqDto = new ChatReqDto(companyCode, question, sessionId, fileUrl);
+        //200byte 읽기
+        byte[] fullData = Objects.requireNonNull(file).getBytes();
+
+        int lengthToRead = Math.min(fullData.length, 200);
+        byte[] partialData = Arrays.copyOfRange(fullData, 0, lengthToRead);
+
+        String dataToSend = new String(partialData, StandardCharsets.UTF_8);
+
+        //Dto 생성
+        ChatReqDto chatReqDto = new ChatReqDto(companyCode, question, sessionId, fileUrl, dataToSend);
+
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new CustomResponseErrorHandler());
@@ -50,10 +63,10 @@ public class ChatService {
         String param = objectMapper.writeValueAsString(chatReqDto);
         HttpEntity<String> entity = new HttpEntity<>(param, headers);
 
-        //실제 Flask 서버랑 연결하기 위한 URL
+        //실제 Fast api 서버랑 연결하기 위한 URL
         String url = "http://localhost:5000/tospring";
 
-        //Flask 서버로 데이터를 전송하고 받은 응답 값을 return
+        //Fast api 서버로 데이터를 전송하고 받은 응답 값을 return
         String result = restTemplate.postForObject(url, entity, String.class);
         if(fileUrl != null) {
             //파일 s3에서 삭제

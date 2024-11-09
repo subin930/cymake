@@ -14,8 +14,11 @@ import CY.cymake.Repository.CompanyRepository;
 import CY.cymake.Repository.FileRepository;
 import CY.cymake.Repository.UsersRepository;
 import CY.cymake.Domain.User.Dto.RegisterReqDto;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,9 @@ public class UsersService {
     private final double basic_usage = 1536;
     private final double standard_usage = 3072;
     private final double premium_usage = 4068;
+    private final JavaMailSender javaMailSender;
+    private static final String senderEmail = "bread0930@g.skku.edu";
+    private static int number;
     /*
      * 회원가입 처리 로직
      */
@@ -69,6 +75,39 @@ public class UsersService {
         //6. 회원가입 진행
         usersRepository.save(registerReqDto.toUsersEntity(company.get()));
     }
+    /*
+     * 이메일 인증(전송)
+     */
+    public static void createNumber() {
+        number = (int)(Math.random()*(90000)) + 100000;
+    }
+    @Transactional
+    public MimeMessage CreateMail(String mail) {
+        createNumber();
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        try {
+            message.setFrom(senderEmail);
+            message.setRecipients(MimeMessage.RecipientType.TO, mail);
+            message.setSubject("CYMAKE 이메일 인증");
+            String body = "";
+            body += "<h3>" + "CYMAKE 이메일 인증 번호입니다." + "</h3>";
+            body += "<h1>" + number + "</h1>";
+            body += "<h3>" + "감사합니다." + "</h3>";
+            message.setText(body,"UTF-8", "html");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
+    @Transactional
+    public int sendMail(String mail) {
+        MimeMessage message = CreateMail(mail);
+        javaMailSender.send(message);
+
+        return number;
+    }
+
 
     /*
      * 회원탈퇴 처리 로직

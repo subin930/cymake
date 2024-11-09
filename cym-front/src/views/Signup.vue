@@ -3,11 +3,15 @@ import { useRouter } from 'vue-router';
 import InitialHeader from '@/components/common/InitialHeader.vue';
 import { ref } from 'vue';
 import axios from 'axios';
-import { useForm, useField } from 'vee-validate';
+import { useForm, useField, ErrorMessage } from 'vee-validate';
 import * as yup from 'yup';
 
 const errorMessage = ref("");
 const loading = ref(false);
+
+const isVerificationRequested = ref(false); 
+const isVerification = ref(false);
+const verificationCode = ref("");
 
 // 유효성 검사 스키마 정의
 const schema = yup.object({
@@ -36,6 +40,10 @@ const router = useRouter();
 
 // 회원가입 함수
 const Signup = handleSubmit(async (values) => {
+    if (isVerification.value === false){
+        errorMessage.value = "이메일 인증을 완료해주세요.";
+        return;
+    } 
     const body = {
         id: values.id,
         username: values.username,
@@ -58,7 +66,62 @@ const Signup = handleSubmit(async (values) => {
     } finally {
         loading.value = false;
     }
+    
 });
+
+// 인증번호 요청 함수
+const requestVerificationCode = async () => {
+    if (!email.value) {
+        emailError.value = "이메일을 입력해주세요.";
+        return;
+    }
+
+    loading.value = true;
+    try {
+        const response = await axios.post(`/v1/users/mailSend`, {
+            mail: email.value
+        });
+        
+        if (response.data.success) {
+            isVerificationRequested.value = true;
+            errorMessage.value = "인증번호가 발송되었습니다.";
+        } else {
+            errorMessage.value = "인증번호 요청에 실패했습니다.";
+        }
+    } catch (error) {
+        errorMessage.value = error.response?.data?.message || "인증번호 요청 중 오류가 발생했습니다.";
+    } finally {
+        loading.value = false;
+    }
+};
+
+const verifyCode = async () => {
+    if (!verificationCode.value) {
+        errorMessage.value = "인증번호를 입력해주세요.";
+        return;
+    }
+
+    loading.value = true;
+    try {
+        // 서버로 인증번호를 GET 요청의 쿼리 파라미터로 전달
+        const response = await axios.get(`/v1/users/mailCheck`, {
+            params: { userNumber: verificationCode.value }
+        });
+
+        // 서버 응답 처리
+        if (response.data.message === 'success') {
+            errorMessage.value = "인증에 성공했습니다.";
+            isVerification.value = true;
+        } else {
+            errorMessage.value = "인증에 실패했습니다."
+        }
+    } catch (error) {
+        // 서버 에러 메시지 또는 기본 에러 메시지 설정
+        errorMessage.value = error.response?.data?.message || "인증 확인 중 오류가 발생했습니다.";
+    } finally {
+        loading.value = false;
+    }
+};
 </script>
 
 <template>
@@ -88,10 +151,25 @@ const Signup = handleSubmit(async (values) => {
                     <span v-if="usernameError" class="text-danger" style="font-size: 0.7rem;">{{ usernameError }}</span>
                 </div>
 
-                <div class="mb-3">
-                    <label for="inputEmail" class="form-label">이메일 <span class="text-danger">*</span></label>
-                    <input type="email" v-model="email" class="form-control" placeholder="이메일을 입력하세요" id="inputEmail">
-                    <span v-if="emailError" class="text-danger" style="font-size: 0.7rem;">{{ emailError }}</span>
+                <div class="mb-3 d-flex align-items-center">
+                    <div style="flex: 1;">
+                        <label for="inputEmail" class="form-label">이메일 <span class="text-danger">*</span></label>
+                        <input type="email" v-model="email" class="form-control" placeholder="이메일을 입력하세요" id="inputEmail">
+                        <span v-if="emailError" class="text-danger" style="font-size: 0.7rem;">{{ emailError }}</span>
+                    </div>
+                    <button type="button" class="btn btn-secondary ms-2" @click="requestVerificationCode" style="height: 40px; margin-top: 30px;">
+                        인증번호 요청
+                    </button>
+                </div>
+                
+                <div v-if="isVerificationRequested" class="mb-3 d-flex align-items-center">
+                    <div style="flex: 1;">
+                        <label for="verificationCode" class="form-label">인증번호 입력 <span class="text-danger">*</span> </label> 
+                        <input type="text" v-model="verificationCode" class="form-control" placeholder="인증번호를 입력하세요" id="verificationCode">
+                    </div>
+                    <button type="button" class="btn btn-secondary ms-2" @click="verifyCode" style="height: 40px; margin-top: 30px;">
+                        인증번호 확인
+                    </button>
                 </div>
 
                 <div class="mb-3">
@@ -142,7 +220,6 @@ const Signup = handleSubmit(async (values) => {
 }
 
 .form-control:focus {
-    
     box-shadow: none;
 }
 
@@ -157,6 +234,7 @@ const Signup = handleSubmit(async (values) => {
 .title {
     padding: 20px;
 }
+
 /* 로딩 창 스타일 */
 .loading-overlay {
     position: fixed;

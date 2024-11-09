@@ -26,4 +26,7 @@ public class ChatReqDto {
 
     @Schema(description = "파일 url")
     String url;
+
+    @Schema(description = "200바이트 추출")
+    String data;
 }

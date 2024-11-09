@@ -12,10 +12,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tag(name = "User", description = "회원 API")
 @RequestMapping(value = "/v1/users")
@@ -24,6 +28,7 @@ import java.io.IOException;
 public class UsersController {
     private final UsersService usersService;
     private final GlobalResponseHandler globalResponseHandler;
+    private int number;
 
     /*
      * 회원가입 요청 시 RegisterReqDto에 유저가 입력한 정보를 받아옴. 해당 정보로 회원가입 로직 수행 후 결과 반환
@@ -35,6 +40,40 @@ public class UsersController {
         //회원가입 성공~!
         return globalResponseHandler.SendSuccess();
     }
+
+    /*
+    * 이메일 인증 (전송)
+     */
+    @PostMapping("/mailSend")
+    public HashMap<String, Object> mailSend(@Parameter(description = "이메일 인증번호 요청") @RequestBody Map<String, String> request) {
+        String mail = request.get("mail");
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            number = usersService.sendMail(mail);
+            String num = String.valueOf(number);
+
+            map.put("success", Boolean.TRUE);
+            map.put("number", num);
+        } catch (Exception e){
+            map.put("success", Boolean.FALSE);
+            map.put("error", e.getMessage());
+        }
+        return map;
+    }
+
+    @GetMapping("/mailCheck")
+    public CommonBaseResult mailCheck(@Parameter(description = "이메일 인증 확인") @RequestParam String userNumber) {
+
+        boolean isMatch = userNumber.equals(String.valueOf(number));
+        if (isMatch) {
+            return globalResponseHandler.SendSuccess();
+        }
+        else {
+            return globalResponseHandler.SendFailure(HttpStatus.BAD_REQUEST.value(), "인증번호 인증에 실패하였습니다.");
+        }
+    }
+
+
     /*
      * 회원 탈퇴 요청 시 @AuthenticationPrincipal 노테이션을 통해 인증 객체를 받아옴 -> 해당 정보로 유저를 찾아 테이블에서 지움
      */
