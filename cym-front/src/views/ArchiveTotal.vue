@@ -9,7 +9,7 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const token = localStorage.getItem("token");
-const loading = ref(false); //로딩 
+const loading = ref(false); // 로딩 상태
 
 const contentToken = ref(localStorage.getItem("contentToken"));
 const contentCar = ref([]);
@@ -19,30 +19,25 @@ const subject = ref('');
 const currentCarNews = ref([]);
 const currentBeautyNews = ref([]);
 const itemsPerPage = 30; // 한 페이지에 표시할 아이템 수
-//const currentCarPage = ref(1);
 const currentCarPage = ref(parseInt(route.query.carPage) || 1);
 const totalCarPages = ref(1);
-//const currentBeautyPage = ref(1);
 const currentBeautyPage = ref(parseInt(route.query.beautyPage) || 1);
-const totalBeautyPages = ref(0);
+const totalBeautyPages = ref(1);
 
-//const searchBody = ref(localStorage.getItem("searchBody"));
 const searchBody = ref(localStorage.getItem("searchBody") || route.query.searchBody || "");
 const searchResults = ref([]);
 
 const handleSearch = async () => {
-    console.log(searchBody.value);
-    console.log(subject.value);
-    if (searchBody.value && searchBody.value.trim() !== '') { // 빈 값이 아닐 때
+    if (searchBody.value && searchBody.value.trim() !== '') {
         loading.value = true;
         localStorage.setItem("searchBody", searchBody.value);
 
         await router.push({ 
-        query: { 
-            searchBody: searchBody.value, 
-            carPage: currentCarPage.value,
-            beautyPage: currentBeautyPage.value 
-          } 
+            query: { 
+                searchBody: searchBody.value, 
+                carPage: currentCarPage.value,
+                beautyPage: currentBeautyPage.value 
+            } 
         });
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
@@ -50,115 +45,112 @@ const handleSearch = async () => {
                     searchBody: searchBody.value
                 },
                 headers: {
-                'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
             searchResults.value = response.data.content;
-            console.log(response.data.content);
-            if (subject.value === "car"){
-              console.log("searched Car");
-              contentCar.value = searchResults.value;
-              totalCarPages.value = Math.ceil(contentCar.value.length / itemsPerPage);
-              if(totalCarPages.value < 1)totalCarPages.value = 1;
-              currentCarPage.value = 1;
+            if (subject.value === "car") {
+                contentCar.value = searchResults.value;
+                totalCarPages.value = Math.ceil(contentCar.value.length / itemsPerPage);
+                currentCarPage.value = 1;
             } else {
-              console.log("searched Beauty");
-              contentBeauty.value = searchResults.value;
-              totalBeautyPages.value = Math.ceil(contentBeauty.value.length / itemsPerPage);
-              if(totalBeautyPages.value < 1)totalBeautyPages.value = 1;
-              currentBeautyPage.value = 1;
+                contentBeauty.value = searchResults.value;
+                totalBeautyPages.value = Math.ceil(contentBeauty.value.length / itemsPerPage);
+                currentBeautyPage.value = 1;
             }
             paginateNews();
         } catch (error) {
             console.error('Error fetching search results:', error);
         } finally {
-          loading.value = false;
+            loading.value = false;
         }
     } else {
-      console.log('no SearchBody - handleSearch');
-      fetchCarNews();
-      fetchBeautyNews();
-      setSubject();
+        fetchCarNews();
+        fetchBeautyNews();
+        setSubject();
     }
 };
 
 const fetchCarNews = async () => {
-  subject.value = "car";
-  loading.value = true;
-  try {
-    const response = await axios.get(`/v1/archive/total/${subject.value}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }});
-    contentCar.value = response.data.content;
-    totalCarPages.value = Math.ceil(contentCar.value.length / itemsPerPage);
-    paginateNews();
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  } finally {
-    loading.value = false;
-  }
+    subject.value = "car";
+    loading.value = true;
+    try {
+        const response = await axios.get(`/v1/archive/total/${subject.value}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        contentCar.value = response.data.content;
+        totalCarPages.value = Math.ceil(contentCar.value.length / itemsPerPage);
+        paginateNews();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        loading.value = false;
+    }
 };
 
 const fetchBeautyNews = async () => {
-  console.log('fetchBeauty');
-  subject.value = "beauty";
-  loading.value = true;
-  try {
-    const response = await axios.get(`/v1/archive/total/${subject.value}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }});
-    contentBeauty.value = response.data.content;
-    totalBeautyPages.value = Math.ceil(contentBeauty.value.length / itemsPerPage);
-    paginateNews();
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  } finally {
-    loading.value = false;
-  }
+    subject.value = "beauty";
+    loading.value = true;
+    try {
+        const response = await axios.get(`/v1/archive/total/${subject.value}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        contentBeauty.value = response.data.content;
+        totalBeautyPages.value = Math.ceil(contentBeauty.value.length / itemsPerPage);
+        paginateNews();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        loading.value = false;
+    }
 };
 
 const paginateNews = () => {
-  
-  if(subject.value === "car") {
-    console.log('paginateCar');
-    const start = (currentCarPage.value - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    currentCarNews.value = contentCar.value.slice(start, end);
-  }
-  else {
-    console.log('paginateBeauty');
-    const start = (currentBeautyPage.value - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    currentBeautyNews.value = contentBeauty.value.slice(start, end);
-  }
-  
-};
-const changePage = (step) => {
-  scrollToTop(); 
-  if(subject.value === "car") {
-    currentCarPage.value += step;
-    router.push({ query: { ...route.query, carPage: currentCarPage.value } }); // !
-  }
-  else {
-    currentBeautyPage.value += step;
-    router.push({ query: { ...route.query, beautyPage: currentBeautyPage.value } }); // !
-  }
-  paginateNews();
+    if(subject.value === "car") {
+        const start = (currentCarPage.value - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        currentCarNews.value = contentCar.value.slice(start, end);
+    } else {
+        const start = (currentBeautyPage.value - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        currentBeautyNews.value = contentBeauty.value.slice(start, end);
+    }
 };
 
-//watch(currentCarPage, paginateNews);
-//watch(currentBeautyPage, paginateNews);
-watch(currentCarPage, () => { // !
-  router.push({ query: { ...route.query, carPage: currentCarPage.value } }); // !
-});
-watch(currentBeautyPage, () => { // !
-  router.push({ query: { ...route.query, beautyPage: currentBeautyPage.value } }); // !
-});
+const changePage = (step) => {
+    scrollToTop(); 
+    if(subject.value === "car") {
+        currentCarPage.value += step;
+    } else {
+        currentBeautyPage.value += step;
+    }
+    router.push({ 
+        query: { 
+            ...route.query, 
+            carPage: currentCarPage.value, 
+            beautyPage: currentBeautyPage.value 
+        } 
+    });
+    paginateNews();
+};
+
+watch(route, (newRoute) => {
+    searchBody.value = newRoute.query.searchBody || '';
+    currentCarPage.value = parseInt(newRoute.query.carPage) || 1;
+    currentBeautyPage.value = parseInt(newRoute.query.beautyPage) || 1;
+
+    if (searchBody.value.trim() !== '') {
+        handleSearch();
+    } else {
+        paginateNews();
+    }
+}, { immediate: true });
 
 const openModal = (titleVal, imgUrlVal, linkVal, summaryVal, keywordsVal) => {
-    console.log(summaryVal, keywordsVal); 
     title.value = titleVal;
     imgUrl.value = imgUrlVal;
     newsLink.value = linkVal;
@@ -170,45 +162,22 @@ const openModal = (titleVal, imgUrlVal, linkVal, summaryVal, keywordsVal) => {
 };
 
 const setSubject = () => {
-  console.log(contentToken.value);
-  if (contentToken.value =='0') {
-    subject.value = 'car';
-    console.log("set subject car");
-  }
-  else {
-    subject.value = 'beauty';
-    console.log("set subject beauty");
-  }
-  console.log(subject.value);
-  scrollToTop(); 
+    if (contentToken.value == '0') {
+        subject.value = 'car';
+    } else {
+        subject.value = 'beauty';
+    }
 
-  if(searchBody.value && searchBody.value.trim() !== '') {
-    console.log('has SearchBody: '+searchBody.value);
-    handleSearch();
-  }
-  paginateNews();
+    scrollToTop(); 
+
+    if (searchBody.value && searchBody.value.trim() !== '') {
+        handleSearch();
+    }
+    paginateNews();
 }
 
-//통합 검색에서 더 많은 결과 보기로 넘어온 경우 검색 결과가 바로 뜨도록 하는 함수
-const checkSearch = () => {
-  if(searchBody.value && searchBody.value.trim() !== '') {
-    console.log('has SearchBody: '+searchBody.value);
-    handleSearch();
-    localStorage.removeItem("searchBody");
-  }
-  else {
-    console.log('no SearchBody');
-    fetchCarNews();
-    fetchBeautyNews();
-    setSubject();
-  }
-}
-
-//주제 변경 시 스크롤 초기화
 const scrollToTop = () => {
-  //const container = document.querySelector('.news-container');
-  //container.scrollTop = 0;
-  window.scrollTo(0, 0);
+    window.scrollTo(0, 0);
 };
 
 const title = ref('no title');
@@ -217,10 +186,15 @@ const newsLink = ref('no link');
 const summary = ref([]);
 const keywords = ref([]);
 
-onMounted(setSubject);
-onMounted(checkSearch);
-onMounted(() => { // !
-  paginateNews(); // !
+onMounted(() => {
+    if (searchBody.value.trim() !== '') {
+        handleSearch();
+    } else {
+        fetchCarNews();
+        fetchBeautyNews();
+        setSubject();
+    }
+    paginateNews();
 });
 </script>
 
