@@ -43,7 +43,7 @@ public class ChatService {
         //200byte 읽기
         byte[] fullData = Objects.requireNonNull(file).getBytes();
 
-        int lengthToRead = Math.min(fullData.length, 200);
+        int lengthToRead = Math.min(fullData.length, 500);
         byte[] partialData = Arrays.copyOfRange(fullData, 0, lengthToRead);
 
         String dataToSend = new String(partialData, StandardCharsets.UTF_8);
