@@ -26,7 +26,7 @@ def doChat(company_code, session_id, message, bedrock_agent, data):
     
     input_data = {
         'input' : {
-            'text': system_prompt + data + '\n' + message
+            'text': system_prompt + data + ' ! end of sample ! \n' + message
         },
         'retrieveAndGenerateConfiguration' : {
             'knowledgeBaseConfiguration': {
