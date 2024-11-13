@@ -41,17 +41,17 @@ def doChat(company_code, session_id, message, bedrock_agent, data):
         input_data['sessionId'] = session_id
 
     if (company_code != '0'):
-        if (data):
-            bedrock_agent.start_ingestion_job(
-                dataSourceId = bedrock_id[company_code][1],
-                knowledgeBaseId = knowledge_base_id
-            )
-            time.sleep(7)
         bedrock_agent.start_ingestion_job(
-            dataSourceId = bedrock_id[company_code][2],
+            dataSourceId = bedrock_id[company_code][1],
             knowledgeBaseId = knowledge_base_id
         )
-        time.sleep(2)
+        time.sleep(7)
+        if (data):
+            bedrock_agent.start_ingestion_job(
+                dataSourceId = bedrock_id[company_code][2],
+                knowledgeBaseId = knowledge_base_id
+            )
+            time.sleep(2)
 
     response = bedrock_runtime.retrieve_and_generate(**input_data)
     
