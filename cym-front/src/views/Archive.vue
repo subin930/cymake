@@ -168,10 +168,10 @@ onMounted(fetchCrawlInfo);
         </div>
     </div>
     <div class="container-fluid m-3 row align-items-center justify-content-center">
-        <div v-if="crwlInfoCar.length > 0" class="col">
+        <div v-if="crwlInfoCar.length > 0" class="col-6 justify-content-end">
             <CarGraph :crwlData="crwlInfoCar" :title="titleCar"></CarGraph>
         </div>
-        <div v-if="crwlInfoBeauty.length > 0" class="col">
+        <div v-if="crwlInfoBeauty.length > 0" class="col-6 justify-content-start">
             <CarGraph :crwlData="crwlInfoBeauty" :title="titleBeauty"></CarGraph>
         </div>
     </div>

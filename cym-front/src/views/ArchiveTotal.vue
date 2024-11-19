@@ -5,7 +5,21 @@ import NewsModal from '@/components/common/NewsModal.vue';
 import NewsItem from '@/components/common/NewsItem.vue';
 import { ref, onMounted, watch } from "vue";
 import axios from 'axios';
-
+// props 정의
+defineProps({
+  carPage: {
+    type: Number,
+    default: 1
+  },
+  beautyPage: {
+    type: Number,
+    default: 1
+  },
+  searchBody: {
+    type: String,
+    default: ''
+  }
+});
 const route = useRoute();
 const router = useRouter();
 const token = localStorage.getItem("token");
@@ -31,14 +45,25 @@ const handleSearch = async () => {
     if (searchBody.value && searchBody.value.trim() !== '') {
         loading.value = true;
         localStorage.setItem("searchBody", searchBody.value);
+        
+        const query = {
+            searchBody: searchBody.value,
+        };
 
-        await router.push({ 
-            query: { 
-                searchBody: searchBody.value, 
-                carPage: currentCarPage.value,
-                beautyPage: currentBeautyPage.value 
-            } 
-        });
+        if (subject.value === "car") {
+            query.carPage = currentCarPage.value; // 자동차 뉴스일 때만 carPage 추가
+        } else if (subject.value === "beauty") {
+            query.beautyPage = currentBeautyPage.value; // 화장품 뉴스일 때만 beautyPage 추가
+        }
+
+        await router.push({ query });
+        //await router.push({ 
+        //    query: { 
+        //        searchBody: searchBody.value, 
+        //        carPage: currentCarPage.value,
+        //        beautyPage: currentBeautyPage.value 
+        //    } 
+        //});
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
                 params: {
@@ -125,24 +150,71 @@ const changePage = (step) => {
     scrollToTop(); 
     if(subject.value === "car") {
         currentCarPage.value += step;
-    } else {
-        currentBeautyPage.value += step;
-    }
-    router.push({ 
+        router.push({ 
         query: { 
             ...route.query, 
             carPage: currentCarPage.value, 
+            beautyPage: undefined
+        } 
+    });
+    } else {
+        currentBeautyPage.value += step;
+        router.push({ 
+        query: { 
+            ...route.query, 
+            carPage: undefined,
             beautyPage: currentBeautyPage.value 
         } 
     });
+    }
+    //router.push({ 
+    //    query: { 
+    //        ...route.query, 
+    //        carPage: currentCarPage.value, 
+    //        beautyPage: currentBeautyPage.value 
+    //    } 
+    //});
     paginateNews();
 };
 
-watch(route, (newRoute) => {
-    searchBody.value = newRoute.query.searchBody || '';
-    currentCarPage.value = parseInt(newRoute.query.carPage) || 1;
-    currentBeautyPage.value = parseInt(newRoute.query.beautyPage) || 1;
+watch(route, (newRoute, oldRoute) => {
+    const newSearchBody = newRoute.query?.searchBody || ''; // 안전 접근
+    const newCarPage = parseInt(newRoute.query?.carPage) || 1;
+    const newBeautyPage = parseInt(newRoute.query?.beautyPage) || 1;
 
+    // 검색어 및 페이지 번호 업데이트
+    searchBody.value = newSearchBody;
+    currentCarPage.value = newCarPage;
+    currentBeautyPage.value = newBeautyPage;
+
+     // 페이지 변경 처리
+     if (newCarPage !== currentCarPage.value || newBeautyPage !== currentBeautyPage.value) {
+        paginateNews(); // 페이지네이션 동기화
+    }
+
+    console.log("watching U");
+    // 주제 변경 시 처리 (query가 없을 때도 안전 처리)
+    //if (oldRoute?.query?.carPage && !newRoute.query?.carPage) {
+    //    console.log("Changed to Beauty");
+    //    contentToken.value = '1'; // carPage에서 beautyPage로 이동
+    //    setSubject(); // beauty 데이터 로드
+    //} else if (oldRoute?.query?.beautyPage && !newRoute.query?.beautyPage) {
+    //    console.log("CHanged to Car");
+    //    contentToken.value = '0'; // beautyPage에서 carPage로 이동
+    //    setSubject(); // car 데이터 로드
+    //}
+    // 주제가 변경될 때만 contentToken 업데이트 및 setSubject 호출
+    if (newRoute.query?.carPage && contentToken.value !== '0') {
+        console.log("CHanged to Car");
+        contentToken.value = '0'; // 자동차 뉴스
+        setSubject(); 
+    } else if (newRoute.query?.beautyPage && contentToken.value !== '1') {
+        console.log("Changed to Beauty");
+        contentToken.value = '1'; // 화장품 뉴스
+        setSubject();
+    }
+
+    // 검색어가 있으면 검색 수행
     if (searchBody.value.trim() !== '') {
         handleSearch();
     } else {
@@ -169,9 +241,23 @@ const setSubject = () => {
     }
 
     scrollToTop(); 
-
+    // URL에서 현재 주제에 해당하는 페이지 쿼리 파라미터 가져오기
+    const currentPage = parseInt(route.query[`${subject.value}Page`]) || 1;
     if (searchBody.value && searchBody.value.trim() !== '') {
-        handleSearch();
+      router.push({
+            query: {
+                searchBody: searchBody.value,
+                [`${subject.value}Page`]: currentPage // 현재 주제에 맞는 페이지 설정
+            }
+      });
+      handleSearch();
+    }
+    else {
+      router.push({
+            query: {
+                [`${subject.value}Page`]: currentPage // 현재 주제에 맞는 페이지 설정
+            }
+        });
     }
     paginateNews();
 }
