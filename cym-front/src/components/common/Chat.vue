@@ -39,16 +39,18 @@ const sendMessage = async() => {
   }
   }
   if (newMessage.value.trim()) {
-    //메세지 목록에 유저 메세지 추가
-    messages.value.push({ text: newMessage.value, sender: 'user' });
+    
     console.log(sessionId);
     let formData = new FormData();
     formData.append('sessionId', sessionId.value);
     formData.append('question', newMessage.value);
+    //첨부 파일이 있을 경우 메세지 추가
     if (uploadedFile.value) {
       formData.append('file', uploadedFile.value);
       messages.value.push({ text: uploadedFile.value.name, sender: 'user-file' });
     }
+    //메세지 목록에 유저 메세지 추가
+    messages.value.push({ text: newMessage.value, sender: 'user' });
     // Clear input field (메세지와 파일 초기화) + 자동 스크롤
     newMessage.value = '';
     uploadedFile.value = null;
@@ -221,7 +223,6 @@ onMounted(() => {
 .message {
     padding: 15px;
     border-radius: 10px;
-    margin-bottom: 10px;
     max-width: 80%;
 }
 .message.user {
@@ -229,21 +230,23 @@ onMounted(() => {
     font-size: .9rem; 
     align-self: flex-end;
     color: #212121;
+    margin-bottom: 10px;
 }
-
 .message.user-file {
-    background-color: #F5F6FA; 
+    background-color: #ffffff; 
     font-size: 0.7rem; 
     align-self: flex-end; 
-    padding: 3px; 
-    margin-bottom: 2px; 
+    padding: 5px; 
+    margin-bottom: 4px; 
     color: #666666; 
+    border: 1px solid #e0e0e0;
 }
 .message.bot {
-    background-color: #D6D6D6;
+    background-color: #b3b3b3;
     align-self: flex-start;
     font-size: .9rem; 
     color: #212121;
+    margin-bottom: 10px;
 }
 .chat-file {
     display: flex;
