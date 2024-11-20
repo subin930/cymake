@@ -57,13 +57,7 @@ const handleSearch = async () => {
         }
 
         await router.push({ query });
-        //await router.push({ 
-        //    query: { 
-        //        searchBody: searchBody.value, 
-        //        carPage: currentCarPage.value,
-        //        beautyPage: currentBeautyPage.value 
-        //    } 
-        //});
+        
         try {
             const response = await axios.get(`/v1/archive/total/${subject.value}/search`, {
                 params: {
@@ -167,13 +161,6 @@ const changePage = (step) => {
         } 
     });
     }
-    //router.push({ 
-    //    query: { 
-    //        ...route.query, 
-    //        carPage: currentCarPage.value, 
-    //        beautyPage: currentBeautyPage.value 
-    //    } 
-    //});
     paginateNews();
 };
 
@@ -188,21 +175,12 @@ watch(route, (newRoute, oldRoute) => {
     currentBeautyPage.value = newBeautyPage;
 
      // 페이지 변경 처리
-     if (newCarPage !== currentCarPage.value || newBeautyPage !== currentBeautyPage.value) {
+    if (newCarPage !== currentCarPage.value || newBeautyPage !== currentBeautyPage.value) {
         paginateNews(); // 페이지네이션 동기화
     }
 
     console.log("watching U");
-    // 주제 변경 시 처리 (query가 없을 때도 안전 처리)
-    //if (oldRoute?.query?.carPage && !newRoute.query?.carPage) {
-    //    console.log("Changed to Beauty");
-    //    contentToken.value = '1'; // carPage에서 beautyPage로 이동
-    //    setSubject(); // beauty 데이터 로드
-    //} else if (oldRoute?.query?.beautyPage && !newRoute.query?.beautyPage) {
-    //    console.log("CHanged to Car");
-    //    contentToken.value = '0'; // beautyPage에서 carPage로 이동
-    //    setSubject(); // car 데이터 로드
-    //}
+
     // 주제가 변경될 때만 contentToken 업데이트 및 setSubject 호출
     if (newRoute.query?.carPage && contentToken.value !== '0') {
         console.log("CHanged to Car");
