@@ -232,12 +232,12 @@ onMounted(() => {
 }
 
 .message.user-file {
-    background-color: #F5F6FA; /* 동일 배경 */
-    font-size: 0.7rem; /* 글씨 크기를 줄임 */
-    align-self: flex-end; /* 정렬 유지 */
-    padding: 3px; /* 패딩 줄임 */
-    margin-bottom: 2px; /* 간격 줄임 */
-    color: #666666; /* 텍스트 색상 변경 */
+    background-color: #F5F6FA; 
+    font-size: 0.7rem; 
+    align-self: flex-end; 
+    padding: 3px; 
+    margin-bottom: 2px; 
+    color: #666666; 
 }
 .message.bot {
     background-color: #D6D6D6;
