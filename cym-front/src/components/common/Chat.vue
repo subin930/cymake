@@ -35,7 +35,7 @@ const sendMessage = async() => {
   if (uploadedFile.value) {
     if (uploadedFile.value.size > 30 * 1024 * 1024) { // 파일 크기 30MB 초과 확인
     alert('파일 크기는 30MB를 초과할 수 없습니다.');
-    return; // 파일이 너무 크면 업로드 중단 ... 자동으로 파일 취소해야 하나?
+    return; // 파일이 너무 크면 업로드 중단
   }
   }
   if (newMessage.value.trim()) {
@@ -47,7 +47,7 @@ const sendMessage = async() => {
     formData.append('question', newMessage.value);
     if (uploadedFile.value) {
       formData.append('file', uploadedFile.value);
-      messages.value.push({ text: uploadedFile.value.name, sender: 'user' });
+      messages.value.push({ text: uploadedFile.value.name, sender: 'user-file' });
     }
     // Clear input field (메세지와 파일 초기화) + 자동 스크롤
     newMessage.value = '';
@@ -163,8 +163,8 @@ onMounted(() => {
             <div class="offcanvas-body p-0">
             <!-- Chat messages -->
                 <div class="chat-container" ref="chatMessages" >
-                    <div v-for="(message, index) in messages" :key="index" style="white-space: pre-wrap; font-size: .9rem; color: #212121;"
-                    class="message" :class="{'user': message.sender === 'user', 'bot': message.sender === 'bot'}">
+                    <div v-for="(message, index) in messages" :key="index" style="white-space: pre-wrap;"
+                    class="message" :class="{'user': message.sender === 'user', 'bot': message.sender === 'bot', 'user-file': message.sender === 'user-file'}">
                     {{ message.text }}
                     </div>
                     <div v-if="botLoading===true" class="message bot" style="font-size: .9rem; color: #212121;">응답 생성 중입니다...</div>
@@ -224,15 +224,26 @@ onMounted(() => {
     margin-bottom: 10px;
     max-width: 80%;
 }
-
 .message.user {
     background-color: #F5F6FA;
+    font-size: .9rem; 
     align-self: flex-end;
+    color: #212121;
 }
 
+.message.user-file {
+    background-color: #F5F6FA; /* 동일 배경 */
+    font-size: 0.7rem; /* 글씨 크기를 줄임 */
+    align-self: flex-end; /* 정렬 유지 */
+    padding: 3px; /* 패딩 줄임 */
+    margin-bottom: 2px; /* 간격 줄임 */
+    color: #666666; /* 텍스트 색상 변경 */
+}
 .message.bot {
     background-color: #D6D6D6;
     align-self: flex-start;
+    font-size: .9rem; 
+    color: #212121;
 }
 .chat-file {
     display: flex;
